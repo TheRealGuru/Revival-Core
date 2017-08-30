@@ -1,0 +1,30 @@
+broadcasts:
+  enabled: true
+  random: true
+  delay: 60
+  prefix: '&6Broadcast: &r'
+chat-filter:
+  enabled: true
+  interval: 3
+  filter-out:
+    - 'nigger'
+    - 'n1gger'
+    - 'nigg3r'
+    - 'n1gg3r'
+    - 'niqqa'
+    - 'nig'
+    - 'n1g'
+    - 'nigga'
+    - 'n1gga'
+    - 'nigg4'
+    - 'n1gg4'
+    - 'faggot'
+    - 'f4ggot'
+    - 'fagg0t'
+    - 'f4gg0t'
+    - 'fag'
+    - 'f4g'
+    - 'ez'
+    - '3z'
+    - 'gang gang'
+    - 'otf'

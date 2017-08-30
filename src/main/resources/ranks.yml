@@ -1,0 +1,33 @@
+ranks:
+  silver:
+    name: 'Silver'
+    tag: '&7'
+    permission: 'revival.silver'
+  gold:
+    name: 'Gold'
+    tag: '&6'
+    permission: 'revival.gold'
+  plat:
+    name: 'Platinum'
+    tag: '&b'
+    permission: 'revival.plat'
+  emerald:
+    name: 'Emerald'
+    tag: '&a'
+    permission: 'revival.emerald'
+  community-manager:
+    name: 'Community Manager'
+    tag: '&d'
+    permission: 'revival.cm'
+  mod:
+    name: 'Moderator'
+    tag: '&3'
+    permission: 'revival.mod'
+  admin:
+    name: 'Administrator'
+    tag: '&c'
+    permission: 'revival.admin'
+  owner:
+    name: 'Owner'
+    tag: '&4'
+    permission: 'revival.owner'
