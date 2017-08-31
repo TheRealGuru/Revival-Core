@@ -10,7 +10,7 @@ public class Punishment
 
     @Getter UUID uuid;
     @Getter UUID punishedPlayers;
-    @Getter int punishedAddresse;
+    @Getter int punishedAddress;
     @Getter UUID punisher;
     @Getter @Setter String reason;
     @Getter PunishType type;
@@ -21,7 +21,7 @@ public class Punishment
     {
         this.uuid = uuid;
         this.punishedPlayers = punishedPlayer;
-        this.punishedAddresse = punishedAddress;
+        this.punishedAddress = punishedAddress;
         this.punisher = punisher;
         this.reason = reason;
         this.type = type;

@@ -11,6 +11,7 @@ public class Account
 {
 
     @Getter UUID uuid;
+    @Getter @Setter List<Integer> registeredAddresses;
     @Getter @Setter int xp;
     @Getter @Setter boolean hideGlobalChat;
     @Getter @Setter boolean hideMessages;
@@ -18,9 +19,10 @@ public class Account
     @Getter List<Punishment> punishments;
     @Getter @Setter long lastSeen;
 
-    public Account(UUID uuid, int xp, boolean hideGlobalChat, boolean hideMessages, List<UUID> blockedPlayers, List<Punishment> punishments, long lastSeen)
+    public Account(UUID uuid, List<Integer> registeredAddresses, int xp, boolean hideGlobalChat, boolean hideMessages, List<UUID> blockedPlayers, List<Punishment> punishments, long lastSeen)
     {
         this.uuid = uuid;
+        this.registeredAddresses = registeredAddresses;
         this.xp = xp;
         this.hideGlobalChat = hideGlobalChat;
         this.hideMessages = hideMessages;

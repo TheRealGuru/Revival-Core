@@ -1,3 +1,7 @@
+muted:
+  temp: "&cYou have been silenced for '%reason%'. You may speak again on %date%"
+  forever: "&cYou have been silenced for '%reason%'. This punishment will not expire."
+
 lives:
   personal-lives: '&aYour lives: %lives%'
   others-lives: "&a%player%'s lives: %lives"

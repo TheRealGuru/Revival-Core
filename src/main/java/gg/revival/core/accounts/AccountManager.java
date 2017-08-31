@@ -7,10 +7,12 @@ import gg.revival.core.Revival;
 import gg.revival.core.punishments.PunishType;
 import gg.revival.core.punishments.Punishment;
 import gg.revival.core.tools.Config;
+import gg.revival.core.tools.IPTools;
 import gg.revival.core.tools.Logger;
 import gg.revival.driver.MongoAPI;
 import lombok.Getter;
 import org.bson.Document;
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -49,7 +51,14 @@ public class AccountManager
         {
             List<UUID> blockedPlayers = new ArrayList<>();
             List<Punishment> punishments = new ArrayList<>();
-            Account account = new Account(uuid, 0, false, false, blockedPlayers, punishments, System.currentTimeMillis());
+            List<Integer> newAddressList = new ArrayList<>();
+
+            if(Bukkit.getPlayer(uuid) != null && Bukkit.getPlayer(uuid).isOnline())
+            {
+                newAddressList.add(IPTools.ipStringToInteger(Bukkit.getPlayer(uuid).getAddress().getAddress().getHostAddress()));
+            }
+
+            Account account = new Account(uuid, newAddressList, 0, false, false, blockedPlayers, punishments, System.currentTimeMillis());
             accounts.add(account);
 
             callback.onQueryDone(account);
@@ -82,6 +91,7 @@ public class AccountManager
                     boolean hideMessages = document.getBoolean("hideMessages");
                     List<String> blockedPlayersIds = (List<String>)document.get("blockedPlayers");
                     List<String> punishmentIds = (List<String>)document.get("punishments");
+                    List<Integer> registeredAddresses = (List<Integer>)document.get("registeredAddresses");
                     List<UUID> blockedPlayers = new ArrayList<>();
                     List<Punishment> punishments = new ArrayList<>();
 
@@ -139,13 +149,13 @@ public class AccountManager
                         }
                     }
 
-                    account = new Account(uuid, xp, hideGlobalChat, hideMessages, blockedPlayers, punishments, System.currentTimeMillis());
+                    account = new Account(uuid, registeredAddresses, xp, hideGlobalChat, hideMessages, blockedPlayers, punishments, System.currentTimeMillis());
                 }
 
                 else
                 {
-                    List<UUID> blockedPlayers = new ArrayList<>(); List<Punishment> punishments = new ArrayList<>();
-                    account = new Account(uuid, 0, false, false, blockedPlayers, punishments, System.currentTimeMillis());
+                    List<UUID> blockedPlayers = new ArrayList<>(); List<Punishment> punishments = new ArrayList<>(); List<Integer> registeredAddresses = new ArrayList<>();
+                    account = new Account(uuid, registeredAddresses, 0, false, false, blockedPlayers, punishments, System.currentTimeMillis());
                 }
 
                 if(getAccount(uuid) == null)
@@ -209,6 +219,7 @@ public class AccountManager
             }
 
             Document newAccountDoc = new Document("uuid", account.getUuid().toString())
+                    .append("registeredAddresses", account.getRegisteredAddresses())
                     .append("xp", account.getXp())
                     .append("hideGlobalChat", account.isHideGlobalChat())
                     .append("hideMessages", account.isHideMessages())
@@ -225,7 +236,7 @@ public class AccountManager
 
                     Document newPunishmentDoc = new Document("uuid", punishment.getUuid().toString())
                             .append("punishedPlayer", punishment.getPunishedPlayers().toString())
-                            .append("punishedAddress", punishment.getPunishedAddresse())
+                            .append("punishedAddress", punishment.getPunishedAddress())
                             .append("punisher", punishment.getPunisher().toString())
                             .append("reason", punishment.getReason())
                             .append("type", punishment.getType().toString())
@@ -287,6 +298,7 @@ public class AccountManager
                     }
 
                     Document newAccountDoc = new Document("uuid", account.getUuid().toString())
+                            .append("registeredAddresses", account.getRegisteredAddresses())
                             .append("xp", account.getXp())
                             .append("hideGlobalChat", account.isHideGlobalChat())
                             .append("hideMessages", account.isHideMessages())
@@ -303,7 +315,7 @@ public class AccountManager
 
                             Document newPunishmentDoc = new Document("uuid", punishment.getUuid().toString())
                                     .append("punishedPlayer", punishment.getPunishedPlayers().toString())
-                                    .append("punishedAddress", punishment.getPunishedAddresse())
+                                    .append("punishedAddress", punishment.getPunishedAddress())
                                     .append("punisher", punishment.getPunisher().toString())
                                     .append("reason", punishment.getReason())
                                     .append("type", punishment.getType().toString())
