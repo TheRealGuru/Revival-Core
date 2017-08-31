@@ -1,3 +1,9 @@
+lives:
+  personal-lives: '&aYour lives: %lives%'
+  others-lives: "&a%player%'s lives: %lives"
+
 errors:
+  no-permission: '&cYou do not have permission to use this command'
+  no-console: 'This command can not be issued through console'
   chat-cooldown: '&cPlease wait another %cooldown%s before speaking again'
   not-allowed-to-say: '&cOne or more of the words in your most recent message is not allowed to be said on our servers. If you bypass this filter you will be punished.'

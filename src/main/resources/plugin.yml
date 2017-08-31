@@ -1,0 +1,6 @@
+name: Revival
+main: gg.revival.core.Revival
+version: 1.0.0
+author: johnsama
+description: Core engine that powers the Revival Network's servers
+depends: [MongoBukkitDriver]

@@ -1,6 +1,8 @@
 package gg.revival.core.chat;
 
 import gg.revival.core.Revival;
+import gg.revival.core.tools.Config;
+import gg.revival.core.tools.Logger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -30,7 +32,7 @@ public class Broadcasts
     public void performBroadcast(boolean random, int interval)
     {
         if(remainingBroadcasts.isEmpty())
-            remainingBroadcasts = loadedBroadcasts;
+            remainingBroadcasts.addAll(loadedBroadcasts);
 
         int cursor = 0;
 
@@ -42,9 +44,9 @@ public class Broadcasts
 
         String broadcast = remainingBroadcasts.get(cursor);
 
-        Bukkit.broadcastMessage(broadcast);
+        Bukkit.broadcastMessage(Config.BROADCASTS_PREFIX + broadcast);
 
-        remainingBroadcasts.remove(cursor);
+        remainingBroadcasts.remove(broadcast);
 
         new BukkitRunnable() {
             public void run() {

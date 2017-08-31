@@ -26,27 +26,27 @@ public class FileManager {
 
             configFile = new File(Revival.getCore().getDataFolder(), "config.yml");
             rankFile = new File(Revival.getCore().getDataFolder(), "ranks.yml");
-            broadcastFile = new File(Revival.getCore().getDataFolder(), "braodcasts.yml");
+            broadcastFile = new File(Revival.getCore().getDataFolder(), "broadcasts.yml");
             messageFile = new File(Revival.getCore().getDataFolder(), "messages.yml");
 
             if (!configFile.exists()) {
                 configFile.getParentFile().mkdirs();
-                Revival.getCore().saveResource("config.yml", true);
+                Revival.getCore().saveResource("config.yml", false);
             }
 
             if (!rankFile.exists()) {
                 rankFile.getParentFile().mkdirs();
-                Revival.getCore().saveResource("ranks.yml", true);
+                Revival.getCore().saveResource("ranks.yml", false);
             }
 
             if(!broadcastFile.exists()) {
                 broadcastFile.getParentFile().mkdirs();
-                Revival.getCore().saveResource("broadcasts.yml", true);
+                Revival.getCore().saveResource("broadcasts.yml", false);
             }
 
             if(!messageFile.exists()) {
                 messageFile.getParentFile().mkdirs();
-                Revival.getCore().saveResource("messages.yml", true);
+                Revival.getCore().saveResource("messages.yml", false);
             }
 
             configConfig = new YamlConfiguration();
@@ -124,25 +124,26 @@ public class FileManager {
             configFile = new File(Revival.getCore().getDataFolder(), "config.yml");
             rankFile = new File(Revival.getCore().getDataFolder(), "ranks.yml");
             broadcastFile = new File(Revival.getCore().getDataFolder(), "broadcasts.yml");
+            messageFile = new File(Revival.getCore().getDataFolder(), "messages.yml");
 
             if (!configFile.exists()) {
                 configFile.getParentFile().mkdirs();
-                Revival.getCore().saveResource("config.yml", true);
+                Revival.getCore().saveResource("config.yml", false);
             }
 
             if (!rankFile.exists()) {
                 rankFile.getParentFile().mkdirs();
-                Revival.getCore().saveResource("ranks.yml", true);
+                Revival.getCore().saveResource("ranks.yml", false);
             }
 
             if (!broadcastFile.exists()) {
                 broadcastFile.getParentFile().mkdirs();
-                Revival.getCore().saveResource("broadcasts.yml", true);
+                Revival.getCore().saveResource("broadcasts.yml", false);
             }
 
             if(!messageFile.exists()) {
                 messageFile.getParentFile().mkdirs();
-                Revival.getCore().saveResource("messages.yml", true);
+                Revival.getCore().saveResource("messages.yml", false);
             }
 
             configConfig = new YamlConfiguration();

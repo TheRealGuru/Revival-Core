@@ -1,7 +1,16 @@
+database:
+  enabled: true
+  hostname: 'localhost'
+  port: 27017
+  creds:
+    enabled: false
+    username: 'root'
+    password: 'password'
+    database: 'revival'
 broadcasts:
   enabled: true
   random: true
-  delay: 60
+  interval: 60
   prefix: '&6Broadcast: &r'
 chat-filter:
   enabled: true

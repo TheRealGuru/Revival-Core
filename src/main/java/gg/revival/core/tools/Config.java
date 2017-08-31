@@ -11,6 +11,14 @@ import java.util.List;
 public class Config
 {
 
+    public static boolean DB_ENABLED = false;
+    public static String DB_HOST = "localhost";
+    public static int DB_PORT = 27017;
+    public static boolean DB_CREDS = false;
+    public static String DB_USERNAME = "root";
+    public static String DB_PASSWORD = "password";
+    public static String DB_DATABASE = "revival";
+
     public static boolean BROADCASTS_ENABLED = true;
     public static boolean BROADCASTS_RANDOM = true;
     public static int BROADCASTS_INTERVAL = 60;
@@ -24,6 +32,14 @@ public class Config
      */
     public static void loadConfiguration()
     {
+        DB_ENABLED = Revival.getFileManager().getConfig().getBoolean("database.enabled");
+        DB_HOST = Revival.getFileManager().getConfig().getString("database.hostname");
+        DB_PORT = Revival.getFileManager().getConfig().getInt("database.port");
+        DB_CREDS = Revival.getFileManager().getConfig().getBoolean("database.creds.enabled");
+        DB_USERNAME = Revival.getFileManager().getConfig().getString("database.creds.username");
+        DB_PASSWORD = Revival.getFileManager().getConfig().getString("database.creds.password");
+        DB_DATABASE = Revival.getFileManager().getConfig().getString("database.creds.database");
+
         BROADCASTS_ENABLED = Revival.getFileManager().getConfig().getBoolean("broadcasts.enabled");
         BROADCASTS_RANDOM = Revival.getFileManager().getConfig().getBoolean("broadcasts.random");
         BROADCASTS_INTERVAL = Revival.getFileManager().getConfig().getInt("broadcasts.interval");
@@ -50,7 +66,7 @@ public class Config
     {
         ConfigurationSection section = Revival.getFileManager().getRanks().getConfigurationSection("ranks");
 
-        for(String ranks : section.getKeys(true))
+        for(String ranks : section.getKeys(false))
         {
             String name = Revival.getFileManager().getRanks().getString("ranks." + ranks + ".name");
             String tag = Revival.getFileManager().getRanks().getString("ranks." + ranks + ".tag");
