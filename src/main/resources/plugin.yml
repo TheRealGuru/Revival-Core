@@ -4,3 +4,6 @@ version: 1.0.0
 author: johnsama
 description: Core engine that powers the Revival Network's servers
 depends: [MongoBukkitDriver]
+commands:
+  ban:
+    description: Ban a player

@@ -15,8 +15,16 @@ import java.util.*;
 public class PunishmentManager
 {
 
+    /**
+     * Contains active mutes running on the server
+     */
     @Getter Map<UUID, Punishment> activeMutes = new HashMap<>();
 
+    /**
+     * Returns a Punishment object is the given UUID has an active mute
+     * @param uuid The user UUID
+     * @return Punishment Object
+     */
     public Punishment getActiveMute(UUID uuid)
     {
         if(activeMutes.containsKey(uuid))
@@ -32,6 +40,11 @@ public class PunishmentManager
         return null;
     }
 
+    /**
+     * Scans an IP address (in int form) and returns a callback containing a set of any punishments associated with it
+     * @param ip The user IP address
+     * @param callback The punishment callback set result
+     */
     public void scanAddress(int ip, PunishmentCallback callback)
     {
         Set<Punishment> result = new HashSet<>();

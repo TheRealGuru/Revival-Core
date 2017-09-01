@@ -181,10 +181,15 @@ public class AccountManager
      * @param account The user Account object
      * @param unsafe Perform async or block the thread
      */
-    public void saveAccount(Account account, boolean unsafe)
+    public void saveAccount(Account account, boolean unsafe, boolean unload)
     {
         if(!Config.DB_ENABLED)
             return;
+
+        if(unload)
+        {
+            accounts.remove(account);
+        }
 
         if(unsafe)
         {

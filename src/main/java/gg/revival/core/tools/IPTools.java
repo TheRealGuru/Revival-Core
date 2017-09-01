@@ -2,6 +2,11 @@ package gg.revival.core.tools;
 
 public class IPTools
 {
+    /**
+     * Returns a int version of an IP address
+     * @param ip The IP to be converted
+     * @return The converted IP to Integer
+     */
     public static int ipStringToInteger (final String ip)
     {
         int value = 0;
@@ -13,6 +18,11 @@ public class IPTools
         return value;
     }
 
+    /**
+     * Returns a String version of an IP, reverting it to how it is normally viewed
+     * @param ip The IP in int form
+     * @return The converted IP to String
+     */
     public static String ipIntegerToString (int ip)
     {
         final String[] parts2 = new String[4];

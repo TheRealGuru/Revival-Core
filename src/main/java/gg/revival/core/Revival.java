@@ -6,11 +6,13 @@ import gg.revival.core.chat.Broadcasts;
 import gg.revival.core.chat.ChatListener;
 import gg.revival.core.chat.Filter;
 import gg.revival.core.database.DBManager;
+import gg.revival.core.essentials.CommandManager;
 import gg.revival.core.punishments.PunishmentListener;
 import gg.revival.core.punishments.PunishmentManager;
 import gg.revival.core.ranks.RankManager;
 import gg.revival.core.tools.Config;
 import gg.revival.core.tools.FileManager;
+import gg.revival.core.tools.PlayerTools;
 import gg.revival.driver.MongoAPI;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -29,6 +31,8 @@ public class Revival extends JavaPlugin
     @Getter static DBManager dbManager;
     @Getter static AccountManager accountManager;
     @Getter static PunishmentManager punishments;
+    @Getter static CommandManager commandManager;
+    @Getter static PlayerTools playerTools;
 
     @Override
     public void onEnable()
@@ -40,7 +44,9 @@ public class Revival extends JavaPlugin
         chatFilter = new Filter();
         dbManager = new DBManager();
         accountManager = new AccountManager();
+        commandManager = new CommandManager();
         punishments = new PunishmentManager();
+        playerTools = new PlayerTools();
 
         fileManager.createFiles();
 
@@ -63,7 +69,7 @@ public class Revival extends JavaPlugin
     {
         for(Player players : Bukkit.getOnlinePlayers())
         {
-            accountManager.saveAccount(accountManager.getAccount(players.getUniqueId()), true);
+            accountManager.saveAccount(accountManager.getAccount(players.getUniqueId()), true, true);
         }
 
         if(MongoAPI.isConnected())
@@ -75,7 +81,9 @@ public class Revival extends JavaPlugin
         broadcasts = null;
         chatFilter = null;
         accountManager = null;
+        commandManager = null;
         punishments = null;
+        playerTools = null;
     }
 
     /**

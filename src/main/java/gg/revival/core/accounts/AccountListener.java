@@ -87,7 +87,7 @@ public class AccountListener implements Listener
 
         account.setLastSeen(System.currentTimeMillis());
 
-        Revival.getAccountManager().saveAccount(Revival.getAccountManager().getAccount(player.getUniqueId()), false);
+        Revival.getAccountManager().saveAccount(Revival.getAccountManager().getAccount(player.getUniqueId()), false, true);
     }
 
 }
