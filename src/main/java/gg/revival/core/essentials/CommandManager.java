@@ -15,10 +15,8 @@ public class CommandManager
             - give/i
             - inv
             - vanish/unvanish
-            - xp
-            - hub
-            - msg
             - report/helpop/tickets
+            - gamemode
      */
 
     /**
@@ -50,6 +48,11 @@ public class CommandManager
         ETeleportCommand teleportCommand = new ETeleportCommand();
         EFreezeCommand freezeCommand = new EFreezeCommand();
         EUnfreezeCommand unfreezeCommand = new EUnfreezeCommand();
+        EHubCommand hubCommand = new EHubCommand();
+        EXPCommand xpCommand = new EXPCommand();
+        EMessageCommand messageCommand = new EMessageCommand();
+        EReplyCommand replyCommand = new EReplyCommand();
+        EGiveCommand giveCommand = new EGiveCommand();
 
         commands.add(banCommand);
         commands.add(tempbanCommand);
@@ -68,6 +71,11 @@ public class CommandManager
         commands.add(teleportCommand);
         commands.add(freezeCommand);
         commands.add(unfreezeCommand);
+        commands.add(hubCommand);
+        commands.add(xpCommand);
+        commands.add(messageCommand);
+        commands.add(replyCommand);
+        commands.add(giveCommand);
 
         for(ECommand commands : commands)
         {

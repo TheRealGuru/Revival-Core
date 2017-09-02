@@ -1,11 +1,30 @@
 package gg.revival.core.tools;
 
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class ItemTools
 {
+
+    /**
+     * Returns an ItemStack by name
+     * @param name Item name
+     * @return The ItemStack result
+     */
+    public ItemStack getItemByName(String name)
+    {
+        for(Material mats : Material.values())
+        {
+            String cleanedUpName = mats.name().toLowerCase().replace("_", "");
+
+            if(name.equalsIgnoreCase(cleanedUpName))
+                return new ItemStack(mats);
+        }
+
+        return null;
+    }
 
     /**
      * Returns a named version of the given item

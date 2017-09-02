@@ -15,10 +15,10 @@ public class EHealCommand extends ECommand
     {
         super(
                 "heal",
-                "/heal <player>",
+                "/heal [player]",
                 "Heal a player",
                 Permissions.ADMIN_TOOLS,
-                1,
+                0,
                 1,
                 false
         );
@@ -28,6 +28,29 @@ public class EHealCommand extends ECommand
     public void onCommand(CommandSender sender, String args[])
     {
         if(!validate(sender, args)) return;
+
+        if(args.length == 0)
+        {
+            if(!(sender instanceof Player))
+            {
+                sender.sendMessage(ChatColor.RED + "You can't heal the console!");
+                return;
+            }
+
+            Player player = (Player)sender;
+
+            player.setHealth(20.0);
+            player.setFoodLevel(20);
+            player.setSaturation(20);
+            player.setExhaustion(0);
+            player.setNoDamageTicks(0);
+            player.setFireTicks(0);
+            player.setFallDistance(0);
+
+            player.sendMessage(ChatColor.GREEN + "You have been healed");
+
+            return;
+        }
 
         String namedPlayer = args[0];
         String healer = "Console";

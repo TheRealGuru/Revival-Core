@@ -12,6 +12,10 @@ muted:
   temp: "&cYou have been silenced for '%reason%'. You may speak again on %time%"
   forever: "&cYou have been silenced for '%reason%'. This punishment will not expire."
 
+messages:
+  from-format: '&d<From %sender%>: &e%message%'
+  to-format: '&d<To %receiver%>: &e%message%'
+
 errors:
   player-not-found: '&cPlayer not found'
   player-not-banned: '&cPlayer not banned'

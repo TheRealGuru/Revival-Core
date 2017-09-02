@@ -29,6 +29,8 @@ public class Config
     public static boolean CHAT_FILTER_ENABLED = true;
     public static int CHAT_FILTER_INTERVAL = 3;
 
+    public static boolean DISABLE_HUB_COMMAND = false;
+
     public static Map<String, List<String>> HELP_TOPICS = new HashMap<>();
 
     /**
@@ -51,6 +53,8 @@ public class Config
 
         CHAT_FILTER_ENABLED = Revival.getFileManager().getConfig().getBoolean("chat-filter.enabled");
         CHAT_FILTER_INTERVAL = Revival.getFileManager().getConfig().getInt("chat-filter.interval");
+
+        DISABLE_HUB_COMMAND = Revival.getFileManager().getConfig().getBoolean("command-settings.disable-hub-command");
 
         ConfigurationSection helpTopicSection = Revival.getFileManager().getConfig().getConfigurationSection("help-topics");
 

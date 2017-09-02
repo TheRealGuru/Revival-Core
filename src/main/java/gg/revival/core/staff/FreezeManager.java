@@ -1,4 +1,4 @@
-package gg.revival.core.tools;
+package gg.revival.core.staff;
 
 import gg.revival.core.Revival;
 import lombok.Getter;

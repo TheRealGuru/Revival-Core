@@ -12,6 +12,8 @@ broadcasts:
   random: true
   interval: 60
   prefix: '&6Broadcast: &r'
+command-settings:
+  disable-hub-command: false
 chat-filter:
   enabled: true
   interval: 3

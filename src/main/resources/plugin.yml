@@ -46,3 +46,18 @@ commands:
   unfreeze:
     description: Thaw a player
     aliases: [thaw]
+  hub:
+    description: Return to the hub server
+    aliases: [lobby]
+  xp:
+    description: View Revival XP
+    aliases: [exp, rxp]
+  message:
+    description: Send a message to another player
+    aliases: [msg, tell]
+  reply:
+    description: Respond to a player who has recently messaged you
+    aliases: [r, respond]
+  give:
+    description: Give items
+    aliases: [item, i]

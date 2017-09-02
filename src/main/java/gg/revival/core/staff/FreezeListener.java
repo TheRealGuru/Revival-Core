@@ -1,4 +1,4 @@
-package gg.revival.core.tools;
+package gg.revival.core.staff;
 
 import gg.revival.core.Revival;
 import org.bukkit.ChatColor;
@@ -11,6 +11,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.*;
 
 public class FreezeListener implements Listener
@@ -140,6 +141,21 @@ public class FreezeListener implements Listener
         {
             player.sendMessage(ChatColor.RED + "You are not allowed to perform this task while frozen");
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onProjectileLaunch(ProjectileLaunchEvent event)
+    {
+        if(event.getEntity().getShooter() instanceof Player)
+        {
+            Player player = (Player)event.getEntity().getShooter();
+
+            if(Revival.getFreezeManager().isFrozen(player.getUniqueId()))
+            {
+                player.sendMessage(ChatColor.RED + "You are not allowed to perform this task while frozen");
+                event.setCancelled(true);
+            }
         }
     }
 

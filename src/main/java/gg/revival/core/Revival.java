@@ -5,11 +5,15 @@ import gg.revival.core.accounts.AccountManager;
 import gg.revival.core.chat.Broadcasts;
 import gg.revival.core.chat.ChatListener;
 import gg.revival.core.chat.Filter;
+import gg.revival.core.chat.MessageManager;
 import gg.revival.core.database.DBManager;
 import gg.revival.core.essentials.CommandManager;
 import gg.revival.core.punishments.PunishmentListener;
 import gg.revival.core.punishments.PunishmentManager;
 import gg.revival.core.ranks.RankManager;
+import gg.revival.core.staff.FreezeListener;
+import gg.revival.core.staff.FreezeManager;
+import gg.revival.core.staff.ModeratorListener;
 import gg.revival.core.tools.*;
 import gg.revival.driver.MongoAPI;
 import lombok.Getter;
@@ -31,6 +35,7 @@ public class Revival extends JavaPlugin
     @Getter static PunishmentManager punishments;
     @Getter static CommandManager commandManager;
     @Getter static FreezeManager freezeManager;
+    @Getter static MessageManager messageManager;
     @Getter static PlayerTools playerTools;
     @Getter static TimeTools timeTools;
     @Getter static ItemTools itemTools;
@@ -48,6 +53,7 @@ public class Revival extends JavaPlugin
         commandManager = new CommandManager();
         punishments = new PunishmentManager();
         freezeManager = new FreezeManager();
+        messageManager = new MessageManager();
         playerTools = new PlayerTools();
         timeTools = new TimeTools();
         itemTools = new ItemTools();
@@ -87,6 +93,7 @@ public class Revival extends JavaPlugin
         accountManager = null;
         commandManager = null;
         freezeManager = null;
+        messageManager = null;
         punishments = null;
         playerTools = null;
         timeTools = null;
@@ -104,6 +111,7 @@ public class Revival extends JavaPlugin
         pluginManager.registerEvents(new AccountListener(), this);
         pluginManager.registerEvents(new PunishmentListener(), this);
         pluginManager.registerEvents(new FreezeListener(), this);
+        pluginManager.registerEvents(new ModeratorListener(), this);
     }
 
 }
