@@ -11,19 +11,21 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
-public class EBanCommand extends ECommand
+public class ETempmuteCommand extends ECommand
 {
 
-    public EBanCommand()
+    public ETempmuteCommand()
     {
         super(
-                "ban",
-                "/ban <player> [reason]",
-                "Ban a player",
-                Permissions.PUNISHMENT_BAN,
-                1,
+                "tempmute",
+                "/tempmute <player> <time> [reason]",
+                "Tempmute a player",
+                Permissions.PUNISHMENT_TEMP_MUTE,
+                2,
                 Integer.MAX_VALUE,
                 false
         );
@@ -37,21 +39,19 @@ public class EBanCommand extends ECommand
         UUID punisherResult = null;
         String namedPlayer = args[0];
         String namedPunisher = "Console";
+        String namedTime = args[1];
         String reasonResult = "Reason not given";
 
-        if(sender instanceof Player)
-        {
-            Player player = (Player)sender;
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
             namedPunisher = player.getName();
             punisherResult = player.getUniqueId();
         }
 
-        if(args.length > 1)
-        {
+        if (args.length > 2) {
             StringBuilder reasonBuilder = new StringBuilder();
 
-            for(int i = 1; i < args.length; i++)
-            {
+            for (int i = 2; i < args.length; i++) {
                 reasonBuilder.append(args[i] + " ");
             }
 
@@ -61,6 +61,13 @@ public class EBanCommand extends ECommand
         final UUID punisher = punisherResult;
         final String reason = reasonResult;
         final String punisherName = namedPunisher;
+        final long muteDur = Revival.getTimeTools().getTime(namedTime);
+
+        if (muteDur <= 0)
+        {
+            sender.sendMessage(MsgUtils.getMessage("errors.invalid-time"));
+            return;
+        }
 
         Revival.getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
             if(uuid == null)
@@ -77,13 +84,13 @@ public class EBanCommand extends ECommand
                     address = result.getRegisteredAddresses().get(0);
                 }
 
-                Punishment punishment = new Punishment(UUID.randomUUID(), uuid, address, punisher, reason, PunishType.BAN, System.currentTimeMillis(), -1L);
+                Punishment punishment = new Punishment(UUID.randomUUID(), uuid, address, punisher, reason, PunishType.MUTE, System.currentTimeMillis(), System.currentTimeMillis() + (muteDur * 1000L));
 
                 result.getPunishments().add(punishment);
 
                 if(Bukkit.getPlayer(uuid) != null)
                 {
-                    Bukkit.getPlayer(uuid).kickPlayer(MsgUtils.getBanMessage(punishment));
+                    Revival.getPunishments().getActiveMutes().put(uuid, punishment);
                 }
 
                 else
@@ -91,11 +98,21 @@ public class EBanCommand extends ECommand
                     Revival.getAccountManager().saveAccount(result, false, Bukkit.getPlayer(uuid) == null);
                 }
 
-                Revival.getPlayerTools().sendPermissionMessage(MsgUtils.getMessage("punish-notifications.player-banned")
-                        .replace("%player%", username)
-                        .replace("%banner%", punisherName), Permissions.PUNISHMENT_VIEW);
+                Date date = new Date(punishment.getExpireDate());
+                SimpleDateFormat formatter = new SimpleDateFormat("M-d-yyyy '@' hh:mm:ss a z");
 
-                Logger.log(username + " has been banned by " + punisherName + " for " + punishment.getReason());
+                Revival.getPlayerTools().sendPermissionMessage(MsgUtils.getMessage("punish-notifications.player-tempmuted")
+                        .replace("%player%", username)
+                        .replace("%muter%", punisherName)
+                        .replace("%time%", formatter.format(date)), Permissions.PUNISHMENT_VIEW);
+
+                if(Bukkit.getPlayer(uuid) != null)
+                {
+                    Bukkit.getPlayer(uuid).sendMessage(MsgUtils.getMessage("muted.temp")
+                            .replace("%reason%", reason).replace("%time%", formatter.format(date)));
+                }
+
+                Logger.log(username + " has been muted by " + punisherName + " for " + punishment.getReason() + "\n" + "This mute will expire on " + formatter.format(date));
             });
         });
     }

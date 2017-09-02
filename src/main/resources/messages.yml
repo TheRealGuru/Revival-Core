@@ -1,12 +1,23 @@
+punish-notifications:
+  player-banned: '&a%player% has been banned by %banner%'
+  player-tempbanned: '&a%player% has been banned by %banner% until %time%'
+  player-muted: '&a%player% has been muted by %muter%'
+  player-tempmuted: '&a%player% has been muted by %muter% until %time%'
+  player-kicked: '&a%player% has been kicked by %kicker%'
+  player-unbanned: '&a%player% has been unbanned by %unbanner%. %punishments% punishment(s) have been removed.'
+  player-unmuted: '&a%player% has been unmuted by %unmuter%. %punishments% punishment(s) have been removed.'
+  player-kicked: '&a%player% has been kicked by %kicker%'
+
 muted:
-  temp: "&cYou have been silenced for '%reason%'. You may speak again on %date%"
+  temp: "&cYou have been silenced for '%reason%'. You may speak again on %time%"
   forever: "&cYou have been silenced for '%reason%'. This punishment will not expire."
 
-lives:
-  personal-lives: '&aYour lives: %lives%'
-  others-lives: "&a%player%'s lives: %lives"
-
 errors:
+  player-not-found: '&cPlayer not found'
+  player-not-banned: '&cPlayer not banned'
+  player-not-muted: '&cPlayer not muted'
+  no-punishments-found: '&eThis player has a clean record'
+  invalid-time: '&cInvalid time'
   no-permission: '&cYou do not have permission to use this command'
   no-console: 'This command can not be issued through console'
   chat-cooldown: '&cPlease wait another %cooldown%s before speaking again'

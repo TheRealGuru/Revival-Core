@@ -6,7 +6,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Config
 {
@@ -26,6 +28,8 @@ public class Config
 
     public static boolean CHAT_FILTER_ENABLED = true;
     public static int CHAT_FILTER_INTERVAL = 3;
+
+    public static Map<String, List<String>> HELP_TOPICS = new HashMap<>();
 
     /**
      * Loads configuration from config.yml
@@ -47,6 +51,24 @@ public class Config
 
         CHAT_FILTER_ENABLED = Revival.getFileManager().getConfig().getBoolean("chat-filter.enabled");
         CHAT_FILTER_INTERVAL = Revival.getFileManager().getConfig().getInt("chat-filter.interval");
+
+        ConfigurationSection helpTopicSection = Revival.getFileManager().getConfig().getConfigurationSection("help-topics");
+
+        for(String topics : helpTopicSection.getKeys(false))
+        {
+            String displayName = Revival.getFileManager().getConfig().getString("help-topics." + topics + ".display-name");
+            List<String> unformattedLore = Revival.getFileManager().getConfig().getStringList("help-topics." + topics + ".page");
+            List<String> formattedLore = new ArrayList<>();
+
+            for(String lore : unformattedLore)
+            {
+                formattedLore.add(ChatColor.translateAlternateColorCodes('&', lore));
+            }
+
+            HELP_TOPICS.put(displayName, formattedLore);
+        }
+
+        Logger.log("Loaded " + HELP_TOPICS.size() + " Help Topics");
     }
 
     /**

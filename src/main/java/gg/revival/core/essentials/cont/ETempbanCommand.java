@@ -11,47 +11,46 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
-public class EBanCommand extends ECommand
+public class ETempbanCommand extends ECommand
 {
 
-    public EBanCommand()
+    public ETempbanCommand()
     {
         super(
-                "ban",
-                "/ban <player> [reason]",
-                "Ban a player",
-                Permissions.PUNISHMENT_BAN,
-                1,
+                "tempban",
+                "/tempban <player> <time> [reason]",
+                "Temporarily ban a player",
+                Permissions.PUNISHMENT_TEMP_BAN,
+                2,
                 Integer.MAX_VALUE,
                 false
         );
     }
 
     @Override
-    public void onCommand(CommandSender sender, String args[])
-    {
-        if(!validate(sender, args)) return;
+    public void onCommand(CommandSender sender, String args[]) {
+        if (!validate(sender, args)) return;
 
         UUID punisherResult = null;
         String namedPlayer = args[0];
         String namedPunisher = "Console";
+        String namedTime = args[1];
         String reasonResult = "Reason not given";
 
-        if(sender instanceof Player)
-        {
-            Player player = (Player)sender;
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
             namedPunisher = player.getName();
             punisherResult = player.getUniqueId();
         }
 
-        if(args.length > 1)
-        {
+        if (args.length > 2) {
             StringBuilder reasonBuilder = new StringBuilder();
 
-            for(int i = 1; i < args.length; i++)
-            {
+            for (int i = 2; i < args.length; i++) {
                 reasonBuilder.append(args[i] + " ");
             }
 
@@ -61,6 +60,13 @@ public class EBanCommand extends ECommand
         final UUID punisher = punisherResult;
         final String reason = reasonResult;
         final String punisherName = namedPunisher;
+        final long banDur = Revival.getTimeTools().getTime(namedTime);
+
+        if (banDur <= 0)
+        {
+            sender.sendMessage(MsgUtils.getMessage("errors.invalid-time"));
+            return;
+        }
 
         Revival.getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
             if(uuid == null)
@@ -77,7 +83,7 @@ public class EBanCommand extends ECommand
                     address = result.getRegisteredAddresses().get(0);
                 }
 
-                Punishment punishment = new Punishment(UUID.randomUUID(), uuid, address, punisher, reason, PunishType.BAN, System.currentTimeMillis(), -1L);
+                Punishment punishment = new Punishment(UUID.randomUUID(), uuid, address, punisher, reason, PunishType.BAN, System.currentTimeMillis(), System.currentTimeMillis() + (banDur * 1000L));
 
                 result.getPunishments().add(punishment);
 
@@ -91,11 +97,15 @@ public class EBanCommand extends ECommand
                     Revival.getAccountManager().saveAccount(result, false, Bukkit.getPlayer(uuid) == null);
                 }
 
-                Revival.getPlayerTools().sendPermissionMessage(MsgUtils.getMessage("punish-notifications.player-banned")
-                        .replace("%player%", username)
-                        .replace("%banner%", punisherName), Permissions.PUNISHMENT_VIEW);
+                Date date = new Date(punishment.getExpireDate());
+                SimpleDateFormat formatter = new SimpleDateFormat("M-d-yyyy '@' hh:mm:ss a z");
 
-                Logger.log(username + " has been banned by " + punisherName + " for " + punishment.getReason());
+                Revival.getPlayerTools().sendPermissionMessage(MsgUtils.getMessage("punish-notifications.player-tempbanned")
+                        .replace("%player%", username)
+                        .replace("%banner%", punisherName)
+                        .replace("%time%", formatter.format(date)), Permissions.PUNISHMENT_VIEW);
+
+                Logger.log(username + " has been banned by " + punisherName + " for " + punishment.getReason() + "\n" + "This ban will expire on " + formatter.format(date));
             });
         });
     }

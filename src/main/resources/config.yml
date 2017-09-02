@@ -23,6 +23,8 @@ chat-filter:
     - 'niqqa'
     - 'nig'
     - 'n1g'
+    - 'nigg'
+    - 'n1gg'
     - 'nigga'
     - 'n1gga'
     - 'nigg4'
@@ -37,3 +39,16 @@ chat-filter:
     - '3z'
     - 'gang gang'
     - 'otf'
+help-topics:
+  factions:
+    display-name: 'Factions'
+    page:
+        - 'Line 1'
+        - 'Line 2'
+        - 'Line 3'
+  network:
+    display-name: 'Network'
+    page:
+      - 'Line 1'
+      - 'Line 2'
+      - 'Line 3'

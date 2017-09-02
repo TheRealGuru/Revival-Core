@@ -40,6 +40,12 @@ public class PunishmentListener implements Listener
 
             event.setCancelled(true);
         }
+
+        if(Revival.getChatFilter().isBad(event.getMessage().split(" ")))
+        {
+            player.sendMessage(MsgUtils.getMessage("errors.not-allowed-to-say"));
+            event.setCancelled(true);
+        }
     }
 
 }

@@ -13,16 +13,16 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-public class EBanCommand extends ECommand
+public class EMuteCommand extends ECommand
 {
 
-    public EBanCommand()
+    public EMuteCommand()
     {
         super(
-                "ban",
-                "/ban <player> [reason]",
-                "Ban a player",
-                Permissions.PUNISHMENT_BAN,
+              "mute",
+                "/mute <player> [reason]",
+                "Mute a player forever",
+                Permissions.PUNISHMENT_PERM_MUTE,
                 1,
                 Integer.MAX_VALUE,
                 false
@@ -77,13 +77,13 @@ public class EBanCommand extends ECommand
                     address = result.getRegisteredAddresses().get(0);
                 }
 
-                Punishment punishment = new Punishment(UUID.randomUUID(), uuid, address, punisher, reason, PunishType.BAN, System.currentTimeMillis(), -1L);
+                Punishment punishment = new Punishment(UUID.randomUUID(), uuid, address, punisher, reason, PunishType.MUTE, System.currentTimeMillis(), -1L);
 
                 result.getPunishments().add(punishment);
 
                 if(Bukkit.getPlayer(uuid) != null)
                 {
-                    Bukkit.getPlayer(uuid).kickPlayer(MsgUtils.getBanMessage(punishment));
+                    Revival.getPunishments().getActiveMutes().put(uuid, punishment);
                 }
 
                 else
@@ -91,11 +91,17 @@ public class EBanCommand extends ECommand
                     Revival.getAccountManager().saveAccount(result, false, Bukkit.getPlayer(uuid) == null);
                 }
 
-                Revival.getPlayerTools().sendPermissionMessage(MsgUtils.getMessage("punish-notifications.player-banned")
+                Revival.getPlayerTools().sendPermissionMessage(MsgUtils.getMessage("punish-notifications.player-muted")
                         .replace("%player%", username)
-                        .replace("%banner%", punisherName), Permissions.PUNISHMENT_VIEW);
+                        .replace("%muter%", punisherName), Permissions.PUNISHMENT_VIEW);
 
-                Logger.log(username + " has been banned by " + punisherName + " for " + punishment.getReason());
+                if(Bukkit.getPlayer(uuid) != null)
+                {
+                    Bukkit.getPlayer(uuid).sendMessage(MsgUtils.getMessage("muted.forever")
+                            .replace("%reason%", reason));
+                }
+
+                Logger.log(username + " has been muted by " + punisherName + " for " + punishment.getReason());
             });
         });
     }

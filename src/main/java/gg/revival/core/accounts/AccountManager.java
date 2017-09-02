@@ -16,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class AccountManager
 {
@@ -207,9 +208,12 @@ public class AccountManager
             List<String> punishmentIds = new ArrayList<>();
             List<String> blockedPlayerIds = new ArrayList<>();
 
+            List<Punishment> punishmentCache = new CopyOnWriteArrayList<>(account.getPunishments());
+            List<UUID> blockedPlayerCache = new CopyOnWriteArrayList<>(account.getBlockedPlayers());
+
             if(!account.getPunishments().isEmpty())
             {
-                for(Punishment punishment : account.getPunishments())
+                for(Punishment punishment : punishmentCache)
                 {
                     punishmentIds.add(punishment.getUuid().toString());
                 }
@@ -217,7 +221,7 @@ public class AccountManager
 
             if(!account.getBlockedPlayers().isEmpty())
             {
-                for(UUID blockedPlayer : account.getBlockedPlayers())
+                for(UUID blockedPlayer : blockedPlayerCache)
                 {
                     blockedPlayerIds.add(blockedPlayer.toString());
                 }
@@ -234,7 +238,7 @@ public class AccountManager
 
             if(!account.getPunishments().isEmpty())
             {
-                for(Punishment punishment : account.getPunishments())
+                for(Punishment punishment : punishmentCache)
                 {
                     FindIterable<Document> punishmentQuery = punishmentCollection.find(Filters.eq("uuid", punishment.getUuid().toString()));
                     Document punishmentDoc = punishmentQuery.first();
@@ -242,11 +246,20 @@ public class AccountManager
                     Document newPunishmentDoc = new Document("uuid", punishment.getUuid().toString())
                             .append("punishedPlayer", punishment.getPunishedPlayers().toString())
                             .append("punishedAddress", punishment.getPunishedAddress())
-                            .append("punisher", punishment.getPunisher().toString())
                             .append("reason", punishment.getReason())
                             .append("type", punishment.getType().toString())
                             .append("created", punishment.getCreateDate())
                             .append("expires", punishment.getExpireDate());
+
+                    if(punishment.getPunisher() != null)
+                    {
+                        newPunishmentDoc.append("punisher", punishment.getPunisher().toString());
+                    }
+
+                    else
+                    {
+                        newPunishmentDoc.append("punisher", null);
+                    }
 
                     if(punishmentDoc != null)
                     {
@@ -286,9 +299,12 @@ public class AccountManager
                     List<String> punishmentIds = new ArrayList<>();
                     List<String> blockedPlayerIds = new ArrayList<>();
 
+                    List<Punishment> punishmentCache = new CopyOnWriteArrayList<>(account.getPunishments());
+                    List<UUID> blockedPlayerCache = new CopyOnWriteArrayList<>(account.getBlockedPlayers());
+
                     if(!account.getPunishments().isEmpty())
                     {
-                        for(Punishment punishment : account.getPunishments())
+                        for(Punishment punishment : punishmentCache)
                         {
                             punishmentIds.add(punishment.getUuid().toString());
                         }
@@ -296,7 +312,7 @@ public class AccountManager
 
                     if(!account.getBlockedPlayers().isEmpty())
                     {
-                        for(UUID blockedPlayer : account.getBlockedPlayers())
+                        for(UUID blockedPlayer : blockedPlayerCache)
                         {
                             blockedPlayerIds.add(blockedPlayer.toString());
                         }
@@ -313,7 +329,7 @@ public class AccountManager
 
                     if(!account.getPunishments().isEmpty())
                     {
-                        for(Punishment punishment : account.getPunishments())
+                        for(Punishment punishment : punishmentCache)
                         {
                             FindIterable<Document> punishmentQuery = punishmentCollection.find(Filters.eq("uuid", punishment.getUuid().toString()));
                             Document punishmentDoc = punishmentQuery.first();
@@ -321,11 +337,20 @@ public class AccountManager
                             Document newPunishmentDoc = new Document("uuid", punishment.getUuid().toString())
                                     .append("punishedPlayer", punishment.getPunishedPlayers().toString())
                                     .append("punishedAddress", punishment.getPunishedAddress())
-                                    .append("punisher", punishment.getPunisher().toString())
                                     .append("reason", punishment.getReason())
                                     .append("type", punishment.getType().toString())
                                     .append("created", punishment.getCreateDate())
                                     .append("expires", punishment.getExpireDate());
+
+                            if(punishment.getPunisher() != null)
+                            {
+                                newPunishmentDoc.append("punisher", punishment.getPunisher().toString());
+                            }
+
+                            else
+                            {
+                                newPunishmentDoc.append("punisher", null);
+                            }
 
                             if(punishmentDoc != null)
                             {

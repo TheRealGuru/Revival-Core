@@ -27,7 +27,7 @@ public class ECommandExecutor implements CommandExecutor
                 return true;
             }
 
-            if(!cmd.getAliases().isEmpty())
+            if(cmd.getAliases() != null && !cmd.getAliases().isEmpty())
             {
                 for(String aliases : cmd.getAliases())
                 {

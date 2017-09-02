@@ -10,9 +10,7 @@ import gg.revival.core.essentials.CommandManager;
 import gg.revival.core.punishments.PunishmentListener;
 import gg.revival.core.punishments.PunishmentManager;
 import gg.revival.core.ranks.RankManager;
-import gg.revival.core.tools.Config;
-import gg.revival.core.tools.FileManager;
-import gg.revival.core.tools.PlayerTools;
+import gg.revival.core.tools.*;
 import gg.revival.driver.MongoAPI;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -32,7 +30,10 @@ public class Revival extends JavaPlugin
     @Getter static AccountManager accountManager;
     @Getter static PunishmentManager punishments;
     @Getter static CommandManager commandManager;
+    @Getter static FreezeManager freezeManager;
     @Getter static PlayerTools playerTools;
+    @Getter static TimeTools timeTools;
+    @Getter static ItemTools itemTools;
 
     @Override
     public void onEnable()
@@ -46,7 +47,10 @@ public class Revival extends JavaPlugin
         accountManager = new AccountManager();
         commandManager = new CommandManager();
         punishments = new PunishmentManager();
+        freezeManager = new FreezeManager();
         playerTools = new PlayerTools();
+        timeTools = new TimeTools();
+        itemTools = new ItemTools();
 
         fileManager.createFiles();
 
@@ -82,8 +86,11 @@ public class Revival extends JavaPlugin
         chatFilter = null;
         accountManager = null;
         commandManager = null;
+        freezeManager = null;
         punishments = null;
         playerTools = null;
+        timeTools = null;
+        itemTools = null;
     }
 
     /**
@@ -96,6 +103,7 @@ public class Revival extends JavaPlugin
         pluginManager.registerEvents(new ChatListener(), this);
         pluginManager.registerEvents(new AccountListener(), this);
         pluginManager.registerEvents(new PunishmentListener(), this);
+        pluginManager.registerEvents(new FreezeListener(), this);
     }
 
 }

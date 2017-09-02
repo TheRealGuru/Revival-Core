@@ -16,7 +16,7 @@ public class ECommand
     @Getter int minArgs, maxArgs;
     @Getter boolean playerOnly;
 
-    public ECommand(String label, List<String> aliases, String syntax, String description, String permission, int minArgs, int maxArgs, boolean playerOnly)
+    public ECommand(String label, String syntax, String description, String permission, int minArgs, int maxArgs, boolean playerOnly)
     {
         this.label = label;
         this.syntax = syntax;
@@ -42,6 +42,17 @@ public class ECommand
             return false;
         }
 
+        if(permission != null && sender instanceof Player)
+        {
+            Player player = (Player)sender;
+
+            if(!player.hasPermission(permission))
+            {
+                player.sendMessage(MsgUtils.getMessage("errors.no-permission"));
+                return false;
+            }
+        }
+
         if(args.length < minArgs || args.length > maxArgs)
         {
             if(sender instanceof Player)
@@ -56,17 +67,6 @@ public class ECommand
             }
 
             return false;
-        }
-
-        if(permission != null && sender instanceof Player)
-        {
-            Player player = (Player)sender;
-
-            if(!player.hasPermission(permission))
-            {
-                player.sendMessage(MsgUtils.getMessage("errors.no-permission"));
-                return false;
-            }
         }
 
         return true;

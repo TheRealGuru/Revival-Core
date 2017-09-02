@@ -15,7 +15,7 @@ public class Punishment
     @Getter @Setter String reason;
     @Getter PunishType type;
     @Getter long createDate;
-    @Getter long expireDate;
+    @Getter @Setter long expireDate;
 
     public Punishment(UUID uuid, UUID punishedPlayer, int punishedAddress, UUID punisher, String reason, PunishType type, long createDate, long expireDate)
     {

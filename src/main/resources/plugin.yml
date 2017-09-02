@@ -7,3 +7,42 @@ depends: [MongoBukkitDriver]
 commands:
   ban:
     description: Ban a player
+  tempban:
+    description: Tempban a player
+  unban:
+    description: Unban a player
+    aliases: [appeal]
+  mute:
+    description: Mute a player
+  tempmute:
+    description: Tempmute a players
+  unmute:
+    description: Unmute a player
+  lookup:
+    description: Lookup a player
+    aliases: [punishments]
+  enchant:
+    description: Enchant an item
+    aliases: [e]
+  name:
+    description: Name an item
+    aliases: [n, rename]
+  help:
+    description: View help topics
+  broadcast:
+    description: Broadcast a message
+    aliases: [b]
+  kick:
+    description: Kick a player from the server
+  heal:
+    description: Heal a player
+  weather:
+    description: Change the weather
+  teleport:
+    description: Teleport to a location
+    aliases: [tp, tele]
+  freeze:
+    description: Freeze a player
+  unfreeze:
+    description: Thaw a player
+    aliases: [thaw]
