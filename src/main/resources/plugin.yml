@@ -61,3 +61,23 @@ commands:
   give:
     description: Give items
     aliases: [item, i]
+  gamemode:
+    description: Change gamemodes
+    aliases: [gm]
+  inventory:
+    description: View a players inventory
+    aliases: [inv]
+  ignore:
+    description: Block a players communications
+    aliases: [block]
+  unignore:
+    description: Unblock a players communications
+    aliases: [unblock]
+  togglemessages:
+    description: Toggle private messages
+    aliases: [togglemsg, togglepms]
+  toggleglobal:
+    description: Toggle global chat
+  list:
+    description: List command
+    aliases: [online]

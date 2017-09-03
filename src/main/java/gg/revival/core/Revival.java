@@ -6,6 +6,7 @@ import gg.revival.core.chat.Broadcasts;
 import gg.revival.core.chat.ChatListener;
 import gg.revival.core.chat.Filter;
 import gg.revival.core.chat.MessageManager;
+import gg.revival.core.essentials.EssentialsListener;
 import gg.revival.core.database.DBManager;
 import gg.revival.core.essentials.CommandManager;
 import gg.revival.core.punishments.PunishmentListener;
@@ -112,6 +113,7 @@ public class Revival extends JavaPlugin
         pluginManager.registerEvents(new PunishmentListener(), this);
         pluginManager.registerEvents(new FreezeListener(), this);
         pluginManager.registerEvents(new ModeratorListener(), this);
+        pluginManager.registerEvents(new EssentialsListener(), this);
     }
 
 }

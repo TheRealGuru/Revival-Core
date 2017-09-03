@@ -12,11 +12,7 @@ public class CommandManager
 
     /*
         TODO:
-            - give/i
-            - inv
-            - vanish/unvanish
             - report/helpop/tickets
-            - gamemode
      */
 
     /**
@@ -53,6 +49,13 @@ public class CommandManager
         EMessageCommand messageCommand = new EMessageCommand();
         EReplyCommand replyCommand = new EReplyCommand();
         EGiveCommand giveCommand = new EGiveCommand();
+        EGamemodeCommand gamemodeCommand = new EGamemodeCommand();
+        EInvCommand invCommand = new EInvCommand();
+        EIgnoreCommand ignoreCommand = new EIgnoreCommand();
+        EUnignoreCommand unignoreCommand = new EUnignoreCommand();
+        EToggleMessagesCommand toggleMessagesCommand = new EToggleMessagesCommand();
+        EToggleGlobalCommand toggleGlobalCommand = new EToggleGlobalCommand();
+        EListCommand listCommand = new EListCommand();
 
         commands.add(banCommand);
         commands.add(tempbanCommand);
@@ -76,6 +79,13 @@ public class CommandManager
         commands.add(messageCommand);
         commands.add(replyCommand);
         commands.add(giveCommand);
+        commands.add(gamemodeCommand);
+        commands.add(invCommand);
+        commands.add(ignoreCommand);
+        commands.add(unignoreCommand);
+        commands.add(toggleMessagesCommand);
+        commands.add(toggleGlobalCommand);
+        commands.add(listCommand);
 
         for(ECommand commands : commands)
         {

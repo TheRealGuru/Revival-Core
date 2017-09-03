@@ -9,12 +9,26 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 
 public class ModeratorListener implements Listener
 {
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event)
+    {
+        if(!(event.getWhoClicked() instanceof Player)) return;
+
+        Player player = (Player)event.getWhoClicked();
+
+        if(player.hasPermission(Permissions.MOD_TOOLS) && !player.hasPermission(Permissions.ADMIN_TOOLS))
+        {
+            event.setCancelled(true);
+        }
+    }
 
     @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event)

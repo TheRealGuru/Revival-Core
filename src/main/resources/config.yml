@@ -7,6 +7,13 @@ database:
     username: 'root'
     password: 'password'
     database: 'revival'
+tab:
+  header:
+    - 'Header Line 1'
+    - 'Header Line 2'
+  footer:
+    - 'Footer Line 1'
+    - 'Footer Line 2'
 broadcasts:
   enabled: true
   random: true
