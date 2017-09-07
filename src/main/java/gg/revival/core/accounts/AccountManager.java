@@ -78,8 +78,14 @@ public class AccountManager
                 if(Revival.getDbManager().getAccounts() == null)
                     Revival.getDbManager().setAccounts(MongoAPI.getCollection(Config.DB_DATABASE, "accounts"));
 
+                if(Revival.getDbManager().getPunishments() == null)
+                    Revival.getDbManager().setPunishments(MongoAPI.getCollection(Config.DB_DATABASE, "punishments"));
+
                 MongoCollection<Document> accountCollection = Revival.getDbManager().getAccounts();
                 MongoCollection<Document> punishmentCollection = Revival.getDbManager().getPunishments();
+
+                if(accountCollection == null || punishmentCollection == null) return;
+
                 FindIterable<Document> accountQuery = accountCollection.find(Filters.eq("uuid", uuid.toString()));
                 Document document = accountQuery.first();
 

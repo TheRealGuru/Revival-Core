@@ -32,7 +32,7 @@ public class EXPCommand extends ECommand
 
         if(args.length == 0)
         {
-            player.sendMessage(ChatColor.GREEN + "Your XP: " + ChatColor.YELLOW + Revival.getAccountManager().getAccount(player.getUniqueId()).getXp());
+            player.sendMessage(ChatColor.GREEN + "You have " + ChatColor.YELLOW + Revival.getAccountManager().getAccount(player.getUniqueId()).getXp() + ChatColor.GREEN + " XP");
 
             return;
         }
@@ -53,7 +53,7 @@ public class EXPCommand extends ECommand
                     return;
                 }
 
-                player.sendMessage(ChatColor.GREEN + username + "'s XP: " + ChatColor.YELLOW + result.getXp());
+                player.sendMessage(ChatColor.YELLOW + username + ChatColor.GREEN + " has " + ChatColor.YELLOW + result.getXp() + ChatColor.GREEN + " XP");
             });
         });
     }
