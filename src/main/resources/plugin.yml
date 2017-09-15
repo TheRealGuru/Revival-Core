@@ -81,3 +81,12 @@ commands:
   list:
     description: List command
     aliases: [online]
+  report:
+    description: Report a player
+    aliases: [snitch]
+  helpop:
+    description: Ask staff a question
+    aliases: [feedback, question]
+  tickets:
+    description: Tickets command
+    aliases: [ticket]

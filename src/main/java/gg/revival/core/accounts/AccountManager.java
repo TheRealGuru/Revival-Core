@@ -8,7 +8,7 @@ import gg.revival.core.punishments.PunishType;
 import gg.revival.core.punishments.Punishment;
 import gg.revival.core.tools.Config;
 import gg.revival.core.tools.IPTools;
-import gg.revival.core.tools.Logger;
+import gg.revival.core.tools.Processor;
 import gg.revival.driver.MongoAPI;
 import lombok.Getter;
 import org.bson.Document;
@@ -198,100 +198,84 @@ public class AccountManager
             accounts.remove(account);
         }
 
-        if(unsafe)
-        {
-            if(Revival.getDbManager().getAccounts() == null)
-                Revival.getDbManager().setAccounts(MongoAPI.getCollection(Config.DB_DATABASE, "accounts"));
+        if(unsafe) {
+            Runnable saveTask = () -> {
+                if (Revival.getDbManager().getAccounts() == null)
+                    Revival.getDbManager().setAccounts(MongoAPI.getCollection(Config.DB_DATABASE, "accounts"));
 
-            if(Revival.getDbManager().getPunishments() == null)
-                Revival.getDbManager().setPunishments(MongoAPI.getCollection(Config.DB_DATABASE, "punishments"));
+                if (Revival.getDbManager().getPunishments() == null)
+                    Revival.getDbManager().setPunishments(MongoAPI.getCollection(Config.DB_DATABASE, "punishments"));
 
-            MongoCollection<Document> accountCollection = Revival.getDbManager().getAccounts();
-            MongoCollection<Document> punishmentCollection = Revival.getDbManager().getPunishments();
-            FindIterable<Document> accountQuery = accountCollection.find(Filters.eq("uuid", account.getUuid().toString()));
-            Document accountDoc = accountQuery.first();
+                MongoCollection<Document> accountCollection = Revival.getDbManager().getAccounts();
+                MongoCollection<Document> punishmentCollection = Revival.getDbManager().getPunishments();
+                FindIterable<Document> accountQuery = accountCollection.find(Filters.eq("uuid", account.getUuid().toString()));
+                Document accountDoc = accountQuery.first();
 
-            List<String> punishmentIds = new ArrayList<>();
-            List<String> blockedPlayerIds = new ArrayList<>();
+                List<String> punishmentIds = new ArrayList<>();
+                List<String> blockedPlayerIds = new ArrayList<>();
 
-            List<Punishment> punishmentCache = new CopyOnWriteArrayList<>(account.getPunishments());
-            List<UUID> blockedPlayerCache = new CopyOnWriteArrayList<>(account.getBlockedPlayers());
+                List<Punishment> punishmentCache = new CopyOnWriteArrayList<>(account.getPunishments());
+                List<UUID> blockedPlayerCache = new CopyOnWriteArrayList<>(account.getBlockedPlayers());
 
-            if(!account.getPunishments().isEmpty())
-            {
-                for(Punishment punishment : punishmentCache)
-                {
-                    punishmentIds.add(punishment.getUuid().toString());
-                }
-            }
-
-            if(!account.getBlockedPlayers().isEmpty())
-            {
-                for(UUID blockedPlayer : blockedPlayerCache)
-                {
-                    blockedPlayerIds.add(blockedPlayer.toString());
-                }
-            }
-
-            Document newAccountDoc = new Document("uuid", account.getUuid().toString())
-                    .append("registeredAddresses", account.getRegisteredAddresses())
-                    .append("xp", account.getXp())
-                    .append("hideGlobalChat", account.isHideGlobalChat())
-                    .append("hideMessages", account.isHideMessages())
-                    .append("blockedPlayers", blockedPlayerIds)
-                    .append("punishments", punishmentIds)
-                    .append("lastSeen", account.getLastSeen());
-
-            if(!account.getPunishments().isEmpty())
-            {
-                for(Punishment punishment : punishmentCache)
-                {
-                    FindIterable<Document> punishmentQuery = punishmentCollection.find(Filters.eq("uuid", punishment.getUuid().toString()));
-                    Document punishmentDoc = punishmentQuery.first();
-
-                    Document newPunishmentDoc = new Document("uuid", punishment.getUuid().toString())
-                            .append("punishedPlayer", punishment.getPunishedPlayers().toString())
-                            .append("punishedAddress", punishment.getPunishedAddress())
-                            .append("reason", punishment.getReason())
-                            .append("type", punishment.getType().toString())
-                            .append("created", punishment.getCreateDate())
-                            .append("expires", punishment.getExpireDate());
-
-                    if(punishment.getPunisher() != null)
-                    {
-                        newPunishmentDoc.append("punisher", punishment.getPunisher().toString());
-                    }
-
-                    else
-                    {
-                        newPunishmentDoc.append("punisher", null);
-                    }
-
-                    if(punishmentDoc != null)
-                    {
-                        punishmentCollection.replaceOne(punishmentDoc, newPunishmentDoc);
-                    }
-
-                    else
-                    {
-                        punishmentCollection.insertOne(newPunishmentDoc);
+                if (!account.getPunishments().isEmpty()) {
+                    for (Punishment punishment : punishmentCache) {
+                        punishmentIds.add(punishment.getUuid().toString());
                     }
                 }
-            }
 
-            if(accountDoc != null)
-            {
-                accountCollection.replaceOne(accountDoc, newAccountDoc);
-            }
+                if (!account.getBlockedPlayers().isEmpty()) {
+                    for (UUID blockedPlayer : blockedPlayerCache) {
+                        blockedPlayerIds.add(blockedPlayer.toString());
+                    }
+                }
 
-            else
-            {
-                accountCollection.insertOne(newAccountDoc);
-            }
+                Document newAccountDoc = new Document("uuid", account.getUuid().toString())
+                        .append("registeredAddresses", account.getRegisteredAddresses())
+                        .append("xp", account.getXp())
+                        .append("hideGlobalChat", account.isHideGlobalChat())
+                        .append("hideMessages", account.isHideMessages())
+                        .append("blockedPlayers", blockedPlayerIds)
+                        .append("punishments", punishmentIds)
+                        .append("lastSeen", account.getLastSeen());
+
+                if (!account.getPunishments().isEmpty()) {
+                    for (Punishment punishment : punishmentCache) {
+                        FindIterable<Document> punishmentQuery = punishmentCollection.find(Filters.eq("uuid", punishment.getUuid().toString()));
+                        Document punishmentDoc = punishmentQuery.first();
+
+                        Document newPunishmentDoc = new Document("uuid", punishment.getUuid().toString())
+                                .append("punishedPlayer", punishment.getPunishedPlayers().toString())
+                                .append("punishedAddress", punishment.getPunishedAddress())
+                                .append("reason", punishment.getReason())
+                                .append("type", punishment.getType().toString())
+                                .append("created", punishment.getCreateDate())
+                                .append("expires", punishment.getExpireDate());
+
+                        if (punishment.getPunisher() != null) {
+                            newPunishmentDoc.append("punisher", punishment.getPunisher().toString());
+                        } else {
+                            newPunishmentDoc.append("punisher", null);
+                        }
+
+                        if (punishmentDoc != null) {
+                            punishmentCollection.replaceOne(punishmentDoc, newPunishmentDoc);
+                        } else {
+                            punishmentCollection.insertOne(newPunishmentDoc);
+                        }
+                    }
+                }
+
+                if (accountDoc != null) {
+                    accountCollection.replaceOne(accountDoc, newAccountDoc);
+                } else {
+                    accountCollection.insertOne(newAccountDoc);
+                }
+            };
+
+            Processor.getSingleThreadExecutor().submit(saveTask);
         }
 
-        else
-        {
+        else {
             new BukkitRunnable() {
                 public void run() {
                     if(Revival.getDbManager().getAccounts() == null)
@@ -308,18 +292,15 @@ public class AccountManager
                     List<Punishment> punishmentCache = new CopyOnWriteArrayList<>(account.getPunishments());
                     List<UUID> blockedPlayerCache = new CopyOnWriteArrayList<>(account.getBlockedPlayers());
 
-                    if(!account.getPunishments().isEmpty())
-                    {
+                    if(!account.getPunishments().isEmpty()) {
                         for(Punishment punishment : punishmentCache)
                         {
                             punishmentIds.add(punishment.getUuid().toString());
                         }
                     }
 
-                    if(!account.getBlockedPlayers().isEmpty())
-                    {
-                        for(UUID blockedPlayer : blockedPlayerCache)
-                        {
+                    if(!account.getBlockedPlayers().isEmpty()) {
+                        for(UUID blockedPlayer : blockedPlayerCache) {
                             blockedPlayerIds.add(blockedPlayer.toString());
                         }
                     }
@@ -333,10 +314,8 @@ public class AccountManager
                             .append("punishments", punishmentIds)
                             .append("lastSeen", account.getLastSeen());
 
-                    if(!account.getPunishments().isEmpty())
-                    {
-                        for(Punishment punishment : punishmentCache)
-                        {
+                    if(!account.getPunishments().isEmpty()) {
+                        for(Punishment punishment : punishmentCache) {
                             FindIterable<Document> punishmentQuery = punishmentCollection.find(Filters.eq("uuid", punishment.getUuid().toString()));
                             Document punishmentDoc = punishmentQuery.first();
 
@@ -348,35 +327,29 @@ public class AccountManager
                                     .append("created", punishment.getCreateDate())
                                     .append("expires", punishment.getExpireDate());
 
-                            if(punishment.getPunisher() != null)
-                            {
+                            if(punishment.getPunisher() != null) {
                                 newPunishmentDoc.append("punisher", punishment.getPunisher().toString());
                             }
 
-                            else
-                            {
+                            else {
                                 newPunishmentDoc.append("punisher", null);
                             }
 
-                            if(punishmentDoc != null)
-                            {
+                            if(punishmentDoc != null) {
                                 punishmentCollection.replaceOne(punishmentDoc, newPunishmentDoc);
                             }
 
-                            else
-                            {
+                            else {
                                 punishmentCollection.insertOne(newPunishmentDoc);
                             }
                         }
                     }
 
-                    if(document != null)
-                    {
+                    if(document != null) {
                         accountCollection.replaceOne(document, newAccountDoc);
                     }
 
-                    else
-                    {
+                    else {
                         accountCollection.insertOne(newAccountDoc);
                     }
                 }

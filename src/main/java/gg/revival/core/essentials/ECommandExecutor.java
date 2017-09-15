@@ -5,8 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class ECommandExecutor implements CommandExecutor
-{
+public class ECommandExecutor implements CommandExecutor {
 
     /**
      * Loops through every registered command to see if it matches
@@ -16,28 +15,12 @@ public class ECommandExecutor implements CommandExecutor
      * @param args Arguments
      * @return NOTHIN HEHE
      */
-    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String args[])
-    {
-        for(ECommand cmd : Revival.getCommandManager().getCommands())
-        {
-            if(command.getName().equalsIgnoreCase(cmd.getLabel()))
-            {
+    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String args[]) {
+        for(ECommand cmd : Revival.getCommandManager().getCommands()) {
+            if(command.getName().equalsIgnoreCase(cmd.getLabel())) {
                 cmd.onCommand(sender, args);
 
                 return true;
-            }
-
-            if(cmd.getAliases() != null && !cmd.getAliases().isEmpty())
-            {
-                for(String aliases : cmd.getAliases())
-                {
-                    if(command.getName().equalsIgnoreCase(aliases))
-                    {
-                        cmd.onCommand(sender, args);
-
-                        return true;
-                    }
-                }
             }
         }
 

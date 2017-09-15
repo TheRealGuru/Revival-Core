@@ -6,23 +6,18 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-
 public class ECommand
 {
 
     @Getter String label, syntax, description, permission;
-    @Getter List<String> aliases;
     @Getter int minArgs, maxArgs;
     @Getter boolean playerOnly;
 
-    public ECommand(String label, String syntax, String description, String permission, int minArgs, int maxArgs, boolean playerOnly)
-    {
+    public ECommand(String label, String syntax, String description, String permission, int minArgs, int maxArgs, boolean playerOnly) {
         this.label = label;
         this.syntax = syntax;
         this.description = description;
         this.permission = permission;
-        this.aliases = aliases;
         this.minArgs = minArgs;
         this.maxArgs = maxArgs;
         this.playerOnly = playerOnly;
@@ -34,35 +29,28 @@ public class ECommand
      * @param args Arguments
      * @return Returns true if the command is valid
      */
-    public boolean validate(CommandSender sender, String args[])
-    {
-        if(!(sender instanceof Player) && isPlayerOnly())
-        {
+    public boolean validate(CommandSender sender, String args[]) {
+        if(!(sender instanceof Player) && isPlayerOnly()) {
             sender.sendMessage(MsgUtils.getMessage("errors.no-console"));
             return false;
         }
 
-        if(permission != null && sender instanceof Player)
-        {
+        if(permission != null && sender instanceof Player) {
             Player player = (Player)sender;
 
-            if(!player.hasPermission(permission))
-            {
+            if(!player.hasPermission(permission)) {
                 player.sendMessage(MsgUtils.getMessage("errors.no-permission"));
                 return false;
             }
         }
 
-        if(args.length < minArgs || args.length > maxArgs)
-        {
-            if(sender instanceof Player)
-            {
+        if(args.length < minArgs || args.length > maxArgs) {
+            if(sender instanceof Player) {
                 Player player = (Player)sender;
                 player.sendMessage(ChatColor.RED + syntax);
             }
 
-            else
-            {
+            else {
                 sender.sendMessage(syntax);
             }
 

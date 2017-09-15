@@ -1,5 +1,6 @@
 package gg.revival.core.tools;
 
+import com.google.common.collect.Maps;
 import gg.revival.core.Revival;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
@@ -10,9 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerTools
 {
@@ -22,16 +21,13 @@ public class PlayerTools
      * @param viewer The player viewing the GUI
      * @param viewed The player being viewd in the GUI
      */
-    public void openInventory(Player viewer, Player viewed)
-    {
+    public void openInventory(Player viewer, Player viewed) {
         Inventory gui = Bukkit.createInventory(viewed, 54, ChatColor.BLACK + "Player Inventory");
 
         int cursor = 0;
 
-        for(ItemStack contents : viewer.getInventory().getContents())
-        {
-            if(contents == null)
-            {
+        for(ItemStack contents : viewer.getInventory().getContents()) {
+            if(contents == null) {
                 cursor++;
                 continue;
             }
@@ -54,9 +50,7 @@ public class PlayerTools
         List<String> potionLore = new ArrayList<>();
 
         for(PotionEffect potion : viewed.getActivePotionEffects())
-        {
             potionLore.add(ChatColor.RESET + "" + ChatColor.WHITE + StringUtils.capitalize(potion.getType().getName().toLowerCase().replace("_", " ") + ": " + ChatColor.DARK_AQUA + potion.getDuration() / 20));
-        }
 
         potionMeta.setLore(potionLore);
 
@@ -70,10 +64,8 @@ public class PlayerTools
 
         int armorCursor = 45;
 
-        for(ItemStack armor : viewed.getInventory().getArmorContents())
-        {
-            if(armor == null)
-            {
+        for(ItemStack armor : viewed.getInventory().getArmorContents()) {
+            if(armor == null) {
                 armorCursor++;
                 continue;
             }
@@ -111,10 +103,8 @@ public class PlayerTools
      * @param message The message to be sent
      * @param permission The permission needed to see the message
      */
-    public void sendPermissionMessage(String message, String permission)
-    {
-        for(Player players : Bukkit.getOnlinePlayers())
-        {
+    public void sendPermissionMessage(String message, String permission) {
+        for(Player players : Bukkit.getOnlinePlayers()) {
             if(!players.hasPermission(permission)) continue;
 
             players.sendMessage(message);
@@ -126,51 +116,111 @@ public class PlayerTools
      * @param name Username to ping the Mojang API
      * @param callback Callback result containing UUID and Username
      */
-    public void getOfflinePlayer(String name, OfflinePlayerCallback callback)
-    {
-        if(Bukkit.getPlayer(name) != null)
-        {
+    public void getOfflinePlayer(String name, OfflinePlayerCallback callback) {
+        if(Bukkit.getPlayer(name) != null) {
             Player player = Bukkit.getPlayer(name);
             UUID uuid = player.getUniqueId();
             String username = player.getName();
 
             callback.onQueryDone(uuid, username);
-
             return;
         }
 
-        new BukkitRunnable()
-        {
-            public void run()
-            {
+        new BukkitRunnable() {
+            public void run() {
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(name);
 
-                if(offlinePlayer != null)
-                {
+                if(offlinePlayer != null) {
                     UUID uuid = offlinePlayer.getUniqueId();
                     String username = offlinePlayer.getName();
 
-                    new BukkitRunnable()
-                    {
-                        public void run()
-                        {
+                    new BukkitRunnable() {
+                        public void run() {
                             callback.onQueryDone(uuid, username);
                         }
                     }.runTask(Revival.getCore());
                 }
 
-                else
-                {
-                    new BukkitRunnable()
-                    {
-                        public void run()
-                        {
+                else {
+                    new BukkitRunnable() {
+                        public void run() {
                             callback.onQueryDone(null, null);
                         }
                     }.runTask(Revival.getCore());
                 }
             }
         }.runTaskAsynchronously(Revival.getCore());
+    }
+
+    public void getOfflinePlayer(UUID uuid, OfflinePlayerCallback callback) {
+        if(Bukkit.getPlayer(uuid) != null) {
+            Player player = Bukkit.getPlayer(uuid);
+            String username = player.getName();
+
+            callback.onQueryDone(player.getUniqueId(), username);
+            return;
+        }
+
+        new BukkitRunnable() {
+            public void run() {
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+
+                if(offlinePlayer != null) {
+                    UUID uuid = offlinePlayer.getUniqueId();
+                    String username = offlinePlayer.getName();
+
+                    new BukkitRunnable() {
+                        public void run() {
+                            callback.onQueryDone(uuid, username);
+                        }
+                    }.runTask(Revival.getCore());
+                }
+
+                else {
+                    new BukkitRunnable() {
+                        public void run() {
+                            callback.onQueryDone(null, null);
+                        }
+                    }.runTask(Revival.getCore());
+                }
+            }
+        }.runTaskAsynchronously(Revival.getCore());
+    }
+
+    public void getManyOfflinePlayersByUUID(Set<UUID> uuids, ManyOfflinePlayerCallback callback) {
+        Map<UUID, String> result = Maps.newHashMap();
+
+        for(UUID uuid : uuids) {
+            if(Bukkit.getPlayer(uuid) != null) {
+                Player player = Bukkit.getPlayer(uuid);
+                String username = player.getName();
+
+                result.put(uuid, username);
+            }
+
+            if(result.size() == uuids.size()) {
+                callback.onQueryDone(result);
+                return;
+            }
+
+            new BukkitRunnable() {
+                public void run() {
+                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+                    String username = offlinePlayer.getName();
+
+                    result.put(uuid, username);
+
+                    if(result.size() == uuids.size()) {
+                        new BukkitRunnable() {
+                            public void run() {
+                                callback.onQueryDone(result);
+                                return;
+                            }
+                        }.runTask(Revival.getCore());
+                    }
+                }
+            }.runTaskAsynchronously(Revival.getCore());
+        }
     }
 
 }

@@ -14,6 +14,7 @@ public class DBManager
 
     @Getter @Setter MongoCollection<Document> accounts;
     @Getter @Setter MongoCollection<Document> punishments;
+    @Getter @Setter MongoCollection<Document> tickets;
 
     /**
      * Connects to the MongoDB instance, every plugin that needs to do so waits for this method to be ran
@@ -50,10 +51,10 @@ public class DBManager
                     );
                 }
 
-                if(MongoAPI.isConnected())
-                {
+                if(MongoAPI.isConnected()) {
                     accounts = MongoAPI.getCollection(Config.DB_DATABASE, "accounts");
                     punishments = MongoAPI.getCollection(Config.DB_DATABASE, "punishments");
+                    tickets = MongoAPI.getCollection(Config.DB_DATABASE, "tickets");
                 }
             }
         }.runTaskAsynchronously(Revival.getCore());

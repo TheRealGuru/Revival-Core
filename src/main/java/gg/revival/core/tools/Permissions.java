@@ -16,6 +16,8 @@ public class Permissions
     public static String PUNISHMENT_UNMUTE = "revival.punishments.unmute";
     public static String PUNISHMENT_KICK = "revival.punishments.kick";
 
+    public static String TICKETS_VIEW = "revival.tickets.view";
+
     public static String MOD_TOOLS = "revival.tools.mod";
     public static String ADMIN_TOOLS = "revival.tools.admin";
 

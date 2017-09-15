@@ -23,8 +23,7 @@ public class CommandManager
     /**
      * Loads every command and registers them on the server
      */
-    public CommandManager()
-    {
+    public CommandManager() {
         ECommandExecutor commandExecutor = new ECommandExecutor();
 
         EBanCommand banCommand = new EBanCommand();
@@ -56,6 +55,9 @@ public class CommandManager
         EToggleMessagesCommand toggleMessagesCommand = new EToggleMessagesCommand();
         EToggleGlobalCommand toggleGlobalCommand = new EToggleGlobalCommand();
         EListCommand listCommand = new EListCommand();
+        EReportCommand reportCommand = new EReportCommand();
+        EHelpOpCommand helpopCommand = new EHelpOpCommand();
+        ETicketsCommand ticketsCommand = new ETicketsCommand();
 
         commands.add(banCommand);
         commands.add(tempbanCommand);
@@ -86,11 +88,12 @@ public class CommandManager
         commands.add(toggleMessagesCommand);
         commands.add(toggleGlobalCommand);
         commands.add(listCommand);
+        commands.add(reportCommand);
+        commands.add(helpopCommand);
+        commands.add(ticketsCommand);
 
         for(ECommand commands : commands)
-        {
             Revival.getCore().getCommand(commands.getLabel()).setExecutor(commandExecutor);
-        }
     }
 
 }
