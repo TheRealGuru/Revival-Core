@@ -7,8 +7,7 @@ import lombok.Setter;
 import java.util.List;
 import java.util.UUID;
 
-public class Account
-{
+public class Account {
 
     @Getter UUID uuid;
     @Getter @Setter List<Integer> registeredAddresses;
@@ -19,8 +18,7 @@ public class Account
     @Getter List<Punishment> punishments;
     @Getter @Setter long lastSeen;
 
-    public Account(UUID uuid, List<Integer> registeredAddresses, int xp, boolean hideGlobalChat, boolean hideMessages, List<UUID> blockedPlayers, List<Punishment> punishments, long lastSeen)
-    {
+    public Account(UUID uuid, List<Integer> registeredAddresses, int xp, boolean hideGlobalChat, boolean hideMessages, List<UUID> blockedPlayers, List<Punishment> punishments, long lastSeen) {
         this.uuid = uuid;
         this.registeredAddresses = registeredAddresses;
         this.xp = xp;

@@ -18,6 +18,8 @@ public class Permissions
 
     public static String TICKETS_VIEW = "revival.tickets.view";
 
+    public static String XP_VIEW = "revival.xp.view";
+
     public static String MOD_TOOLS = "revival.tools.mod";
     public static String ADMIN_TOOLS = "revival.tools.admin";
 

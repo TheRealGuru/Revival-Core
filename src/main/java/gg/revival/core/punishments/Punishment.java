@@ -5,8 +5,7 @@ import lombok.Setter;
 
 import java.util.UUID;
 
-public class Punishment
-{
+public class Punishment {
 
     @Getter UUID uuid;
     @Getter UUID punishedPlayers;
@@ -17,8 +16,7 @@ public class Punishment
     @Getter long createDate;
     @Getter @Setter long expireDate;
 
-    public Punishment(UUID uuid, UUID punishedPlayer, int punishedAddress, UUID punisher, String reason, PunishType type, long createDate, long expireDate)
-    {
+    public Punishment(UUID uuid, UUID punishedPlayer, int punishedAddress, UUID punisher, String reason, PunishType type, long createDate, long expireDate) {
         this.uuid = uuid;
         this.punishedPlayers = punishedPlayer;
         this.punishedAddress = punishedAddress;
@@ -29,13 +27,11 @@ public class Punishment
         this.expireDate = expireDate;
     }
 
-    public boolean isExpired()
-    {
+    public boolean isExpired() {
         return expireDate < System.currentTimeMillis();
     }
 
-    public boolean isForever()
-    {
+    public boolean isForever() {
         return expireDate == -1L;
     }
 

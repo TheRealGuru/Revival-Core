@@ -5,18 +5,15 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class ItemTools
-{
+public class ItemTools {
 
     /**
      * Returns an ItemStack by name
      * @param name Item name
      * @return The ItemStack result
      */
-    public ItemStack getItemByName(String name)
-    {
-        for(Material mats : Material.values())
-        {
+    public ItemStack getItemByName(String name) {
+        for(Material mats : Material.values()) {
             String cleanedUpName = mats.name().toLowerCase().replace("_", "");
 
             if(name.equalsIgnoreCase(cleanedUpName))
@@ -32,8 +29,7 @@ public class ItemTools
      * @param item
      * @return
      */
-    public ItemStack applyName(String name, ItemStack item)
-    {
+    public ItemStack applyName(String name, ItemStack item) {
         if(name == null || item == null) return null;
 
         ItemMeta meta = item.getItemMeta();
@@ -50,8 +46,7 @@ public class ItemTools
      * @param item Item to be enchanted
      * @return The enchanted item
      */
-    public ItemStack applyEnchantment(Enchantment enchantment, int level, ItemStack item)
-    {
+    public ItemStack applyEnchantment(Enchantment enchantment, int level, ItemStack item) {
         if(enchantment == null || level == 0 || item == null) return null;
 
         item.addUnsafeEnchantment(enchantment, level);
@@ -64,8 +59,7 @@ public class ItemTools
      * @param enchant Enchantment name
      * @return Matching enchantment enum
      */
-    public Enchantment getEnchantFromString(String enchant)
-    {
+    public Enchantment getEnchantFromString(String enchant) {
         String ls = enchant.toLowerCase();
 
         if(ls.startsWith("aqua")) {
@@ -116,6 +110,8 @@ public class ItemTools
             return Enchantment.THORNS;
         } else if(ls.startsWith("unb")) {
             return Enchantment.DURABILITY;
+        } else if(ls.startsWith("dep")) {
+            return Enchantment.DEPTH_STRIDER;
         }
 
         return null;

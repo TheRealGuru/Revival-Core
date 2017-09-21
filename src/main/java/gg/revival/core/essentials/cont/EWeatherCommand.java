@@ -7,11 +7,9 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class EWeatherCommand extends ECommand
-{
+public class EWeatherCommand extends ECommand {
 
-    public EWeatherCommand()
-    {
+    public EWeatherCommand() {
         super(
                 "weather",
                 "/weather <clear/storm>",
@@ -24,15 +22,13 @@ public class EWeatherCommand extends ECommand
     }
 
     @Override
-    public void onCommand(CommandSender sender, String args[])
-    {
+    public void onCommand(CommandSender sender, String args[]) {
         if(!validate(sender, args)) return;
 
         Player player = (Player)sender;
         World world = player.getWorld();
 
-        if(args[0].startsWith("c"))
-        {
+        if(args[0].startsWith("c")) {
             world.setStorm(false);
             world.setWeatherDuration(3600 * 20);
 
@@ -41,8 +37,7 @@ public class EWeatherCommand extends ECommand
             return;
         }
 
-        if(args[0].startsWith("s") || args[0].startsWith("r"))
-        {
+        if(args[0].startsWith("s") || args[0].startsWith("r")) {
             world.setStorm(true);
             world.setWeatherDuration(3600 * 20);
 

@@ -12,27 +12,24 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 
-public class FreezeListener implements Listener
-{
+public class FreezeListener implements Listener {
 
     @EventHandler
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event)
-    {
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         Entity damaged = event.getEntity();
         Entity damager = event.getDamager();
 
-        if(damaged instanceof Player)
-        {
+        if(damaged instanceof Player) {
             Player player = (Player)damaged;
 
-            if(Revival.getFreezeManager().isFrozen(player.getUniqueId()))
-            {
-                if(damager instanceof Player)
-                {
+            if(Revival.getFreezeManager().isFrozen(player.getUniqueId())) {
+                if(damager instanceof Player) {
                     Player damagerPlayer = (Player)damager;
-
                     damagerPlayer.sendMessage(ChatColor.RED + "You are not allowed to perform this task while this player is frozen");
                 }
 
@@ -42,65 +39,50 @@ public class FreezeListener implements Listener
             }
         }
 
-        if(damager instanceof Player)
-        {
+        if(damager instanceof Player) {
             Player player = (Player)damager;
 
-            if(Revival.getFreezeManager().isFrozen(player.getUniqueId()))
-            {
+            if(Revival.getFreezeManager().isFrozen(player.getUniqueId())) {
                 player.sendMessage(ChatColor.RED + "You are not allowed to perform this task while frozen");
                 event.setCancelled(true);
-
-                return;
             }
         }
     }
 
     @EventHandler
-    public void onEntityDamage(EntityDamageEvent event)
-    {
+    public void onEntityDamage(EntityDamageEvent event) {
         if(!(event.getEntity() instanceof Player)) return;
 
         Player player = (Player)event.getEntity();
 
-        if(Revival.getFreezeManager().isFrozen(player.getUniqueId()))
-        {
+        if(Revival.getFreezeManager().isFrozen(player.getUniqueId())) {
             event.setCancelled(true);
-
-            return;
         }
     }
 
     @EventHandler
-    public void onPlayerDropItem(PlayerDropItemEvent event)
-    {
+    public void onPlayerDropItem(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
 
-        if(Revival.getFreezeManager().isFrozen(player.getUniqueId()))
-        {
+        if(Revival.getFreezeManager().isFrozen(player.getUniqueId())) {
             player.sendMessage(ChatColor.RED + "You are not allowed to perform this task while frozen");
             event.setCancelled(true);
         }
     }
 
     @EventHandler
-    public void onPlayerPickupItem(PlayerPickupItemEvent event)
-    {
+    public void onPlayerPickupItem(PlayerPickupItemEvent event) {
         Player player = event.getPlayer();
 
         if(Revival.getFreezeManager().isFrozen(player.getUniqueId()))
-        {
             event.setCancelled(true);
-        }
     }
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event)
-    {
+    public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
-        if(Revival.getFreezeManager().isFrozen(player.getUniqueId()))
-        {
+        if(Revival.getFreezeManager().isFrozen(player.getUniqueId())) {
             if(!event.getAction().equals(Action.PHYSICAL))
                 player.sendMessage(ChatColor.RED + "You are not allowed to perform this task while frozen");
 
@@ -109,50 +91,41 @@ public class FreezeListener implements Listener
     }
 
     @EventHandler
-    public void onPlayerCommand(PlayerCommandPreprocessEvent event)
-    {
+    public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
 
-        if(Revival.getFreezeManager().isFrozen(player.getUniqueId()))
-        {
+        if(Revival.getFreezeManager().isFrozen(player.getUniqueId())) {
             player.sendMessage(ChatColor.RED + "You are not allowed to perform this task while frozen");
             event.setCancelled(true);
         }
     }
 
     @EventHandler
-    public void onBlockBreak(BlockBreakEvent event)
-    {
+    public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
 
-        if(Revival.getFreezeManager().isFrozen(player.getUniqueId()))
-        {
+        if(Revival.getFreezeManager().isFrozen(player.getUniqueId())) {
             player.sendMessage(ChatColor.RED + "You are not allowed to perform this task while frozen");
             event.setCancelled(true);
         }
     }
 
     @EventHandler
-    public void onBlockPlace(BlockPlaceEvent event)
-    {
+    public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
 
-        if(Revival.getFreezeManager().isFrozen(player.getUniqueId()))
-        {
+        if(Revival.getFreezeManager().isFrozen(player.getUniqueId())) {
             player.sendMessage(ChatColor.RED + "You are not allowed to perform this task while frozen");
             event.setCancelled(true);
         }
     }
 
     @EventHandler
-    public void onProjectileLaunch(ProjectileLaunchEvent event)
-    {
-        if(event.getEntity().getShooter() instanceof Player)
-        {
+    public void onProjectileLaunch(ProjectileLaunchEvent event) {
+        if(event.getEntity().getShooter() instanceof Player) {
             Player player = (Player)event.getEntity().getShooter();
 
-            if(Revival.getFreezeManager().isFrozen(player.getUniqueId()))
-            {
+            if(Revival.getFreezeManager().isFrozen(player.getUniqueId())) {
                 player.sendMessage(ChatColor.RED + "You are not allowed to perform this task while frozen");
                 event.setCancelled(true);
             }

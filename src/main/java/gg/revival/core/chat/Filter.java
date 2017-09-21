@@ -24,8 +24,7 @@ public class Filter
      * @param uuid The user UUID
      * @param interval Cooldown duration
      */
-    public void applyCooldown(UUID uuid, int interval)
-    {
+    public void applyCooldown(UUID uuid, int interval) {
         cooldowns.put(uuid, System.currentTimeMillis() + (interval * 1000L));
 
         new BukkitRunnable() {
@@ -50,10 +49,8 @@ public class Filter
      * @param message The user message
      * @return Supplied array of words contains a 'bad' word
      */
-    public boolean isBad(String message[])
-    {
-        for(String word : message)
-        {
+    public boolean isBad(String message[]) {
+        for(String word : message) {
             if(badWords.contains(word.toLowerCase()))
                 return true;
         }

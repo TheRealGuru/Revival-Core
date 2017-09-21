@@ -46,18 +46,14 @@ public class AccountManager
      * @param uuid The user UUID
      * @param callback Callback interface
      */
-    public void getAccount(UUID uuid, final AccountCallback callback)
-    {
-        if(!Config.DB_ENABLED)
-        {
+    public void getAccount(UUID uuid, final AccountCallback callback) {
+        if(!Config.DB_ENABLED) {
             List<UUID> blockedPlayers = new ArrayList<>();
             List<Punishment> punishments = new ArrayList<>();
             List<Integer> newAddressList = new ArrayList<>();
 
             if(Bukkit.getPlayer(uuid) != null && Bukkit.getPlayer(uuid).isOnline())
-            {
                 newAddressList.add(IPTools.ipStringToInteger(Bukkit.getPlayer(uuid).getAddress().getAddress().getHostAddress()));
-            }
 
             Account account = new Account(uuid, newAddressList, 0, false, false, blockedPlayers, punishments, System.currentTimeMillis());
             accounts.add(account);
@@ -67,8 +63,7 @@ public class AccountManager
             return;
         }
 
-        if(getAccount(uuid) != null)
-        {
+        if(getAccount(uuid) != null) {
             callback.onQueryDone(getAccount(uuid));
             return;
         }
@@ -86,13 +81,19 @@ public class AccountManager
 
                 if(accountCollection == null || punishmentCollection == null) return;
 
-                FindIterable<Document> accountQuery = accountCollection.find(Filters.eq("uuid", uuid.toString()));
-                Document document = accountQuery.first();
+                FindIterable<Document> accountQuery = null;
 
+                try {
+                    accountQuery = MongoAPI.getQueryByFilter(accountCollection, "uuid", uuid.toString());
+                } catch (LinkageError err) {
+                    getAccount(uuid, callback);
+                    return;
+                }
+
+                Document document = accountQuery.first();
                 Account account = null;
 
-                if(document != null)
-                {
+                if(document != null) {
                     int xp = document.getInteger("xp");
                     boolean hideGlobalChat = document.getBoolean("hideGlobalChat");
                     boolean hideMessages = document.getBoolean("hideMessages");
@@ -102,18 +103,15 @@ public class AccountManager
                     List<UUID> blockedPlayers = new ArrayList<>();
                     List<Punishment> punishments = new ArrayList<>();
 
-                    if(punishmentIds != null && !punishmentIds.isEmpty())
-                    {
+                    if(punishmentIds != null && !punishmentIds.isEmpty()) {
                         if(Revival.getDbManager().getPunishments() == null)
                             Revival.getDbManager().setPunishments(MongoAPI.getCollection(Config.DB_DATABASE, "punishments"));
 
-                        for(String punishmentId : punishmentIds)
-                        {
+                        for(String punishmentId : punishmentIds) {
                             FindIterable<Document> punishmentQuery = punishmentCollection.find(Filters.eq("uuid", punishmentId));
                             Document punishmentDoc = punishmentQuery.first();
 
-                            if(punishmentDoc != null)
-                            {
+                            if(punishmentDoc != null) {
                                 UUID punishedPlayer = UUID.fromString(punishmentDoc.getString("punishedPlayer"));
                                 int punishedAddress = punishmentDoc.getInteger("punishedAddress");
                                 String reason = punishmentDoc.getString("reason");
@@ -123,18 +121,12 @@ public class AccountManager
                                 PunishType type = null;
 
                                 if(punishmentDoc.get("punisher") != null)
-                                {
                                     punisher = UUID.fromString(punishmentDoc.getString("punisher"));
-                                }
 
-                                if(punishmentDoc.getString("type") != null)
-                                {
-                                    for(PunishType types : PunishType.values())
-                                    {
+                                if(punishmentDoc.getString("type") != null) {
+                                    for(PunishType types : PunishType.values()) {
                                         if(punishmentDoc.getString("type").equalsIgnoreCase(types.toString()))
-                                        {
                                             type = types;
-                                        }
                                     }
                                 }
 
@@ -148,27 +140,21 @@ public class AccountManager
                         }
                     }
 
-                    if(blockedPlayersIds != null && !blockedPlayersIds.isEmpty())
-                    {
+                    if(blockedPlayersIds != null && !blockedPlayersIds.isEmpty()) {
                         for(String blockedPlayerId : blockedPlayersIds)
-                        {
                             blockedPlayers.add(UUID.fromString(blockedPlayerId));
-                        }
                     }
 
                     account = new Account(uuid, registeredAddresses, xp, hideGlobalChat, hideMessages, blockedPlayers, punishments, System.currentTimeMillis());
                 }
 
-                else
-                {
+                else {
                     List<UUID> blockedPlayers = new ArrayList<>(); List<Punishment> punishments = new ArrayList<>(); List<Integer> registeredAddresses = new ArrayList<>();
                     account = new Account(uuid, registeredAddresses, 0, false, false, blockedPlayers, punishments, System.currentTimeMillis());
                 }
 
                 if(getAccount(uuid) == null)
-                {
                     accounts.add(account);
-                }
 
                 final Account result = account;
 
@@ -188,15 +174,12 @@ public class AccountManager
      * @param account The user Account object
      * @param unsafe Perform async or block the thread
      */
-    public void saveAccount(Account account, boolean unsafe, boolean unload)
-    {
+    public void saveAccount(Account account, boolean unsafe, boolean unload) {
         if(!Config.DB_ENABLED)
             return;
 
         if(unload)
-        {
             accounts.remove(account);
-        }
 
         if(unsafe) {
             Runnable saveTask = () -> {
@@ -294,15 +277,12 @@ public class AccountManager
 
                     if(!account.getPunishments().isEmpty()) {
                         for(Punishment punishment : punishmentCache)
-                        {
                             punishmentIds.add(punishment.getUuid().toString());
-                        }
                     }
 
                     if(!account.getBlockedPlayers().isEmpty()) {
-                        for(UUID blockedPlayer : blockedPlayerCache) {
+                        for(UUID blockedPlayer : blockedPlayerCache)
                             blockedPlayerIds.add(blockedPlayer.toString());
-                        }
                     }
 
                     Document newAccountDoc = new Document("uuid", account.getUuid().toString())
@@ -327,31 +307,23 @@ public class AccountManager
                                     .append("created", punishment.getCreateDate())
                                     .append("expires", punishment.getExpireDate());
 
-                            if(punishment.getPunisher() != null) {
+                            if(punishment.getPunisher() != null)
                                 newPunishmentDoc.append("punisher", punishment.getPunisher().toString());
-                            }
-
-                            else {
+                            else
                                 newPunishmentDoc.append("punisher", null);
-                            }
 
-                            if(punishmentDoc != null) {
+                            if(punishmentDoc != null)
                                 punishmentCollection.replaceOne(punishmentDoc, newPunishmentDoc);
-                            }
-
-                            else {
+                            else
                                 punishmentCollection.insertOne(newPunishmentDoc);
-                            }
                         }
                     }
 
-                    if(document != null) {
+                    if(document != null)
                         accountCollection.replaceOne(document, newAccountDoc);
-                    }
 
-                    else {
+                    else
                         accountCollection.insertOne(newAccountDoc);
-                    }
                 }
             }.runTaskAsynchronously(Revival.getCore());
         }

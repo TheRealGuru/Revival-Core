@@ -13,11 +13,9 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-public class EMuteCommand extends ECommand
-{
+public class EMuteCommand extends ECommand {
 
-    public EMuteCommand()
-    {
+    public EMuteCommand() {
         super(
               "mute",
                 "/mute <player> [reason]",
@@ -30,8 +28,7 @@ public class EMuteCommand extends ECommand
     }
 
     @Override
-    public void onCommand(CommandSender sender, String args[])
-    {
+    public void onCommand(CommandSender sender, String args[]) {
         if(!validate(sender, args)) return;
 
         UUID punisherResult = null;
@@ -39,21 +36,17 @@ public class EMuteCommand extends ECommand
         String namedPunisher = "Console";
         String reasonResult = "Reason not given";
 
-        if(sender instanceof Player)
-        {
+        if(sender instanceof Player) {
             Player player = (Player)sender;
             namedPunisher = player.getName();
             punisherResult = player.getUniqueId();
         }
 
-        if(args.length > 1)
-        {
+        if(args.length > 1) {
             StringBuilder reasonBuilder = new StringBuilder();
 
             for(int i = 1; i < args.length; i++)
-            {
                 reasonBuilder.append(args[i] + " ");
-            }
 
             reasonResult = reasonBuilder.toString().trim();
         }
@@ -63,8 +56,7 @@ public class EMuteCommand extends ECommand
         final String punisherName = namedPunisher;
 
         Revival.getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
-            if(uuid == null)
-            {
+            if(uuid == null) {
                 sender.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
                 return;
             }
@@ -73,33 +65,23 @@ public class EMuteCommand extends ECommand
                 int address = 0;
 
                 if(result.getRegisteredAddresses() != null && !result.getRegisteredAddresses().isEmpty())
-                {
                     address = result.getRegisteredAddresses().get(0);
-                }
 
                 Punishment punishment = new Punishment(UUID.randomUUID(), uuid, address, punisher, reason, PunishType.MUTE, System.currentTimeMillis(), -1L);
 
                 result.getPunishments().add(punishment);
 
                 if(Bukkit.getPlayer(uuid) != null)
-                {
                     Revival.getPunishments().getActiveMutes().put(uuid, punishment);
-                }
-
                 else
-                {
                     Revival.getAccountManager().saveAccount(result, false, Bukkit.getPlayer(uuid) == null);
-                }
 
                 Revival.getPlayerTools().sendPermissionMessage(MsgUtils.getMessage("punish-notifications.player-muted")
                         .replace("%player%", username)
                         .replace("%muter%", punisherName), Permissions.PUNISHMENT_VIEW);
 
                 if(Bukkit.getPlayer(uuid) != null)
-                {
-                    Bukkit.getPlayer(uuid).sendMessage(MsgUtils.getMessage("muted.forever")
-                            .replace("%reason%", reason));
-                }
+                    Bukkit.getPlayer(uuid).sendMessage(MsgUtils.getMessage("muted.forever").replace("%reason%", reason));
 
                 Logger.log(username + " has been muted by " + punisherName + " for " + punishment.getReason());
             });

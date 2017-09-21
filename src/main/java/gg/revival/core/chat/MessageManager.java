@@ -17,33 +17,28 @@ public class MessageManager
 
     @Getter Map<UUID, UUID> recentMessagers = new HashMap<>();
 
-    public UUID getRecentMessager(UUID uuid)
-    {
+    public UUID getRecentMessager(UUID uuid) {
         if(recentMessagers.containsKey(uuid))
             return recentMessagers.get(uuid);
 
         return null;
     }
 
-    public void sendMessage(Player sender, Player receiver, String message)
-    {
+    public void sendMessage(Player sender, Player receiver, String message) {
         Account senderAccount = Revival.getAccountManager().getAccount(sender.getUniqueId());
         Account receiverAccount = Revival.getAccountManager().getAccount(receiver.getUniqueId());
 
-        if(senderAccount.getBlockedPlayers().contains(receiver.getUniqueId()))
-        {
+        if(senderAccount.getBlockedPlayers().contains(receiver.getUniqueId())) {
             sender.sendMessage(ChatColor.RED + "You have " + receiver.getName() + " blocked");
             return;
         }
 
-        if(senderAccount.isHideMessages())
-        {
+        if(senderAccount.isHideMessages()) {
             sender.sendMessage(ChatColor.RED + "You have private messages disabled");
             return;
         }
 
-        if(receiverAccount.getBlockedPlayers().contains(sender.getUniqueId()) || receiverAccount.isHideMessages())
-        {
+        if(receiverAccount.getBlockedPlayers().contains(sender.getUniqueId()) || receiverAccount.isHideMessages()) {
             sender.sendMessage(ChatColor.RED + receiver.getName() + " has private messages disabled");
             return;
         }

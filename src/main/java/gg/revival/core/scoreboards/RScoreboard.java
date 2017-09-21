@@ -11,8 +11,7 @@ import org.bukkit.scoreboard.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class RScoreboard
-{
+public class RScoreboard {
 
     private static Map<String, String> cache = new HashMap<>();
 
@@ -24,8 +23,7 @@ public class RScoreboard
     private List<Integer> removed;
     private Set<String> updated;
 
-    public RScoreboard(String title)
-    {
+    public RScoreboard(String title) {
         this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         this.title = ChatColor.translateAlternateColorCodes('&', title);
         this.scores = new ConcurrentHashMap<>();
@@ -34,13 +32,11 @@ public class RScoreboard
         this.updated = Collections.synchronizedSet(new HashSet<>());
     }
 
-    public void add(String text, Integer score)
-    {
+    public void add(String text, Integer score) {
         text = ChatColor.translateAlternateColorCodes('&', text);
 
-        if (remove(score, text, false) || !scores.containsValue(score)) {
+        if (remove(score, text, false) || !scores.containsValue(score))
             updated.add(text);
-        }
 
         scores.put(text, score);
     }
@@ -50,8 +46,7 @@ public class RScoreboard
         return remove(score, text, true);
     }
 
-    public boolean remove(Integer score, String n, boolean b)
-    {
+    public boolean remove(Integer score, String n, boolean b) {
         String toRemove = get(score, n);
 
         if (toRemove == null)
@@ -65,22 +60,18 @@ public class RScoreboard
         return true;
     }
 
-    public String get(int score, String n)
-    {
+    public String get(int score, String n) {
         String str = null;
 
         for (Map.Entry<String, Integer> entry : scores.entrySet()) {
-            if (entry.getValue().equals(score) &&
-                    !entry.getKey().equals(n)) {
+            if (entry.getValue().equals(score) && !entry.getKey().equals(n))
                 str = entry.getKey();
-            }
         }
 
         return str;
     }
 
-    private Map.Entry<Team, String> createTeam(String text, int pos)
-    {
+    private Map.Entry<Team, String> createTeam(String text, int pos) {
         Team team;
         ChatColor color = ChatColor.values()[pos];
         String result;
@@ -102,8 +93,7 @@ public class RScoreboard
         return new AbstractMap.SimpleEntry<>(team, result);
     }
 
-    private void applyText(Team team, String text, String result)
-    {
+    private void applyText(Team team, String text, String result) {
         Iterator<String> iterator = Splitter.fixedLength(16).split(text).iterator();
         String prefix = iterator.next();
 
@@ -126,9 +116,8 @@ public class RScoreboard
             if (prefixColor == null)
                 prefixColor = "";
 
-            if (suffix.length() > 16) {
+            if (suffix.length() > 16)
                 suffix = suffix.substring(0, (13 - prefixColor.length()));
-            }
 
             team.setSuffix((prefixColor.equals("") ? ChatColor.RESET : prefixColor) + suffix);
         }
@@ -138,9 +127,7 @@ public class RScoreboard
         if (updated.isEmpty())
             return;
 
-
-        if (obj == null)
-        {
+        if (obj == null) {
             obj = scoreboard.registerNewObjective((title.length() > 16 ? title.substring(0, 15) : title), "dummy");
             obj.setDisplayName(title);
             obj.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -164,16 +151,14 @@ public class RScoreboard
 
         int index = scores.size();
 
-        for (Map.Entry<String, Integer> text : scores.entrySet())
-        {
+        for (Map.Entry<String, Integer> text : scores.entrySet()) {
             Team t = scoreboard.getTeam(ChatColor.values()[text.getValue()].toString());
             Map.Entry<Team, String> team;
 
             if(!updated.contains(text.getKey()))
                 continue;
 
-            if(t != null)
-            {
+            if(t != null) {
                 String color = ChatColor.values()[text.getValue()].toString();
 
                 if (!cache.containsKey(color))
@@ -184,9 +169,7 @@ public class RScoreboard
                 index -= 1;
 
                 continue;
-            }
-
-            else {
+            } else {
                 team = createTeam(text.getKey(), text.getValue());
             }
 
@@ -199,16 +182,14 @@ public class RScoreboard
         updated.clear();
     }
 
-    public void setTitle(String title)
-    {
+    public void setTitle(String title) {
         this.title = ChatColor.translateAlternateColorCodes('&', title);
 
         if(obj != null)
             obj.setDisplayName(title);
     }
 
-    public void reset()
-    {
+    public void reset() {
         for (Team t : teams)
             t.unregister();
 
@@ -216,8 +197,7 @@ public class RScoreboard
         scores.clear();
     }
 
-    public void send(Player... players)
-    {
+    public void send(Player... players) {
         for (Player p : players)
             p.setScoreboard(scoreboard);
     }

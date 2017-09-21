@@ -5,12 +5,9 @@ import lombok.Getter;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-public class RankManager
-{
+public class RankManager {
 
     /**
      * Contains every rank enabled on this server instance
@@ -22,12 +19,10 @@ public class RankManager
      * @param player The player
      * @return Rank object
      */
-    public Rank getRank(Player player)
-    {
+    public Rank getRank(Player player) {
         List<Rank> reversed = Lists.reverse(ranks);
 
-        for(Rank rank : reversed)
-        {
+        for(Rank rank : reversed) {
             if(rank.hasRank(player))
                 return rank;
         }

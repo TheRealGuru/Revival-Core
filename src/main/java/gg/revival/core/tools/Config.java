@@ -10,8 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Config
-{
+public class Config {
 
     public static boolean DB_ENABLED = false;
     public static String DB_HOST = "localhost";
@@ -34,13 +33,16 @@ public class Config
 
     public static boolean DISABLE_HUB_COMMAND = false;
 
+    public static boolean TAB_ENABLED = true;
+    public static String TAB_HEADER = "Default Header";
+    public static String TAB_FOOTER = "Default Footer";
+
     public static Map<String, List<String>> HELP_TOPICS = new HashMap<>();
 
     /**
      * Loads configuration from config.yml
      */
-    public static void loadConfiguration()
-    {
+    public static void loadConfiguration() {
         DB_ENABLED = Revival.getFileManager().getConfig().getBoolean("database.enabled");
         DB_HOST = Revival.getFileManager().getConfig().getString("database.hostname");
         DB_PORT = Revival.getFileManager().getConfig().getInt("database.port");
@@ -62,18 +64,19 @@ public class Config
 
         DISABLE_HUB_COMMAND = Revival.getFileManager().getConfig().getBoolean("command-settings.disable-hub-command");
 
+        TAB_ENABLED = Revival.getFileManager().getConfig().getBoolean("tab.enabled");
+        TAB_HEADER = ChatColor.translateAlternateColorCodes('&', Revival.getFileManager().getConfig().getString("tab.header"));
+        TAB_FOOTER = ChatColor.translateAlternateColorCodes('&', Revival.getFileManager().getConfig().getString("tab.footer"));
+
         ConfigurationSection helpTopicSection = Revival.getFileManager().getConfig().getConfigurationSection("help-topics");
 
-        for(String topics : helpTopicSection.getKeys(false))
-        {
+        for(String topics : helpTopicSection.getKeys(false)) {
             String displayName = Revival.getFileManager().getConfig().getString("help-topics." + topics + ".display-name");
             List<String> unformattedLore = Revival.getFileManager().getConfig().getStringList("help-topics." + topics + ".page");
             List<String> formattedLore = new ArrayList<>();
 
             for(String lore : unformattedLore)
-            {
                 formattedLore.add(ChatColor.translateAlternateColorCodes('&', lore));
-            }
 
             HELP_TOPICS.put(displayName, formattedLore);
         }
@@ -84,22 +87,18 @@ public class Config
     /**
      * Loads filtered words from config.yml
      */
-    public static void loadFilteredWords()
-    {
+    public static void loadFilteredWords() {
         Revival.getChatFilter().getBadWords().addAll(Revival.getFileManager().getConfig().getStringList("chat-filter.filter-out"));
-
         Logger.log("Loaded " + Revival.getChatFilter().getBadWords().size() + " Chat Filters");
     }
 
     /**
      * Loads ranks from ranks.yml
      */
-    public static void loadRanks()
-    {
+    public static void loadRanks() {
         ConfigurationSection section = Revival.getFileManager().getRanks().getConfigurationSection("ranks");
 
-        for(String ranks : section.getKeys(false))
-        {
+        for(String ranks : section.getKeys(false)) {
             String name = Revival.getFileManager().getRanks().getString("ranks." + ranks + ".name");
             String tag = Revival.getFileManager().getRanks().getString("ranks." + ranks + ".tag");
             String permission = Revival.getFileManager().getRanks().getString("ranks." + ranks + ".permission");
@@ -115,18 +114,14 @@ public class Config
     /**
      * Loads broadcasts from broadcasts.yml
      */
-    public static void loadBroadcasts()
-    {
+    public static void loadBroadcasts() {
         List<String> unformatted = Revival.getFileManager().getBroadcasts().getStringList("broadcasts");
         List<String> broadcasts = new ArrayList<>();
 
         for(String broadcast : unformatted)
-        {
             broadcasts.add(ChatColor.translateAlternateColorCodes('&', broadcast));
-        }
 
         Revival.getBroadcasts().getLoadedBroadcasts().addAll(broadcasts);
-
         Logger.log("Loaded " + Revival.getBroadcasts().getLoadedBroadcasts().size() + " Broadcasts");
     }
 

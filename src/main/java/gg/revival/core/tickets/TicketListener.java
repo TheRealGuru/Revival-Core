@@ -3,6 +3,7 @@ package gg.revival.core.tickets;
 import gg.revival.core.Revival;
 import gg.revival.core.tools.Config;
 import gg.revival.core.tools.Permissions;
+import mkremins.fanciful.FancyMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -11,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -18,6 +20,23 @@ import java.util.List;
 import java.util.UUID;
 
 public class TicketListener implements Listener {
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+
+        if(!player.hasPermission(Permissions.TICKETS_VIEW)) return;
+
+        if(!Config.TICKETS_ENABLED) return;
+
+        if(Revival.getTicketManager().getLoadedTickets().isEmpty()) return;
+
+        new FancyMessage(
+                Revival.getTicketManager().getLoadedTickets().size() + " open tickets")
+                .color(ChatColor.AQUA).then(" [Click here to view]")
+                .color(ChatColor.GREEN)
+                .command("/tickets").send(player);
+    }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {

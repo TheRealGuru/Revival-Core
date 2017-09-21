@@ -13,77 +13,64 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
 import java.util.UUID;
 
-public class AccountListener implements Listener
-{
+public class AccountListener implements Listener {
 
     @EventHandler
-    public void onPlayerLoginAttempt(AsyncPlayerPreLoginEvent event)
-    {
+    public void onPlayerLoginAttempt(AsyncPlayerPreLoginEvent event) {
         UUID uuid = event.getUniqueId();
 
         Revival.getAccountManager().getAccount(uuid, result -> {
             if(result == null || result.getPunishments().isEmpty()) return;
 
-            for(Punishment punishment : result.getPunishments())
-            {
-                if(punishment.getType().equals(PunishType.BAN))
-                {
-                    if(punishment.isForever() || !punishment.isExpired())
-                    {
+            for(Punishment punishment : result.getPunishments()) {
+                if(punishment.getType().equals(PunishType.BAN)) {
+                    if(punishment.isForever() || !punishment.isExpired()) {
                         event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, MsgUtils.getBanMessage(punishment));
 
                         if(Bukkit.getPlayer(uuid) != null && Bukkit.getPlayer(uuid).isOnline())
-                        {
                             Bukkit.getPlayer(uuid).kickPlayer(MsgUtils.getBanMessage(punishment));
-                        }
                     }
 
                     continue;
                 }
 
-                if(punishment.getType().equals(PunishType.MUTE))
-                {
+                if(punishment.getType().equals(PunishType.MUTE)) {
                     if(punishment.isForever() || !punishment.isExpired())
-                    {
                         Revival.getPunishments().getActiveMutes().put(uuid, punishment);
-                    }
                 }
             }
         });
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event)
-    {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
         Revival.getPunishments().scanAddress(IPTools.ipStringToInteger(player.getAddress().getAddress().getHostAddress()), result -> {
             if(result == null || result.isEmpty() || player.hasPermission(Permissions.PUNISHMENT_PARDON)) return;
 
-            for(Punishment punishment : result)
-            {
-                if(punishment.getType().equals(PunishType.BAN) && (punishment.isForever() || !punishment.isExpired()))
-                {
+            for(Punishment punishment : result) {
+                if(punishment.getType().equals(PunishType.BAN) && (punishment.isForever() || !punishment.isExpired())) {
                     player.kickPlayer(MsgUtils.getBanMessage(punishment));
 
                     return;
                 }
 
                 if(punishment.getType().equals(PunishType.MUTE) && Revival.getPunishments().getActiveMute(player.getUniqueId()) == null && (punishment.isForever() || !punishment.isExpired()))
-                {
                     Revival.getPunishments().getActiveMutes().put(player.getUniqueId(), punishment);
-                }
             }
         });
     }
 
     @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event)
-    {
+    public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         Account account = Revival.getAccountManager().getAccount(player.getUniqueId());
+
+        if(account == null) return;
 
         account.setLastSeen(System.currentTimeMillis());
 

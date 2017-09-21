@@ -11,8 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class FreezeManager
-{
+public class FreezeManager {
 
     /**
      * Contains all frozen players
@@ -24,8 +23,7 @@ public class FreezeManager
      * @param uuid The player UUID
      * @return The original Location
      */
-    public Location getLocation(UUID uuid)
-    {
+    public Location getLocation(UUID uuid) {
         if(frozenPlayers.containsKey(uuid))
             return frozenPlayers.get(uuid);
 
@@ -37,24 +35,17 @@ public class FreezeManager
      * @param uuid The player UUID
      * @return The player is frozen
      */
-    public boolean isFrozen(UUID uuid)
-    {
-        if(getLocation(uuid) != null)
-            return true;
-
-        return false;
+    public boolean isFrozen(UUID uuid) {
+        return getLocation(uuid) != null;
     }
 
     /**
      * Sets a player frozen
      * @param player
      */
-    public void freezePlayer(Player player)
-    {
+    public void freezePlayer(Player player) {
         frozenPlayers.put(player.getUniqueId(), player.getLocation());
-
         player.sendMessage(ChatColor.DARK_RED + "You have been frozen!");
-
         checkLocation(player);
     }
 
@@ -62,10 +53,8 @@ public class FreezeManager
      * Unfreezes a player
      * @param player
      */
-    public void unfreezePlayer(Player player)
-    {
+    public void unfreezePlayer(Player player) {
         frozenPlayers.remove(player.getUniqueId());
-
         player.sendMessage(ChatColor.GREEN + "You have been unfrozen!");
     }
 
@@ -73,24 +62,20 @@ public class FreezeManager
      * Loop method that constantly keeps checking if the player has moved until they are offline or no longer frozen
      * @param player
      */
-    public void checkLocation(Player player)
-    {
+    public void checkLocation(Player player) {
         if(player == null) return;
 
         Location location = getLocation(player.getUniqueId());
 
         if(location == null) return;
 
-        if(player.getLocation().distance(location) >= 1.0)
-        {
+        if(player.getLocation().distance(location) >= 1.0) {
             player.teleport(location);
             player.sendMessage(ChatColor.RED + "You are not allowed to move while frozen");
         }
 
-        new BukkitRunnable()
-        {
-            public void run()
-            {
+        new BukkitRunnable() {
+            public void run() {
                 checkLocation(player);
             }
         }.runTaskLater(Revival.getCore(), 20L);

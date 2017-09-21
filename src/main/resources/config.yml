@@ -7,23 +7,25 @@ database:
     username: 'root'
     password: 'password'
     database: 'revival'
+
 tab:
-  header:
-    - 'Header Line 1'
-    - 'Header Line 2'
-  footer:
-    - 'Footer Line 1'
-    - 'Footer Line 2'
+  enabled: true
+  header: "&aDefault Header"
+  footer: "&6Default Footer"
+
 tickets:
   enabled: true
   cooldown: 30
+
 broadcasts:
   enabled: true
   random: true
   interval: 60
-  prefix: '&6Broadcast: &r'
+  prefix: '&f[&3Revival&f] &r'
+
 command-settings:
   disable-hub-command: false
+
 chat-filter:
   enabled: true
   interval: 3
@@ -49,8 +51,8 @@ chat-filter:
     - 'f4g'
     - 'ez'
     - '3z'
-    - 'gang gang'
     - 'otf'
+
 help-topics:
   factions:
     display-name: 'Factions'

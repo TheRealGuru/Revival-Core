@@ -9,8 +9,7 @@ import lombok.Setter;
 import org.bson.Document;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class DBManager
-{
+public class DBManager {
 
     @Getter @Setter MongoCollection<Document> accounts;
     @Getter @Setter MongoCollection<Document> punishments;
@@ -19,8 +18,7 @@ public class DBManager
     /**
      * Connects to the MongoDB instance, every plugin that needs to do so waits for this method to be ran
      */
-    public void establishConnection()
-    {
+    public void establishConnection() {
         if(!Config.DB_ENABLED)
             return;
 
@@ -31,8 +29,7 @@ public class DBManager
         {
             public void run()
             {
-                if(Config.DB_CREDS)
-                {
+                if(Config.DB_CREDS) {
                     MongoAPI.connect(
                             Config.DB_HOST,
                             Config.DB_PORT,
@@ -42,8 +39,7 @@ public class DBManager
                     );
                 }
 
-                else
-                {
+                else {
                     MongoAPI.connect(
                             Config.DB_HOST,
                             Config.DB_PORT,

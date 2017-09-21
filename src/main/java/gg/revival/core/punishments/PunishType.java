@@ -1,7 +1,6 @@
 package gg.revival.core.punishments;
 
-public enum PunishType
-{
+public enum PunishType {
 
     MUTE, BAN
 

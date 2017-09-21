@@ -9,6 +9,7 @@ import gg.revival.core.chat.MessageManager;
 import gg.revival.core.database.DBManager;
 import gg.revival.core.essentials.CommandManager;
 import gg.revival.core.essentials.EssentialsListener;
+import gg.revival.core.network.NetworkListener;
 import gg.revival.core.punishments.PunishmentListener;
 import gg.revival.core.punishments.PunishmentManager;
 import gg.revival.core.ranks.RankManager;
@@ -41,6 +42,7 @@ public class Revival extends JavaPlugin {
     @Getter static MessageManager messageManager;
     @Getter static TicketManager ticketManager;
     @Getter static PlayerTools playerTools;
+    @Getter static ServerTools serverTools;
     @Getter static TimeTools timeTools;
     @Getter static ItemTools itemTools;
 
@@ -59,6 +61,7 @@ public class Revival extends JavaPlugin {
         messageManager = new MessageManager();
         ticketManager = new TicketManager();
         playerTools = new PlayerTools();
+        serverTools = new ServerTools();
         timeTools = new TimeTools();
         itemTools = new ItemTools();
 
@@ -79,6 +82,7 @@ public class Revival extends JavaPlugin {
             ticketManager.pullUpdates(false);
 
         loadListeners();
+        loadPluginChannels();
     }
 
     @Override
@@ -106,6 +110,7 @@ public class Revival extends JavaPlugin {
         ticketManager = null;
         punishments = null;
         playerTools = null;
+        serverTools = null;
         timeTools = null;
         itemTools = null;
     }
@@ -125,4 +130,11 @@ public class Revival extends JavaPlugin {
         pluginManager.registerEvents(new TicketListener(), this);
     }
 
+    /**
+     * Loads Plugin-Message channels to communicate with clients and other servers running on our network
+     */
+    private void loadPluginChannels() {
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCoord");
+        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new NetworkListener());
+    }
 }

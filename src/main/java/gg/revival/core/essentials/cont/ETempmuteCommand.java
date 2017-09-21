@@ -51,9 +51,8 @@ public class ETempmuteCommand extends ECommand
         if (args.length > 2) {
             StringBuilder reasonBuilder = new StringBuilder();
 
-            for (int i = 2; i < args.length; i++) {
+            for (int i = 2; i < args.length; i++)
                 reasonBuilder.append(args[i] + " ");
-            }
 
             reasonResult = reasonBuilder.toString().trim();
         }
@@ -63,15 +62,13 @@ public class ETempmuteCommand extends ECommand
         final String punisherName = namedPunisher;
         final long muteDur = Revival.getTimeTools().getTime(namedTime);
 
-        if (muteDur <= 0)
-        {
+        if (muteDur <= 0) {
             sender.sendMessage(MsgUtils.getMessage("errors.invalid-time"));
             return;
         }
 
         Revival.getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
-            if(uuid == null)
-            {
+            if(uuid == null) {
                 sender.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
                 return;
             }
@@ -80,23 +77,16 @@ public class ETempmuteCommand extends ECommand
                 int address = 0;
 
                 if(result.getRegisteredAddresses() != null && !result.getRegisteredAddresses().isEmpty())
-                {
                     address = result.getRegisteredAddresses().get(0);
-                }
 
                 Punishment punishment = new Punishment(UUID.randomUUID(), uuid, address, punisher, reason, PunishType.MUTE, System.currentTimeMillis(), System.currentTimeMillis() + (muteDur * 1000L));
 
                 result.getPunishments().add(punishment);
 
                 if(Bukkit.getPlayer(uuid) != null)
-                {
                     Revival.getPunishments().getActiveMutes().put(uuid, punishment);
-                }
-
                 else
-                {
                     Revival.getAccountManager().saveAccount(result, false, Bukkit.getPlayer(uuid) == null);
-                }
 
                 Date date = new Date(punishment.getExpireDate());
                 SimpleDateFormat formatter = new SimpleDateFormat("M-d-yyyy '@' hh:mm:ss a z");
@@ -106,8 +96,7 @@ public class ETempmuteCommand extends ECommand
                         .replace("%muter%", punisherName)
                         .replace("%time%", formatter.format(date)), Permissions.PUNISHMENT_VIEW);
 
-                if(Bukkit.getPlayer(uuid) != null)
-                {
+                if(Bukkit.getPlayer(uuid) != null) {
                     Bukkit.getPlayer(uuid).sendMessage(MsgUtils.getMessage("muted.temp")
                             .replace("%reason%", reason).replace("%time%", formatter.format(date)));
                 }

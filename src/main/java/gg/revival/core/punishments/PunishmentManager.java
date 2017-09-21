@@ -12,8 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
-public class PunishmentManager
-{
+public class PunishmentManager {
 
     /**
      * Contains active mutes running on the server
@@ -25,10 +24,8 @@ public class PunishmentManager
      * @param uuid The user UUID
      * @return Punishment Object
      */
-    public Punishment getActiveMute(UUID uuid)
-    {
-        if(activeMutes.containsKey(uuid))
-        {
+    public Punishment getActiveMute(UUID uuid) {
+        if(activeMutes.containsKey(uuid)) {
             Punishment punishment = activeMutes.get(uuid);
 
             if(punishment.isForever() || !punishment.isExpired())
@@ -45,14 +42,11 @@ public class PunishmentManager
      * @param ip The user IP address
      * @param callback The punishment callback set result
      */
-    public void scanAddress(int ip, PunishmentCallback callback)
-    {
+    public void scanAddress(int ip, PunishmentCallback callback) {
         Set<Punishment> result = new HashSet<>();
 
-        new BukkitRunnable()
-        {
-            public void run()
-            {
+        new BukkitRunnable() {
+            public void run() {
                 if(Revival.getDbManager().getPunishments() == null)
                     Revival.getDbManager().setPunishments(MongoAPI.getCollection(Config.DB_DATABASE, "punishments"));
 
@@ -60,8 +54,7 @@ public class PunishmentManager
                 FindIterable<Document> query = punishmentCollection.find(Filters.eq("punishedAddress", ip));
                 Iterator<Document> iterator = query.iterator();
 
-                while(iterator.hasNext())
-                {
+                while(iterator.hasNext()) {
                     Document current = iterator.next();
 
                     UUID punishmentId = UUID.fromString(current.getString("uuid"));
@@ -73,14 +66,10 @@ public class PunishmentManager
                     UUID punisher = null;
                     PunishType type = null;
 
-                    if(current.getString("type") != null)
-                    {
-                        for(PunishType types : PunishType.values())
-                        {
+                    if(current.getString("type") != null) {
+                        for(PunishType types : PunishType.values()) {
                             if(current.getString("type").equalsIgnoreCase(types.toString()))
-                            {
                                 type = types;
-                            }
                         }
                     }
 
@@ -92,10 +81,8 @@ public class PunishmentManager
                     result.add(punishment);
                 }
 
-                new BukkitRunnable()
-                {
-                    public void run()
-                    {
+                new BukkitRunnable() {
+                    public void run() {
                         callback.onQueryDone(result);
                     }
                 }.runTask(Revival.getCore());
