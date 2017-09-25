@@ -6,7 +6,6 @@ import gg.revival.core.punishments.Punishment;
 import gg.revival.core.tools.IPTools;
 import gg.revival.core.tools.MsgUtils;
 import gg.revival.core.tools.Permissions;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,16 +21,14 @@ public class AccountListener implements Listener {
     public void onPlayerLoginAttempt(AsyncPlayerPreLoginEvent event) {
         UUID uuid = event.getUniqueId();
 
-        Revival.getAccountManager().getAccount(uuid, result -> {
+        Revival.getAccountManager().getAccount(uuid, true, result -> {
             if(result == null || result.getPunishments().isEmpty()) return;
 
             for(Punishment punishment : result.getPunishments()) {
                 if(punishment.getType().equals(PunishType.BAN)) {
                     if(punishment.isForever() || !punishment.isExpired()) {
                         event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, MsgUtils.getBanMessage(punishment));
-
-                        if(Bukkit.getPlayer(uuid) != null && Bukkit.getPlayer(uuid).isOnline())
-                            Bukkit.getPlayer(uuid).kickPlayer(MsgUtils.getBanMessage(punishment));
+                        return;
                     }
 
                     continue;

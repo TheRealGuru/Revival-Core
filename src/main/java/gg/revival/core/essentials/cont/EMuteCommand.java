@@ -61,7 +61,7 @@ public class EMuteCommand extends ECommand {
                 return;
             }
 
-            Revival.getAccountManager().getAccount(uuid, result -> {
+            Revival.getAccountManager().getAccount(uuid, false, result -> {
                 int address = 0;
 
                 if(result.getRegisteredAddresses() != null && !result.getRegisteredAddresses().isEmpty())

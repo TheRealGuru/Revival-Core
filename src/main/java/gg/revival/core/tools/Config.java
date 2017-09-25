@@ -36,6 +36,7 @@ public class Config {
     public static boolean TAB_ENABLED = true;
     public static String TAB_HEADER = "Default Header";
     public static String TAB_FOOTER = "Default Footer";
+    public static boolean TAB_DISPLAY_STATUS = true;
 
     public static Map<String, List<String>> HELP_TOPICS = new HashMap<>();
 
@@ -67,6 +68,7 @@ public class Config {
         TAB_ENABLED = Revival.getFileManager().getConfig().getBoolean("tab.enabled");
         TAB_HEADER = ChatColor.translateAlternateColorCodes('&', Revival.getFileManager().getConfig().getString("tab.header"));
         TAB_FOOTER = ChatColor.translateAlternateColorCodes('&', Revival.getFileManager().getConfig().getString("tab.footer"));
+        TAB_DISPLAY_STATUS = Revival.getFileManager().getConfig().getBoolean("tab.display-status");
 
         ConfigurationSection helpTopicSection = Revival.getFileManager().getConfig().getConfigurationSection("help-topics");
 

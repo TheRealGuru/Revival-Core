@@ -14,11 +14,9 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class EUnmuteCommand extends ECommand
-{
+public class EUnmuteCommand extends ECommand {
 
-    public EUnmuteCommand()
-    {
+    public EUnmuteCommand() {
         super(
                 "unmute",
                 "/unmute <player>",
@@ -31,15 +29,13 @@ public class EUnmuteCommand extends ECommand
     }
 
     @Override
-    public void onCommand(CommandSender sender, String args[])
-    {
+    public void onCommand(CommandSender sender, String args[]) {
         if(!validate(sender, args)) return;
 
         String namedPlayer = args[0];
         String namedUnmuter = "Console";
 
-        if (sender instanceof Player)
-        {
+        if (sender instanceof Player) {
             Player player = (Player)sender;
             namedUnmuter = player.getName();
         }
@@ -47,15 +43,13 @@ public class EUnmuteCommand extends ECommand
         final String unmuter = namedUnmuter;
 
         Revival.getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
-            if(uuid == null)
-            {
+            if(uuid == null) {
                 sender.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
                 return;
             }
 
-            Revival.getAccountManager().getAccount(uuid, result -> {
-                if(result.getPunishments().isEmpty())
-                {
+            Revival.getAccountManager().getAccount(uuid, false, result -> {
+                if(result.getPunishments().isEmpty()) {
                     sender.sendMessage(MsgUtils.getMessage("errors.player-not-banned"));
                     return;
                 }
@@ -63,12 +57,10 @@ public class EUnmuteCommand extends ECommand
                 List<Punishment> punishmentCache = new CopyOnWriteArrayList<>(result.getPunishments());
                 int removedMutes = 0;
 
-                for(Punishment punishment : punishmentCache)
-                {
+                for(Punishment punishment : punishmentCache) {
                     if(!punishment.getType().equals(PunishType.MUTE)) continue;
 
-                    if(punishment.isForever() || !punishment.isExpired())
-                    {
+                    if(punishment.isForever() || !punishment.isExpired()) {
                         result.getPunishments().remove(punishment);
 
                         punishment.setExpireDate(System.currentTimeMillis());
@@ -78,12 +70,9 @@ public class EUnmuteCommand extends ECommand
                 }
 
                 if(Revival.getPunishments().getActiveMute(uuid) != null)
-                {
                     Revival.getPunishments().getActiveMutes().remove(uuid);
-                }
 
-                if(removedMutes == 0)
-                {
+                if(removedMutes == 0) {
                     sender.sendMessage(MsgUtils.getMessage("errors.player-not-muted"));
                     return;
                 }

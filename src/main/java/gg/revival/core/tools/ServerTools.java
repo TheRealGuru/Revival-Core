@@ -39,8 +39,12 @@ public class ServerTools {
                 StringBuilder status = new StringBuilder();
 
                 status.append("     \n");
-                status.append(ChatColor.GRAY + "Facing: " + ChatColor.LIGHT_PURPLE + direction + "\n");
-                status.append(ChatColor.GRAY + "X: " + ChatColor.LIGHT_PURPLE + x + " " + ChatColor.GRAY + "Y: " + ChatColor.LIGHT_PURPLE + y + " " + ChatColor.GRAY + "Z: " + ChatColor.LIGHT_PURPLE + z + "\n     \n");
+
+                if(Config.TAB_DISPLAY_STATUS) {
+                    status.append(ChatColor.GRAY + "Facing: " + ChatColor.LIGHT_PURPLE + direction + "\n");
+                    status.append(ChatColor.GRAY + "X: " + ChatColor.LIGHT_PURPLE + x + " " + ChatColor.GRAY + "Y: " + ChatColor.LIGHT_PURPLE + y + " " + ChatColor.GRAY + "Z: " + ChatColor.LIGHT_PURPLE + z + "\n     \n");
+                }
+
                 status.append(footer);
 
                 packet.getChatComponents()

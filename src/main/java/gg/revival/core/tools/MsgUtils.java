@@ -12,19 +12,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
-public class MsgUtils
-{
+public class MsgUtils {
 
     /**
      * Returns a ChatColor formatted string from the messages.yml file
      * @param path Message path in messages.yml
      * @return Formatted string
      */
-    public static String getMessage(String path)
-    {
+    public static String getMessage(String path) {
         return ChatColor.translateAlternateColorCodes('&', Revival.getFileManager().getMessages().getString(path));
     }
 
@@ -34,33 +30,24 @@ public class MsgUtils
      * @param topic Topic that is being sent, if null it displays the main page
      * @param content The content to be displayed
      */
-    public static void sendHelpPage(Player player, String topic, List<String> content)
-    {
-        if(topic == null)
-        {
+    public static void sendHelpPage(Player player, String topic, List<String> content) {
+        if(topic == null) {
             player.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "-------------------------");
             player.sendMessage("Displaying Help Topic: " + ChatColor.AQUA + "Main");
             player.sendMessage(ChatColor.YELLOW + "Click a topic to view more information.");
             player.sendMessage("     ");
 
             for(String topics : content)
-            {
                 new FancyMessage(" - ").then(topics).color(ChatColor.BLUE).command("/help " + topics).send(player);
-            }
 
             player.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "-------------------------");
-        }
-
-        else
-        {
+        } else {
             player.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "-------------------------");
             player.sendMessage("Displaying Help Topic: " + ChatColor.AQUA + topic);
             player.sendMessage("     ");
 
             for(String page : content)
-            {
                 player.sendMessage(" - " + page);
-            }
 
             player.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "-------------------------");
         }
@@ -72,8 +59,7 @@ public class MsgUtils
      * @param username The username to lookup
      * @param account The account thats being displayed
      */
-    public static void sendPunishments(Player player, String username, Account account)
-    {
+    public static void sendPunishments(Player player, String username, Account account) {
         player.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "-------------------------");
         player.sendMessage("Displaying all punishments for " + ChatColor.RED + username);
         player.sendMessage(ChatColor.YELLOW + "Hover over each punishment to view more information.");
@@ -83,8 +69,7 @@ public class MsgUtils
 
         int cursor = 1;
 
-        for(Punishment punishment : account.getPunishments())
-        {
+        for(Punishment punishment : account.getPunishments()) {
             Date date = new Date(punishment.getCreateDate());
             List<String> info = new ArrayList<>();
 
@@ -92,14 +77,9 @@ public class MsgUtils
             info.add("Reason: " + punishment.getReason());
 
             if(punishment.isForever())
-            {
                 info.add("Expires: Never");
-            }
-
             else
-            {
                 info.add("Expires: " + formatter.format(date));
-            }
 
             new FancyMessage(cursor + ". ").then(formatter.format(date)).color(ChatColor.RED).tooltip(info).send(player);
 
@@ -114,8 +94,7 @@ public class MsgUtils
      * @param punishment The players found punishment
      * @return Formatted ban message
      */
-    public static String getBanMessage(Punishment punishment)
-    {
+    public static String getBanMessage(Punishment punishment) {
         StringBuilder result = new StringBuilder();
 
         result.append(ChatColor.RED + "Adios, amigo!" + ChatColor.RESET + "\n");
@@ -125,12 +104,9 @@ public class MsgUtils
         result.append("     " + "\n");
 
         if(punishment.isForever())
-        {
             result.append("This ban will " + ChatColor.UNDERLINE + "never" + ChatColor.RESET + " expire!" + "\n");
-        }
 
-        else
-        {
+        else {
             Date date = new Date(punishment.getExpireDate());
             SimpleDateFormat formatter = new SimpleDateFormat("M-d-yyyy '@' hh:mm:ss a z");
 
@@ -147,8 +123,7 @@ public class MsgUtils
      * @param reason Kick reason
      * @return Formatted kick reason
      */
-    public static String getKickMessage(String reason)
-    {
+    public static String getKickMessage(String reason) {
         StringBuilder result = new StringBuilder();
 
         result.append(ChatColor.RED + "You got the boot!" + ChatColor.RESET + "\n");

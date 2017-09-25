@@ -6,8 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ECommand
-{
+public class ECommand {
 
     @Getter String label, syntax, description, permission;
     @Getter int minArgs, maxArgs;
@@ -48,9 +47,7 @@ public class ECommand
             if(sender instanceof Player) {
                 Player player = (Player)sender;
                 player.sendMessage(ChatColor.RED + syntax);
-            }
-
-            else {
+            } else {
                 sender.sendMessage(syntax);
             }
 

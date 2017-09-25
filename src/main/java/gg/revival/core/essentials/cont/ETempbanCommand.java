@@ -15,11 +15,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
-public class ETempbanCommand extends ECommand
-{
+public class ETempbanCommand extends ECommand {
 
-    public ETempbanCommand()
-    {
+    public ETempbanCommand() {
         super(
                 "tempban",
                 "/tempban <player> <time> [reason]",
@@ -50,9 +48,8 @@ public class ETempbanCommand extends ECommand
         if (args.length > 2) {
             StringBuilder reasonBuilder = new StringBuilder();
 
-            for (int i = 2; i < args.length; i++) {
+            for (int i = 2; i < args.length; i++)
                 reasonBuilder.append(args[i] + " ");
-            }
 
             reasonResult = reasonBuilder.toString().trim();
         }
@@ -62,40 +59,31 @@ public class ETempbanCommand extends ECommand
         final String punisherName = namedPunisher;
         final long banDur = Revival.getTimeTools().getTime(namedTime);
 
-        if (banDur <= 0)
-        {
+        if (banDur <= 0) {
             sender.sendMessage(MsgUtils.getMessage("errors.invalid-time"));
             return;
         }
 
         Revival.getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
-            if(uuid == null)
-            {
+            if(uuid == null) {
                 sender.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
                 return;
             }
 
-            Revival.getAccountManager().getAccount(uuid, result -> {
+            Revival.getAccountManager().getAccount(uuid, false, result -> {
                 int address = 0;
 
                 if(result.getRegisteredAddresses() != null && !result.getRegisteredAddresses().isEmpty())
-                {
                     address = result.getRegisteredAddresses().get(0);
-                }
 
                 Punishment punishment = new Punishment(UUID.randomUUID(), uuid, address, punisher, reason, PunishType.BAN, System.currentTimeMillis(), System.currentTimeMillis() + (banDur * 1000L));
 
                 result.getPunishments().add(punishment);
 
                 if(Bukkit.getPlayer(uuid) != null)
-                {
                     Bukkit.getPlayer(uuid).kickPlayer(MsgUtils.getBanMessage(punishment));
-                }
-
                 else
-                {
                     Revival.getAccountManager().saveAccount(result, false, Bukkit.getPlayer(uuid) == null);
-                }
 
                 Date date = new Date(punishment.getExpireDate());
                 SimpleDateFormat formatter = new SimpleDateFormat("M-d-yyyy '@' hh:mm:ss a z");

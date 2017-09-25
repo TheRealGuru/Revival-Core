@@ -15,11 +15,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
-public class ETempmuteCommand extends ECommand
-{
+public class ETempmuteCommand extends ECommand {
 
-    public ETempmuteCommand()
-    {
+    public ETempmuteCommand() {
         super(
                 "tempmute",
                 "/tempmute <player> <time> [reason]",
@@ -32,8 +30,7 @@ public class ETempmuteCommand extends ECommand
     }
 
     @Override
-    public void onCommand(CommandSender sender, String args[])
-    {
+    public void onCommand(CommandSender sender, String args[]) {
         if(!validate(sender, args)) return;
 
         UUID punisherResult = null;
@@ -73,7 +70,7 @@ public class ETempmuteCommand extends ECommand
                 return;
             }
 
-            Revival.getAccountManager().getAccount(uuid, result -> {
+            Revival.getAccountManager().getAccount(uuid, false, result -> {
                 int address = 0;
 
                 if(result.getRegisteredAddresses() != null && !result.getRegisteredAddresses().isEmpty())

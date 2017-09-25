@@ -46,7 +46,7 @@ public class EXPCommand extends ECommand {
                 return;
             }
 
-            Revival.getAccountManager().getAccount(uuid, result -> {
+            Revival.getAccountManager().getAccount(uuid, false, result -> {
                 if(result == null) {
                     player.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
                     return;

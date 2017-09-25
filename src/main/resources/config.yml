@@ -12,6 +12,7 @@ tab:
   enabled: true
   header: "&aDefault Header"
   footer: "&6Default Footer"
+  display-status: true
 
 tickets:
   enabled: true

@@ -41,6 +41,8 @@ public class EssentialsListener implements Listener {
         Player player = event.getPlayer();
         Location from = event.getFrom(), to = event.getTo();
 
+        if(!Config.TAB_DISPLAY_STATUS) return;
+
         if(
                 from.getBlockX() == to.getBlockX() &&
                 from.getBlockY() == to.getBlockY() &&

@@ -9,11 +9,6 @@ import java.util.Set;
 
 public class CommandManager {
 
-    /*
-        TODO:
-            - report/helpop/tickets
-     */
-
     /**
      * Contains every registered command in this plugin
      */

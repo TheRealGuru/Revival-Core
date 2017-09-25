@@ -11,15 +11,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class EUnbanCommand extends ECommand
-{
+public class EUnbanCommand extends ECommand {
 
-    public EUnbanCommand()
-    {
+    public EUnbanCommand() {
         super(
                 "unban",
                 "/unban <player>",
@@ -32,15 +29,13 @@ public class EUnbanCommand extends ECommand
     }
 
     @Override
-    public void onCommand(CommandSender sender, String args[])
-    {
+    public void onCommand(CommandSender sender, String args[]) {
         if(!validate(sender, args)) return;
 
         String namedPlayer = args[0];
         String namedUnbanner = "Console";
 
-        if (sender instanceof Player)
-        {
+        if (sender instanceof Player) {
             Player player = (Player)sender;
             namedUnbanner = player.getName();
         }
@@ -48,15 +43,13 @@ public class EUnbanCommand extends ECommand
         final String unbanner = namedUnbanner;
 
         Revival.getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
-            if(uuid == null)
-            {
+            if(uuid == null) {
                 sender.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
                 return;
             }
 
-            Revival.getAccountManager().getAccount(uuid, result -> {
-                if(result.getPunishments().isEmpty())
-                {
+            Revival.getAccountManager().getAccount(uuid, false, result -> {
+                if(result.getPunishments().isEmpty()) {
                     sender.sendMessage(MsgUtils.getMessage("errors.player-not-banned"));
                     return;
                 }
@@ -64,12 +57,10 @@ public class EUnbanCommand extends ECommand
                 List<Punishment> punishmentCache = new CopyOnWriteArrayList<>(result.getPunishments());
                 int removedBans = 0;
 
-                for(Punishment punishment : punishmentCache)
-                {
+                for(Punishment punishment : punishmentCache) {
                     if(!punishment.getType().equals(PunishType.BAN)) continue;
 
-                    if(punishment.isForever() || !punishment.isExpired())
-                    {
+                    if(punishment.isForever() || !punishment.isExpired()) {
                         result.getPunishments().remove(punishment);
 
                         punishment.setExpireDate(System.currentTimeMillis());
@@ -78,8 +69,7 @@ public class EUnbanCommand extends ECommand
                     }
                 }
 
-                if(removedBans == 0)
-                {
+                if(removedBans == 0) {
                     sender.sendMessage(MsgUtils.getMessage("errors.player-not-banned"));
                     return;
                 }

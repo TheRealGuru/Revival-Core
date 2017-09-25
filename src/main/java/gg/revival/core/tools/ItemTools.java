@@ -62,57 +62,56 @@ public class ItemTools {
     public Enchantment getEnchantFromString(String enchant) {
         String ls = enchant.toLowerCase();
 
-        if(ls.startsWith("aqua")) {
+        if(ls.startsWith("aqua"))
             return Enchantment.WATER_WORKER;
-        } else if(ls.startsWith("bane")) {
+        else if(ls.startsWith("bane"))
             return Enchantment.DAMAGE_ARTHROPODS;
-        } else if(ls.startsWith("blast")) {
+        else if(ls.startsWith("blast"))
             return Enchantment.PROTECTION_EXPLOSIONS;
-        } else if(ls.startsWith("eff")) {
+        else if(ls.startsWith("eff"))
             return Enchantment.DIG_SPEED;
-        } else if(ls.startsWith("feather")) {
+        else if(ls.startsWith("feather"))
             return Enchantment.PROTECTION_FALL;
-        } else if(ls.startsWith("firea")) {
+        else if(ls.startsWith("firea"))
             return Enchantment.FIRE_ASPECT;
-        } else if(ls.startsWith("firep")) {
+        else if(ls.startsWith("firep"))
             return Enchantment.PROTECTION_FIRE;
-        } else if(ls.startsWith("flame")) {
+        else if(ls.startsWith("flame"))
             return Enchantment.ARROW_FIRE;
-        } else if(ls.startsWith("fortune")) {
+        else if(ls.startsWith("fortune"))
             return Enchantment.LOOT_BONUS_BLOCKS;
-        } else if(ls.startsWith("inf")) {
+        else if(ls.startsWith("inf"))
             return Enchantment.ARROW_INFINITE;
-        } else if(ls.startsWith("knock")) {
+        else if(ls.startsWith("knock"))
             return Enchantment.KNOCKBACK;
-        } else if(ls.startsWith("loot")) {
+        else if(ls.startsWith("loot"))
             return Enchantment.LOOT_BONUS_MOBS;
-        } else if(ls.startsWith("luck")) {
+        else if(ls.startsWith("luck"))
             return Enchantment.LUCK;
-        } else if(ls.startsWith("lure")) {
+        else if(ls.startsWith("lure"))
             return Enchantment.LURE;
-        } else if(ls.startsWith("power")) {
+        else if(ls.startsWith("power"))
             return Enchantment.ARROW_DAMAGE;
-        } else if(ls.startsWith("proj")) {
+        else if(ls.startsWith("proj"))
             return Enchantment.PROTECTION_PROJECTILE;
-        } else if(ls.startsWith("prot")) {
+        else if(ls.startsWith("prot"))
             return Enchantment.PROTECTION_ENVIRONMENTAL;
-        } else if(ls.startsWith("punch")) {
+        else if(ls.startsWith("punch"))
             return Enchantment.ARROW_KNOCKBACK;
-        } else if(ls.startsWith("sharp")) {
+        else if(ls.startsWith("sharp"))
             return Enchantment.DAMAGE_ALL;
-        } else if(ls.startsWith("resp")) {
+        else if(ls.startsWith("resp"))
             return Enchantment.OXYGEN;
-        } else if(ls.startsWith("silk")) {
+        else if(ls.startsWith("silk"))
             return Enchantment.SILK_TOUCH;
-        } else if(ls.startsWith("smite")) {
+        else if(ls.startsWith("smite"))
             return Enchantment.DAMAGE_UNDEAD;
-        } else if(ls.startsWith("thorns")) {
+        else if(ls.startsWith("thorns"))
             return Enchantment.THORNS;
-        } else if(ls.startsWith("unb")) {
+        else if(ls.startsWith("unb"))
             return Enchantment.DURABILITY;
-        } else if(ls.startsWith("dep")) {
+        else if(ls.startsWith("dep"))
             return Enchantment.DEPTH_STRIDER;
-        }
 
         return null;
     }

@@ -73,6 +73,9 @@ public class PunishmentManager {
                         }
                     }
 
+                    if(current.getString("punisher") != null)
+                        punisher = UUID.fromString(current.getString("punisher"));
+
                     Punishment punishment = new Punishment(
                             punishmentId, punishedPlayer, punishedAddress,
                             punisher, reason, type, createTime, expireTime

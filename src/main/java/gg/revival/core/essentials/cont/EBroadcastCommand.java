@@ -71,6 +71,8 @@ public class EBroadcastCommand extends ECommand {
 
                 output.writeShort(messageBytes.toByteArray().length);
                 output.write(messageBytes.toByteArray());
+
+                Logger.log("Deployed network-wide broadcast");
             }
         }
 

@@ -1,5 +1,6 @@
 package gg.revival.core.tickets;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mongodb.client.FindIterable;
@@ -39,7 +40,9 @@ public class TicketManager {
      * @return
      */
     public Ticket getTicketByUUID(UUID ticketId) {
-        for(Ticket ticket : loadedTickets)
+        ImmutableList<Ticket> cache = ImmutableList.copyOf(loadedTickets);
+
+        for(Ticket ticket : cache)
             if(ticket.getTicketUUID().equals(ticketId)) return ticket;
 
         return null;
@@ -51,9 +54,10 @@ public class TicketManager {
      * @return
      */
     public Set<Ticket> getTicketsByCreator(UUID creatorId) {
+        ImmutableList<Ticket> cache = ImmutableList.copyOf(loadedTickets);
         Set<Ticket> result = Sets.newHashSet();
 
-        for(Ticket ticket : loadedTickets)
+        for(Ticket ticket : cache)
             if(ticket.getTicketCreator().equals(creatorId)) result.add(ticket);
 
         return result;
@@ -65,9 +69,10 @@ public class TicketManager {
      * @return
      */
     public Set<Ticket> getReports(UUID reportedId) {
+        ImmutableList<Ticket> cache = ImmutableList.copyOf(loadedTickets);
         Set<Ticket> result = Sets.newHashSet();
 
-        for(Ticket ticket : loadedTickets)
+        for(Ticket ticket : cache)
             if(ticket.getReportedUUID() != null && ticket.getReportedUUID().equals(reportedId)) result.add(ticket);
 
         return result;
