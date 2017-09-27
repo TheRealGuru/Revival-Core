@@ -1,6 +1,6 @@
 package gg.revival.core.essentials;
 
-import gg.revival.core.tools.MsgUtils;
+import gg.revival.core.Revival;
 import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -8,11 +8,13 @@ import org.bukkit.entity.Player;
 
 public class ECommand {
 
+    @Getter private Revival revival;
     @Getter String label, syntax, description, permission;
     @Getter int minArgs, maxArgs;
     @Getter boolean playerOnly;
 
-    public ECommand(String label, String syntax, String description, String permission, int minArgs, int maxArgs, boolean playerOnly) {
+    public ECommand(Revival revival, String label, String syntax, String description, String permission, int minArgs, int maxArgs, boolean playerOnly) {
+        this.revival = revival;
         this.label = label;
         this.syntax = syntax;
         this.description = description;
@@ -30,7 +32,7 @@ public class ECommand {
      */
     public boolean validate(CommandSender sender, String args[]) {
         if(!(sender instanceof Player) && isPlayerOnly()) {
-            sender.sendMessage(MsgUtils.getMessage("errors.no-console"));
+            sender.sendMessage(revival.getMsgTools().getMessage("errors.no-console"));
             return false;
         }
 
@@ -38,7 +40,7 @@ public class ECommand {
             Player player = (Player)sender;
 
             if(!player.hasPermission(permission)) {
-                player.sendMessage(MsgUtils.getMessage("errors.no-permission"));
+                player.sendMessage(revival.getMsgTools().getMessage("errors.no-permission"));
                 return false;
             }
         }

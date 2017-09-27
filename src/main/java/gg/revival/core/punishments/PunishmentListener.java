@@ -1,7 +1,7 @@
 package gg.revival.core.punishments;
 
 import gg.revival.core.Revival;
-import gg.revival.core.tools.MsgUtils;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -13,28 +13,34 @@ import java.util.Date;
 
 public class PunishmentListener implements Listener {
 
+    @Getter private Revival revival;
+
+    public PunishmentListener(Revival revival) {
+        this.revival = revival;
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
 
-        if(Revival.getPunishments().getActiveMute(player.getUniqueId()) != null) {
-            Punishment punishment = Revival.getPunishments().getActiveMute(player.getUniqueId());
+        if(revival.getPunishments().getActiveMute(player.getUniqueId()) != null) {
+            Punishment punishment = revival.getPunishments().getActiveMute(player.getUniqueId());
 
             if(punishment.isForever())
-                player.sendMessage(MsgUtils.getMessage("muted.forever").replace("%reason%", punishment.getReason()));
+                player.sendMessage(revival.getMsgTools().getMessage("muted.forever").replace("%reason%", punishment.getReason()));
 
             else {
                 Date date = new Date(punishment.getExpireDate());
                 SimpleDateFormat formatter = new SimpleDateFormat("M-d-yyyy '@' hh:mm:ss a z");
 
-                player.sendMessage(MsgUtils.getMessage("muted.temp").replace("%reason%", punishment.getReason()).replace("%time%", formatter.format(date)));
+                player.sendMessage(revival.getMsgTools().getMessage("muted.temp").replace("%reason%", punishment.getReason()).replace("%time%", formatter.format(date)));
             }
 
             event.setCancelled(true);
         }
 
-        if(Revival.getChatFilter().isBad(event.getMessage().split(" "))) {
-            player.sendMessage(MsgUtils.getMessage("errors.not-allowed-to-say"));
+        if(revival.getChatFilter().isBad(event.getMessage().split(" "))) {
+            player.sendMessage(revival.getMsgTools().getMessage("errors.not-allowed-to-say"));
             event.setCancelled(true);
         }
     }

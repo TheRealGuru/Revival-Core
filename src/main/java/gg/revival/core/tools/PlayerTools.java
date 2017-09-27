@@ -13,8 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
-public class PlayerTools
-{
+public class PlayerTools {
 
     /**
      * Opens a GUI containing the players inventory contents, armor contents, health, food and potions

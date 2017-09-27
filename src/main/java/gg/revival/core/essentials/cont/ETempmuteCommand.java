@@ -5,7 +5,6 @@ import gg.revival.core.essentials.ECommand;
 import gg.revival.core.punishments.PunishType;
 import gg.revival.core.punishments.Punishment;
 import gg.revival.core.tools.Logger;
-import gg.revival.core.tools.MsgUtils;
 import gg.revival.core.tools.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -17,8 +16,9 @@ import java.util.UUID;
 
 public class ETempmuteCommand extends ECommand {
 
-    public ETempmuteCommand() {
+    public ETempmuteCommand(Revival revival) {
         super(
+                revival,
                 "tempmute",
                 "/tempmute <player> <time> [reason]",
                 "Tempmute a player",
@@ -57,20 +57,20 @@ public class ETempmuteCommand extends ECommand {
         final UUID punisher = punisherResult;
         final String reason = reasonResult;
         final String punisherName = namedPunisher;
-        final long muteDur = Revival.getTimeTools().getTime(namedTime);
+        final long muteDur = getRevival().getTimeTools().getTime(namedTime);
 
         if (muteDur <= 0) {
-            sender.sendMessage(MsgUtils.getMessage("errors.invalid-time"));
+            sender.sendMessage(getRevival().getMsgTools().getMessage("errors.invalid-time"));
             return;
         }
 
-        Revival.getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
+        getRevival().getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
             if(uuid == null) {
-                sender.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
+                sender.sendMessage(getRevival().getMsgTools().getMessage("errors.player-not-found"));
                 return;
             }
 
-            Revival.getAccountManager().getAccount(uuid, false, result -> {
+            getRevival().getAccountManager().getAccount(uuid, false, result -> {
                 int address = 0;
 
                 if(result.getRegisteredAddresses() != null && !result.getRegisteredAddresses().isEmpty())
@@ -81,20 +81,20 @@ public class ETempmuteCommand extends ECommand {
                 result.getPunishments().add(punishment);
 
                 if(Bukkit.getPlayer(uuid) != null)
-                    Revival.getPunishments().getActiveMutes().put(uuid, punishment);
+                    getRevival().getPunishments().getActiveMutes().put(uuid, punishment);
                 else
-                    Revival.getAccountManager().saveAccount(result, false, Bukkit.getPlayer(uuid) == null);
+                    getRevival().getAccountManager().saveAccount(result, false, Bukkit.getPlayer(uuid) == null);
 
                 Date date = new Date(punishment.getExpireDate());
                 SimpleDateFormat formatter = new SimpleDateFormat("M-d-yyyy '@' hh:mm:ss a z");
 
-                Revival.getPlayerTools().sendPermissionMessage(MsgUtils.getMessage("punish-notifications.player-tempmuted")
+                getRevival().getPlayerTools().sendPermissionMessage(getRevival().getMsgTools().getMessage("punish-notifications.player-tempmuted")
                         .replace("%player%", username)
                         .replace("%muter%", punisherName)
                         .replace("%time%", formatter.format(date)), Permissions.PUNISHMENT_VIEW);
 
                 if(Bukkit.getPlayer(uuid) != null) {
-                    Bukkit.getPlayer(uuid).sendMessage(MsgUtils.getMessage("muted.temp")
+                    Bukkit.getPlayer(uuid).sendMessage(getRevival().getMsgTools().getMessage("muted.temp")
                             .replace("%reason%", reason).replace("%time%", formatter.format(date)));
                 }
 

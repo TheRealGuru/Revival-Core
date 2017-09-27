@@ -2,6 +2,7 @@ package gg.revival.core.tools;
 
 import gg.revival.core.Revival;
 import gg.revival.core.ranks.Rank;
+import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -12,69 +13,81 @@ import java.util.Map;
 
 public class Config {
 
-    public static boolean DB_ENABLED = false;
-    public static String DB_HOST = "localhost";
-    public static int DB_PORT = 27017;
-    public static boolean DB_CREDS = false;
-    public static String DB_USERNAME = "root";
-    public static String DB_PASSWORD = "password";
-    public static String DB_DATABASE = "revival";
+    @Getter private Revival revival;
 
-    public static boolean BROADCASTS_ENABLED = true;
-    public static boolean BROADCASTS_RANDOM = true;
-    public static int BROADCASTS_INTERVAL = 60;
-    public static String BROADCASTS_PREFIX = ChatColor.GOLD + "Broadcast: " + ChatColor.RESET;
+    public Config(Revival revival) {
+        this.revival = revival;
+    }
 
-    public static boolean CHAT_FILTER_ENABLED = true;
-    public static int CHAT_FILTER_INTERVAL = 3;
+    public boolean DB_ENABLED = false;
+    public String DB_HOST = "localhost";
+    public int DB_PORT = 27017;
+    public boolean DB_CREDS = false;
+    public String DB_USERNAME = "root";
+    public String DB_PASSWORD = "password";
+    public String DB_DATABASE = "revival";
 
-    public static boolean TICKETS_ENABLED = true;
-    public static int TICKETS_COOLDOWN = 30;
+    public boolean BROADCASTS_ENABLED = true;
+    public boolean BROADCASTS_RANDOM = true;
+    public int BROADCASTS_INTERVAL = 60;
+    public String BROADCASTS_PREFIX = ChatColor.GOLD + "Broadcast: " + ChatColor.RESET;
 
-    public static boolean DISABLE_HUB_COMMAND = false;
+    public boolean CHAT_FILTER_ENABLED = true;
+    public int CHAT_FILTER_INTERVAL = 3;
 
-    public static boolean TAB_ENABLED = true;
-    public static String TAB_HEADER = "Default Header";
-    public static String TAB_FOOTER = "Default Footer";
-    public static boolean TAB_DISPLAY_STATUS = true;
+    public boolean TICKETS_ENABLED = true;
+    public int TICKETS_COOLDOWN = 30;
 
-    public static Map<String, List<String>> HELP_TOPICS = new HashMap<>();
+    public boolean DISABLE_HUB_COMMAND = false;
+
+    public boolean TAB_ENABLED = true;
+    public String TAB_HEADER = "Default Header";
+    public String TAB_FOOTER = "Default Footer";
+    public boolean TAB_DISPLAY_STATUS = true;
+
+    public double PLAYER_VELOCITY_H = 1.0;
+    public double PLAYER_VELOCITY_V = 1.0;
+
+    public Map<String, List<String>> HELP_TOPICS = new HashMap<>();
 
     /**
      * Loads configuration from config.yml
      */
-    public static void loadConfiguration() {
-        DB_ENABLED = Revival.getFileManager().getConfig().getBoolean("database.enabled");
-        DB_HOST = Revival.getFileManager().getConfig().getString("database.hostname");
-        DB_PORT = Revival.getFileManager().getConfig().getInt("database.port");
-        DB_CREDS = Revival.getFileManager().getConfig().getBoolean("database.creds.enabled");
-        DB_USERNAME = Revival.getFileManager().getConfig().getString("database.creds.username");
-        DB_PASSWORD = Revival.getFileManager().getConfig().getString("database.creds.password");
-        DB_DATABASE = Revival.getFileManager().getConfig().getString("database.creds.database");
+    public void loadConfiguration() {
+        DB_ENABLED = revival.getConfig().getBoolean("database.enabled");
+        DB_HOST = revival.getConfig().getString("database.hostname");
+        DB_PORT = revival.getConfig().getInt("database.port");
+        DB_CREDS = revival.getConfig().getBoolean("database.creds.enabled");
+        DB_USERNAME = revival.getConfig().getString("database.creds.username");
+        DB_PASSWORD = revival.getConfig().getString("database.creds.password");
+        DB_DATABASE = revival.getConfig().getString("database.creds.database");
 
-        BROADCASTS_ENABLED = Revival.getFileManager().getConfig().getBoolean("broadcasts.enabled");
-        BROADCASTS_RANDOM = Revival.getFileManager().getConfig().getBoolean("broadcasts.random");
-        BROADCASTS_INTERVAL = Revival.getFileManager().getConfig().getInt("broadcasts.interval");
-        BROADCASTS_PREFIX = ChatColor.translateAlternateColorCodes('&', Revival.getFileManager().getConfig().getString("broadcasts.prefix"));
+        BROADCASTS_ENABLED = revival.getConfig().getBoolean("broadcasts.enabled");
+        BROADCASTS_RANDOM = revival.getConfig().getBoolean("broadcasts.random");
+        BROADCASTS_INTERVAL = revival.getConfig().getInt("broadcasts.interval");
+        BROADCASTS_PREFIX = ChatColor.translateAlternateColorCodes('&', revival.getConfig().getString("broadcasts.prefix"));
 
-        CHAT_FILTER_ENABLED = Revival.getFileManager().getConfig().getBoolean("chat-filter.enabled");
-        CHAT_FILTER_INTERVAL = Revival.getFileManager().getConfig().getInt("chat-filter.interval");
+        CHAT_FILTER_ENABLED = revival.getConfig().getBoolean("chat-filter.enabled");
+        CHAT_FILTER_INTERVAL = revival.getConfig().getInt("chat-filter.interval");
 
-        TICKETS_ENABLED = Revival.getFileManager().getConfig().getBoolean("tickets.enabled");
-        TICKETS_COOLDOWN = Revival.getFileManager().getConfig().getInt("tickets.cooldown");
+        TICKETS_ENABLED = revival.getConfig().getBoolean("tickets.enabled");
+        TICKETS_COOLDOWN = revival.getConfig().getInt("tickets.cooldown");
 
-        DISABLE_HUB_COMMAND = Revival.getFileManager().getConfig().getBoolean("command-settings.disable-hub-command");
+        DISABLE_HUB_COMMAND = revival.getConfig().getBoolean("command-settings.disable-hub-command");
 
-        TAB_ENABLED = Revival.getFileManager().getConfig().getBoolean("tab.enabled");
-        TAB_HEADER = ChatColor.translateAlternateColorCodes('&', Revival.getFileManager().getConfig().getString("tab.header"));
-        TAB_FOOTER = ChatColor.translateAlternateColorCodes('&', Revival.getFileManager().getConfig().getString("tab.footer"));
-        TAB_DISPLAY_STATUS = Revival.getFileManager().getConfig().getBoolean("tab.display-status");
+        TAB_ENABLED = revival.getConfig().getBoolean("tab.enabled");
+        TAB_HEADER = ChatColor.translateAlternateColorCodes('&', revival.getConfig().getString("tab.header"));
+        TAB_FOOTER = ChatColor.translateAlternateColorCodes('&', revival.getConfig().getString("tab.footer"));
+        TAB_DISPLAY_STATUS = revival.getConfig().getBoolean("tab.display-status");
 
-        ConfigurationSection helpTopicSection = Revival.getFileManager().getConfig().getConfigurationSection("help-topics");
+        PLAYER_VELOCITY_H = revival.getConfig().getDouble("patches.player-velocity.h");
+        PLAYER_VELOCITY_V = revival.getConfig().getDouble("patches.player-velocity.v");
+
+        ConfigurationSection helpTopicSection = revival.getConfig().getConfigurationSection("help-topics");
 
         for(String topics : helpTopicSection.getKeys(false)) {
-            String displayName = Revival.getFileManager().getConfig().getString("help-topics." + topics + ".display-name");
-            List<String> unformattedLore = Revival.getFileManager().getConfig().getStringList("help-topics." + topics + ".page");
+            String displayName = revival.getConfig().getString("help-topics." + topics + ".display-name");
+            List<String> unformattedLore = revival.getConfig().getStringList("help-topics." + topics + ".page");
             List<String> formattedLore = new ArrayList<>();
 
             for(String lore : unformattedLore)
@@ -89,42 +102,42 @@ public class Config {
     /**
      * Loads filtered words from config.yml
      */
-    public static void loadFilteredWords() {
-        Revival.getChatFilter().getBadWords().addAll(Revival.getFileManager().getConfig().getStringList("chat-filter.filter-out"));
-        Logger.log("Loaded " + Revival.getChatFilter().getBadWords().size() + " Chat Filters");
+    public void loadFilteredWords() {
+        revival.getChatFilter().getBadWords().addAll(revival.getConfig().getStringList("chat-filter.filter-out"));
+        Logger.log("Loaded " + revival.getChatFilter().getBadWords().size() + " Chat Filters");
     }
 
     /**
      * Loads ranks from ranks.yml
      */
-    public static void loadRanks() {
-        ConfigurationSection section = Revival.getFileManager().getRanks().getConfigurationSection("ranks");
+    public void loadRanks() {
+        ConfigurationSection section = revival.getFileManager().getRanks().getConfigurationSection("ranks");
 
         for(String ranks : section.getKeys(false)) {
-            String name = Revival.getFileManager().getRanks().getString("ranks." + ranks + ".name");
-            String tag = Revival.getFileManager().getRanks().getString("ranks." + ranks + ".tag");
-            String permission = Revival.getFileManager().getRanks().getString("ranks." + ranks + ".permission");
+            String name = revival.getFileManager().getRanks().getString("ranks." + ranks + ".name");
+            String tag = revival.getFileManager().getRanks().getString("ranks." + ranks + ".tag");
+            String permission = revival.getFileManager().getRanks().getString("ranks." + ranks + ".permission");
 
             Rank rank = new Rank(name, tag, permission);
 
-            Revival.getRankManager().getRanks().add(rank);
+            revival.getRankManager().getRanks().add(rank);
         }
 
-        Logger.log("Loaded " + Revival.getRankManager().getRanks().size() + " Ranks");
+        Logger.log("Loaded " + revival.getRankManager().getRanks().size() + " Ranks");
     }
 
     /**
      * Loads broadcasts from broadcasts.yml
      */
-    public static void loadBroadcasts() {
-        List<String> unformatted = Revival.getFileManager().getBroadcasts().getStringList("broadcasts");
+    public void loadBroadcasts() {
+        List<String> unformatted = revival.getFileManager().getBroadcasts().getStringList("broadcasts");
         List<String> broadcasts = new ArrayList<>();
 
         for(String broadcast : unformatted)
             broadcasts.add(ChatColor.translateAlternateColorCodes('&', broadcast));
 
-        Revival.getBroadcasts().getLoadedBroadcasts().addAll(broadcasts);
-        Logger.log("Loaded " + Revival.getBroadcasts().getLoadedBroadcasts().size() + " Broadcasts");
+        revival.getBroadcasts().getLoadedBroadcasts().addAll(broadcasts);
+        Logger.log("Loaded " + revival.getBroadcasts().getLoadedBroadcasts().size() + " Broadcasts");
     }
 
 }

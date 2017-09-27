@@ -8,8 +8,9 @@ import org.bukkit.entity.Player;
 
 public class EHelpOpCommand extends ECommand {
 
-    public EHelpOpCommand() {
+    public EHelpOpCommand(Revival revival) {
         super(
+                revival,
                 "helpop",
                 "/helpop <question>",
                 "Ask the staff team a question",
@@ -26,9 +27,9 @@ public class EHelpOpCommand extends ECommand {
 
         Player player = (Player)sender;
 
-        if(Revival.getTicketManager().getTicketCooldowns().containsKey(player.getUniqueId())) {
+        if(getRevival().getTicketManager().getTicketCooldowns().containsKey(player.getUniqueId())) {
             player.sendMessage(ChatColor.RED + "You can not file another ticket for " +
-                    (int)(Revival.getTicketManager().getTicketCooldowns().get(player.getUniqueId()) - System.currentTimeMillis()) / 1000L +
+                    (int)(getRevival().getTicketManager().getTicketCooldowns().get(player.getUniqueId()) - System.currentTimeMillis()) / 1000L +
                     " seconds");
             return;
         }
@@ -40,7 +41,7 @@ public class EHelpOpCommand extends ECommand {
 
         String question = questionBuilder.toString().trim();
 
-        Revival.getTicketManager().createTicket(player.getUniqueId(), null, question);
+        getRevival().getTicketManager().createTicket(player.getUniqueId(), null, question);
         player.sendMessage(ChatColor.GREEN + "Ticket sent successfully. All online staff have been notified.");
     }
 

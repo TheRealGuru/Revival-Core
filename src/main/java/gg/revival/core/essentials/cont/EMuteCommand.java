@@ -5,7 +5,6 @@ import gg.revival.core.essentials.ECommand;
 import gg.revival.core.punishments.PunishType;
 import gg.revival.core.punishments.Punishment;
 import gg.revival.core.tools.Logger;
-import gg.revival.core.tools.MsgUtils;
 import gg.revival.core.tools.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -15,8 +14,9 @@ import java.util.UUID;
 
 public class EMuteCommand extends ECommand {
 
-    public EMuteCommand() {
+    public EMuteCommand(Revival revival) {
         super(
+                revival,
               "mute",
                 "/mute <player> [reason]",
                 "Mute a player forever",
@@ -55,13 +55,13 @@ public class EMuteCommand extends ECommand {
         final String reason = reasonResult;
         final String punisherName = namedPunisher;
 
-        Revival.getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
+        getRevival().getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
             if(uuid == null) {
-                sender.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
+                sender.sendMessage(getRevival().getMsgTools().getMessage("errors.player-not-found"));
                 return;
             }
 
-            Revival.getAccountManager().getAccount(uuid, false, result -> {
+            getRevival().getAccountManager().getAccount(uuid, false, result -> {
                 int address = 0;
 
                 if(result.getRegisteredAddresses() != null && !result.getRegisteredAddresses().isEmpty())
@@ -72,16 +72,16 @@ public class EMuteCommand extends ECommand {
                 result.getPunishments().add(punishment);
 
                 if(Bukkit.getPlayer(uuid) != null)
-                    Revival.getPunishments().getActiveMutes().put(uuid, punishment);
+                    getRevival().getPunishments().getActiveMutes().put(uuid, punishment);
                 else
-                    Revival.getAccountManager().saveAccount(result, false, Bukkit.getPlayer(uuid) == null);
+                    getRevival().getAccountManager().saveAccount(result, false, Bukkit.getPlayer(uuid) == null);
 
-                Revival.getPlayerTools().sendPermissionMessage(MsgUtils.getMessage("punish-notifications.player-muted")
+                getRevival().getPlayerTools().sendPermissionMessage(getRevival().getMsgTools().getMessage("punish-notifications.player-muted")
                         .replace("%player%", username)
                         .replace("%muter%", punisherName), Permissions.PUNISHMENT_VIEW);
 
                 if(Bukkit.getPlayer(uuid) != null)
-                    Bukkit.getPlayer(uuid).sendMessage(MsgUtils.getMessage("muted.forever").replace("%reason%", reason));
+                    Bukkit.getPlayer(uuid).sendMessage(getRevival().getMsgTools().getMessage("muted.forever").replace("%reason%", reason));
 
                 Logger.log(username + " has been muted by " + punisherName + " for " + punishment.getReason());
             });

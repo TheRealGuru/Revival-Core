@@ -90,3 +90,6 @@ commands:
   tickets:
     description: Tickets command
     aliases: [ticket]
+  playervelocity:
+    description: Modify player velocity patch values
+    aliases: [pv]

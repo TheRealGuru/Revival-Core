@@ -2,7 +2,6 @@ package gg.revival.core.database;
 
 import com.mongodb.client.MongoCollection;
 import gg.revival.core.Revival;
-import gg.revival.core.tools.Config;
 import gg.revival.driver.MongoAPI;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +9,12 @@ import org.bson.Document;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class DBManager {
+
+    @Getter private Revival revival;
+
+    public DBManager(Revival revival) {
+        this.revival = revival;
+    }
 
     @Getter @Setter MongoCollection<Document> accounts;
     @Getter @Setter MongoCollection<Document> punishments;
@@ -19,7 +24,7 @@ public class DBManager {
      * Connects to the MongoDB instance, every plugin that needs to do so waits for this method to be ran
      */
     public void establishConnection() {
-        if(!Config.DB_ENABLED)
+        if(!revival.getCfg().DB_ENABLED)
             return;
 
         if(MongoAPI.isConnected())
@@ -29,28 +34,28 @@ public class DBManager {
         {
             public void run()
             {
-                if(Config.DB_CREDS) {
+                if(revival.getCfg().DB_CREDS) {
                     MongoAPI.connect(
-                            Config.DB_HOST,
-                            Config.DB_PORT,
-                            Config.DB_USERNAME,
-                            Config.DB_PASSWORD,
-                            Config.DB_DATABASE
+                            revival.getCfg().DB_HOST,
+                            revival.getCfg().DB_PORT,
+                            revival.getCfg().DB_USERNAME,
+                            revival.getCfg().DB_PASSWORD,
+                            revival.getCfg().DB_DATABASE
                     );
                 }
 
                 else {
                     MongoAPI.connect(
-                            Config.DB_HOST,
-                            Config.DB_PORT,
+                            revival.getCfg().DB_HOST,
+                            revival.getCfg().DB_PORT,
                             null, null, null
                     );
                 }
 
                 if(MongoAPI.isConnected()) {
-                    accounts = MongoAPI.getCollection(Config.DB_DATABASE, "accounts");
-                    punishments = MongoAPI.getCollection(Config.DB_DATABASE, "punishments");
-                    tickets = MongoAPI.getCollection(Config.DB_DATABASE, "tickets");
+                    accounts = MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "accounts");
+                    punishments = MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "punishments");
+                    tickets = MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "tickets");
                 }
             }
         }.runTaskAsynchronously(Revival.getCore());

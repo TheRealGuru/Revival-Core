@@ -1,19 +1,18 @@
 package gg.revival.core.essentials.cont;
 
+import gg.revival.core.Revival;
 import gg.revival.core.essentials.ECommand;
-import gg.revival.core.tools.MsgUtils;
 import gg.revival.core.tools.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class EHealCommand extends ECommand
-{
+public class EHealCommand extends ECommand {
 
-    public EHealCommand()
-    {
+    public EHealCommand(Revival revival) {
         super(
+                revival,
                 "heal",
                 "/heal [player]",
                 "Heal a player",
@@ -25,14 +24,11 @@ public class EHealCommand extends ECommand
     }
 
     @Override
-    public void onCommand(CommandSender sender, String args[])
-    {
+    public void onCommand(CommandSender sender, String args[]) {
         if(!validate(sender, args)) return;
 
-        if(args.length == 0)
-        {
-            if(!(sender instanceof Player))
-            {
+        if(args.length == 0) {
+            if(!(sender instanceof Player)) {
                 sender.sendMessage(ChatColor.RED + "You can't heal the console!");
                 return;
             }
@@ -55,15 +51,13 @@ public class EHealCommand extends ECommand
         String namedPlayer = args[0];
         String healer = "Console";
 
-        if(sender instanceof Player)
-        {
+        if(sender instanceof Player) {
             Player player = (Player)sender;
             healer = player.getName();
         }
 
-        if(Bukkit.getPlayer(namedPlayer) == null || !Bukkit.getPlayer(namedPlayer).isOnline())
-        {
-            sender.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
+        if(Bukkit.getPlayer(namedPlayer) == null || !Bukkit.getPlayer(namedPlayer).isOnline()) {
+            sender.sendMessage(getRevival().getMsgTools().getMessage("errors.player-not-found"));
             return;
         }
 

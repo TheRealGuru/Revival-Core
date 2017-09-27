@@ -2,6 +2,7 @@ package gg.revival.core.tickets;
 
 import com.google.common.collect.Sets;
 import gg.revival.core.Revival;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -15,13 +16,19 @@ import java.util.*;
 
 public class TicketGUI {
 
+    @Getter private Revival revival;
+
+    public TicketGUI(Revival revival) {
+        this.revival = revival;
+    }
+
     /**
      * Opens/Updates the TicketGUI for a specified player
      * @param displayedTo
      * @param inventory
      * @param tickets
      */
-    public static void show(Player displayedTo, final Inventory inventory, Set<Ticket> tickets) {
+    public void show(Player displayedTo, final Inventory inventory, Set<Ticket> tickets) {
         if(tickets.size() == 0) {
             displayedTo.closeInventory();
             return;
@@ -36,7 +43,7 @@ public class TicketGUI {
                 toLookup.add(ticket.getReportedUUID());
         }
 
-        Revival.getPlayerTools().getManyOfflinePlayersByUUID(toLookup, result -> {
+        revival.getPlayerTools().getManyOfflinePlayersByUUID(toLookup, result -> {
             Inventory newInventory = inventory;
 
             if(newInventory == null)

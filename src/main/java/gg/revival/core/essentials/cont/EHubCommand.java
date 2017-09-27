@@ -2,18 +2,16 @@ package gg.revival.core.essentials.cont;
 
 import gg.revival.core.Revival;
 import gg.revival.core.essentials.ECommand;
-import gg.revival.core.tools.Config;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class EHubCommand extends ECommand
-{
+public class EHubCommand extends ECommand {
 
-    public EHubCommand()
-    {
-        super("hub",
+    public EHubCommand(Revival revival) {
+        super(  revival,
+                "hub",
                 "/hub",
                 "Return to the Hub",
                 null,
@@ -23,14 +21,12 @@ public class EHubCommand extends ECommand
     }
 
     @Override
-    public void onCommand(CommandSender sender, String args[])
-    {
+    public void onCommand(CommandSender sender, String args[]) {
         if(!validate(sender, args)) return;
 
         Player player = (Player)sender;
 
-        if(Config.DISABLE_HUB_COMMAND)
-        {
+        if(getRevival().getCfg().DISABLE_HUB_COMMAND) {
             player.sendMessage(ChatColor.RED + "This command is disabled on this server");
             return;
         }
@@ -42,9 +38,7 @@ public class EHubCommand extends ECommand
             public void run()
             {
                 if(player != null)
-                {
                     player.kickPlayer(ChatColor.GREEN + "Returned to hub");
-                }
             }
         }.runTaskLater(Revival.getCore(), 20L);
     }

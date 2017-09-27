@@ -9,14 +9,14 @@ import java.io.IOException;
 
 public class FileManager {
 
-    public File configFile;
-    public File rankFile;
-    public File broadcastFile;
-    public File messageFile;
-    public FileConfiguration configConfig;
-    public FileConfiguration rankConfig;
-    public FileConfiguration broadcastConfig;
-    public FileConfiguration messageConfig;
+    private File configFile;
+    private File rankFile;
+    private File broadcastFile;
+    private File messageFile;
+    private FileConfiguration configConfig;
+    private FileConfiguration rankConfig;
+    private FileConfiguration broadcastConfig;
+    private FileConfiguration messageConfig;
 
     public void createFiles() {
         try {

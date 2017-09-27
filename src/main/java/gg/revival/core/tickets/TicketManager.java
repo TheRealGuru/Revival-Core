@@ -6,10 +6,8 @@ import com.google.common.collect.Sets;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import gg.revival.core.Revival;
-import gg.revival.core.tools.Config;
 import gg.revival.core.tools.Logger;
 import gg.revival.core.tools.Permissions;
-import gg.revival.core.tools.Processor;
 import gg.revival.driver.MongoAPI;
 import lombok.Getter;
 import org.bson.Document;
@@ -23,6 +21,12 @@ import java.util.Set;
 import java.util.UUID;
 
 public class TicketManager {
+
+    @Getter private Revival revival;
+
+    public TicketManager(Revival revival) {
+        this.revival = revival;
+    }
 
     /**
      * Contains all open tickets
@@ -89,9 +93,9 @@ public class TicketManager {
         loadedTickets.add(ticket);
         saveTicket(ticket, false);
 
-        Revival.getPlayerTools().getOfflinePlayer(creator, (creatorId, creatorUsername) -> {
+        revival.getPlayerTools().getOfflinePlayer(creator, (creatorId, creatorUsername) -> {
             if(reported != null) {
-                Revival.getPlayerTools().getOfflinePlayer(reported, (reportedId, reportedUsername) -> {
+                revival.getPlayerTools().getOfflinePlayer(reported, (reportedId, reportedUsername) -> {
                     sendNotification(ticket, creatorUsername, reportedUsername);
                     Logger.log(creatorUsername + " reported " + reportedUsername + " for " + ticket.getReason());
                 });
@@ -106,17 +110,17 @@ public class TicketManager {
                     players.getOpenInventory().getTopInventory() != null &&
                             players.getOpenInventory().getTopInventory().getName() != null &&
                             players.getOpenInventory().getTopInventory().getName().equals(ChatColor.BLACK + "Tickets")) {
-                TicketGUI.show(players, players.getOpenInventory().getTopInventory(), getLoadedTickets());
+                revival.getTicketGui().show(players, players.getOpenInventory().getTopInventory(), getLoadedTickets());
             }
         }
 
-        ticketCooldowns.put(creator, System.currentTimeMillis() + (Config.TICKETS_COOLDOWN * 1000L));
+        ticketCooldowns.put(creator, System.currentTimeMillis() + (revival.getCfg().TICKETS_COOLDOWN * 1000L));
 
         new BukkitRunnable() {
             public void run() {
                 ticketCooldowns.remove(creator);
             }
-        }.runTaskLaterAsynchronously(Revival.getCore(), Config.TICKETS_COOLDOWN * 20L);
+        }.runTaskLaterAsynchronously(Revival.getCore(), revival.getCfg().TICKETS_COOLDOWN * 20L);
     }
 
     /**
@@ -144,17 +148,17 @@ public class TicketManager {
                     players.getOpenInventory().getTopInventory() != null &&
                     players.getOpenInventory().getTopInventory().getName() != null &&
                     players.getOpenInventory().getTopInventory().getName().equals(ChatColor.BLACK + "Tickets")) {
-                TicketGUI.show(players, players.getOpenInventory().getTopInventory(), getLoadedTickets());
+                revival.getTicketGui().show(players, players.getOpenInventory().getTopInventory(), getLoadedTickets());
             }
         }
     }
 
     public void sendNotification(Ticket ticket, String creatorName, String reportedName) {
         if(ticket.getReportedUUID() != null && reportedName != null)
-            Revival.getPlayerTools().sendPermissionMessage(ChatColor.WHITE + "[" + ChatColor.DARK_RED + "Report" + ChatColor.WHITE + "] " +
+            revival.getPlayerTools().sendPermissionMessage(ChatColor.WHITE + "[" + ChatColor.DARK_RED + "Report" + ChatColor.WHITE + "] " +
             creatorName + ChatColor.GRAY + " has reported " + ChatColor.WHITE + reportedName + ChatColor.GRAY + " for " + ChatColor.RESET + ticket.getReason(), Permissions.TICKETS_VIEW);
         else
-            Revival.getPlayerTools().sendPermissionMessage(ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + "HelpOp" + ChatColor.WHITE + "] " +
+            revival.getPlayerTools().sendPermissionMessage(ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + "HelpOp" + ChatColor.WHITE + "] " +
             creatorName + ChatColor.GRAY + " asked " + ChatColor.WHITE + ticket.getReason(), Permissions.TICKETS_VIEW);
     }
 
@@ -164,7 +168,7 @@ public class TicketManager {
      */
     public void pullUpdates(boolean notifyUpdates) {
         if(!MongoAPI.isConnected()) {
-            if(Config.DB_ENABLED) {
+            if(revival.getCfg().DB_ENABLED) {
                 new BukkitRunnable() {
                     public void run() {
                         pullUpdates(notifyUpdates);
@@ -177,10 +181,10 @@ public class TicketManager {
 
         new BukkitRunnable() {
             public void run() {
-                if(Revival.getDbManager().getTickets() == null)
-                    Revival.getDbManager().setTickets(MongoAPI.getCollection(Config.DB_DATABASE, "tickets"));
+                if(revival.getDatabaseManager().getTickets() == null)
+                    revival.getDatabaseManager().setTickets(MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "tickets"));
 
-                MongoCollection<Document> collection = Revival.getDbManager().getTickets();
+                MongoCollection<Document> collection = revival.getDatabaseManager().getTickets();
                 FindIterable<Document> query = collection.find();
                 int added = 0;
 
@@ -205,7 +209,7 @@ public class TicketManager {
                 }
 
                 if (notifyUpdates)
-                    Revival.getPlayerTools().sendPermissionMessage(ChatColor.YELLOW + "Added " + added + " new tickets", Permissions.TICKETS_VIEW);
+                    revival.getPlayerTools().sendPermissionMessage(ChatColor.YELLOW + "Added " + added + " new tickets", Permissions.TICKETS_VIEW);
 
                 Logger.log("Loaded " + loadedTickets.size() + " Tickets");
             }
@@ -222,10 +226,10 @@ public class TicketManager {
 
         if(unsafe) {
             Runnable saveTask = () -> {
-                if(Revival.getDbManager().getTickets() == null)
-                    Revival.getDbManager().setTickets(MongoAPI.getCollection(Config.DB_DATABASE, "tickets"));
+                if(revival.getDatabaseManager().getTickets() == null)
+                    revival.getDatabaseManager().setTickets(MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "tickets"));
 
-                MongoCollection<Document> collection = Revival.getDbManager().getTickets();
+                MongoCollection<Document> collection = revival.getDatabaseManager().getTickets();
                 FindIterable<Document> query = null;
 
                 try {
@@ -259,16 +263,16 @@ public class TicketManager {
                     collection.insertOne(newDoc);
             };
 
-            Processor.getSingleThreadExecutor().submit(saveTask);
+            revival.getProcessor().getSingleThreadExecutor().submit(saveTask);
         }
 
         else {
             new BukkitRunnable() {
                 public void run() {
-                    if(Revival.getDbManager().getTickets() == null)
-                        Revival.getDbManager().setTickets(MongoAPI.getCollection(Config.DB_DATABASE, "tickets"));
+                    if(revival.getDatabaseManager().getTickets() == null)
+                        revival.getDatabaseManager().setTickets(MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "tickets"));
 
-                    MongoCollection<Document> collection = Revival.getDbManager().getTickets();
+                    MongoCollection<Document> collection = revival.getDatabaseManager().getTickets();
                     FindIterable<Document> query = null;
 
                     try {

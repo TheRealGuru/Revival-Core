@@ -1,7 +1,7 @@
 package gg.revival.core.essentials.cont;
 
+import gg.revival.core.Revival;
 import gg.revival.core.essentials.ECommand;
-import gg.revival.core.tools.MsgUtils;
 import gg.revival.core.tools.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -9,12 +9,11 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ETeleportCommand extends ECommand
-{
+public class ETeleportCommand extends ECommand {
 
-    public ETeleportCommand()
-    {
+    public ETeleportCommand(Revival revival) {
         super(
+                revival,
                 "teleport",
                 "/teleport <player> [player] - /teleport [world] <x> <y> <z>",
                 "Teleport to a player or location",
@@ -26,20 +25,16 @@ public class ETeleportCommand extends ECommand
     }
 
     @Override
-    public void onCommand(CommandSender sender, String args[])
-    {
+    public void onCommand(CommandSender sender, String args[]) {
         if(!validate(sender, args)) return;
 
         Player player = (Player)sender;
 
-        if(args.length == 1)
-        {
+        if(args.length == 1) {
             String namedPlayer = args[0];
 
-            if(namedPlayer.equalsIgnoreCase("-all"))
-            {
-                for(Player players : Bukkit.getOnlinePlayers())
-                {
+            if(namedPlayer.equalsIgnoreCase("-all")) {
+                for(Player players : Bukkit.getOnlinePlayers()) {
                     if(players.getUniqueId().equals(player.getUniqueId())) continue;
 
                     players.teleport(player);
@@ -52,9 +47,7 @@ public class ETeleportCommand extends ECommand
             }
 
             if(Bukkit.getPlayer(namedPlayer) == null || !Bukkit.getPlayer(namedPlayer).isOnline())
-            {
-                player.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
-            }
+                player.sendMessage(getRevival().getMsgTools().getMessage("errors.player-not-found"));
 
             Player toPlayer = Bukkit.getPlayer(namedPlayer);
 
@@ -64,15 +57,12 @@ public class ETeleportCommand extends ECommand
             return;
         }
 
-        if(args.length == 2)
-        {
+        if(args.length == 2) {
             String namedFromPlayer = args[0];
             String namedToPlayer = args[1];
 
             if(Bukkit.getPlayer(namedFromPlayer) == null || Bukkit.getPlayer(namedToPlayer) == null)
-            {
-                player.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
-            }
+                player.sendMessage(getRevival().getMsgTools().getMessage("errors.player-not-found"));
 
             Player fromPlayer = Bukkit.getPlayer(namedFromPlayer);
             Player toPlayer = Bukkit.getPlayer(namedToPlayer);
@@ -83,8 +73,7 @@ public class ETeleportCommand extends ECommand
             return;
         }
 
-        if(args.length == 3)
-        {
+        if(args.length == 3) {
             String namedX = args[0], namedY = args[1], namedZ = args[2];
             double x, y, z;
 
@@ -105,14 +94,12 @@ public class ETeleportCommand extends ECommand
             return;
         }
 
-        if(args.length == 4)
-        {
+        if(args.length == 4) {
             String namedWorld = args[0];
             String namedX = args[1], namedY = args[2], namedZ = args[3];
             double x, y, z;
 
-            if(Bukkit.getWorld(namedWorld) == null)
-            {
+            if(Bukkit.getWorld(namedWorld) == null) {
                 player.sendMessage(ChatColor.RED + "Invalid world");
                 return;
             }
@@ -130,8 +117,6 @@ public class ETeleportCommand extends ECommand
 
             player.teleport(location);
             player.sendMessage(ChatColor.YELLOW + "You have teleported to 'World: " + Bukkit.getWorld(namedWorld).getName() + ", X: " + x + ", Y: " + y + ", Z: " + z + "'");
-
-            return;
         }
     }
 

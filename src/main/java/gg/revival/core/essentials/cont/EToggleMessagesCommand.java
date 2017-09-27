@@ -7,12 +7,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class EToggleMessagesCommand extends ECommand
-{
+public class EToggleMessagesCommand extends ECommand {
 
-    public EToggleMessagesCommand()
-    {
+    public EToggleMessagesCommand(Revival revival) {
         super(
+                revival,
                 "togglemessages",
                 "/togglemessages",
                 "Enable/Disable private messages",
@@ -24,25 +23,18 @@ public class EToggleMessagesCommand extends ECommand
     }
 
     @Override
-    public void onCommand(CommandSender sender, String args[])
-    {
+    public void onCommand(CommandSender sender, String args[]) {
         if(!validate(sender, args)) return;
 
         Player player = (Player)sender;
-        Account account = Revival.getAccountManager().getAccount(player.getUniqueId());
+        Account account = getRevival().getAccountManager().getAccount(player.getUniqueId());
 
-        if(account.isHideMessages())
-        {
+        if(account.isHideMessages()) {
             account.setHideMessages(false);
             player.sendMessage(ChatColor.GREEN + "You can now see private messages");
-            return;
-        }
-
-        else
-        {
+        } else {
             account.setHideMessages(true);
             player.sendMessage(ChatColor.GREEN + "You can no longer see private messages");
-            return;
         }
     }
 

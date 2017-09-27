@@ -8,8 +8,9 @@ import org.bukkit.entity.Player;
 
 public class EReportCommand extends ECommand {
 
-    public EReportCommand() {
+    public EReportCommand(Revival revival) {
         super(
+                revival,
                 "report",
                 "/report <player> <reason>",
                 "Report a player",
@@ -26,9 +27,9 @@ public class EReportCommand extends ECommand {
 
         Player player = (Player)sender;
 
-        if(Revival.getTicketManager().getTicketCooldowns().containsKey(player.getUniqueId())) {
+        if(getRevival().getTicketManager().getTicketCooldowns().containsKey(player.getUniqueId())) {
             player.sendMessage(ChatColor.RED + "You can not file another ticket for " +
-                    (int)(Revival.getTicketManager().getTicketCooldowns().get(player.getUniqueId()) - System.currentTimeMillis()) / 1000L +
+                    (int)(getRevival().getTicketManager().getTicketCooldowns().get(player.getUniqueId()) - System.currentTimeMillis()) / 1000L +
             " seconds");
             return;
         }
@@ -41,13 +42,13 @@ public class EReportCommand extends ECommand {
 
         final String reason = reasonBuilder.toString().trim();
 
-        Revival.getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
+        getRevival().getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
             if(uuid == null || username == null) {
                 player.sendMessage(ChatColor.RED + "Player not found");
                 return;
             }
 
-            Revival.getTicketManager().createTicket(player.getUniqueId(), uuid, reason);
+            getRevival().getTicketManager().createTicket(player.getUniqueId(), uuid, reason);
             player.sendMessage(ChatColor.GREEN + "Ticket sent successfully. All online staff have been notified.");
         });
     }

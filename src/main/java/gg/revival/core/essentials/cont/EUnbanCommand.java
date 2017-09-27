@@ -5,7 +5,6 @@ import gg.revival.core.essentials.ECommand;
 import gg.revival.core.punishments.PunishType;
 import gg.revival.core.punishments.Punishment;
 import gg.revival.core.tools.Logger;
-import gg.revival.core.tools.MsgUtils;
 import gg.revival.core.tools.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -16,8 +15,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EUnbanCommand extends ECommand {
 
-    public EUnbanCommand() {
+    public EUnbanCommand(Revival revival) {
         super(
+                revival,
                 "unban",
                 "/unban <player>",
                 "Remove a players active ban",
@@ -42,15 +42,15 @@ public class EUnbanCommand extends ECommand {
 
         final String unbanner = namedUnbanner;
 
-        Revival.getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
+        getRevival().getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
             if(uuid == null) {
-                sender.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
+                sender.sendMessage(getRevival().getMsgTools().getMessage("errors.player-not-found"));
                 return;
             }
 
-            Revival.getAccountManager().getAccount(uuid, false, result -> {
+            getRevival().getAccountManager().getAccount(uuid, false, result -> {
                 if(result.getPunishments().isEmpty()) {
-                    sender.sendMessage(MsgUtils.getMessage("errors.player-not-banned"));
+                    sender.sendMessage(getRevival().getMsgTools().getMessage("errors.player-not-banned"));
                     return;
                 }
 
@@ -70,13 +70,13 @@ public class EUnbanCommand extends ECommand {
                 }
 
                 if(removedBans == 0) {
-                    sender.sendMessage(MsgUtils.getMessage("errors.player-not-banned"));
+                    sender.sendMessage(getRevival().getMsgTools().getMessage("errors.player-not-banned"));
                     return;
                 }
 
-                Revival.getAccountManager().saveAccount(result, false, Bukkit.getPlayer(uuid) == null);
+                getRevival().getAccountManager().saveAccount(result, false, Bukkit.getPlayer(uuid) == null);
 
-                Revival.getPlayerTools().sendPermissionMessage(MsgUtils.getMessage("punish-notifications.player-unbanned")
+                getRevival().getPlayerTools().sendPermissionMessage(getRevival().getMsgTools().getMessage("punish-notifications.player-unbanned")
                         .replace("%player%", username)
                         .replace("%unbanner%", unbanner)
                         .replace("%punishments%", String.valueOf(removedBans)), Permissions.PUNISHMENT_VIEW);

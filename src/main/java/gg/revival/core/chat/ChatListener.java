@@ -1,15 +1,20 @@
 package gg.revival.core.chat;
 
 import gg.revival.core.Revival;
-import gg.revival.core.tools.Config;
-import gg.revival.core.tools.MsgUtils;
 import gg.revival.core.tools.Permissions;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class ChatListener implements Listener {
+
+    @Getter private Revival revival;
+
+    public ChatListener(Revival revival) {
+        this.revival = revival;
+    }
 
     /**
      * Handles all chat filter/cooldown/freeze event listening
@@ -19,18 +24,18 @@ public class ChatListener implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
 
-        if(Revival.getChatFilter().hasCooldown(player.getUniqueId()) && !player.hasPermission(Permissions.CHAT_BYPASS_COOLDOWN)) {
-            player.sendMessage(MsgUtils.getMessage("errors.chat-cooldown"));
+        if(revival.getChatFilter().hasCooldown(player.getUniqueId()) && !player.hasPermission(Permissions.CHAT_BYPASS_COOLDOWN)) {
+            player.sendMessage(revival.getMsgTools().getMessage("errors.chat-cooldown"));
             event.setCancelled(true);
         }
 
-        if(Config.CHAT_FILTER_ENABLED && Revival.getChatFilter().isBad(event.getMessage().split(" ")) && !player.hasPermission(Permissions.CHAT_BYPASS_FILTER)) {
-            player.sendMessage(MsgUtils.getMessage("errors.not-allowed-to-say"));
+        if(revival.getCfg().CHAT_FILTER_ENABLED && revival.getChatFilter().isBad(event.getMessage().split(" ")) && !player.hasPermission(Permissions.CHAT_BYPASS_FILTER)) {
+            player.sendMessage(revival.getMsgTools().getMessage("errors.not-allowed-to-say"));
             event.setCancelled(true);
         }
 
-        if(Config.CHAT_FILTER_ENABLED && Config.CHAT_FILTER_INTERVAL > 0 && !player.hasPermission(Permissions.CHAT_BYPASS_COOLDOWN))
-            Revival.getChatFilter().applyCooldown(player.getUniqueId(), Config.CHAT_FILTER_INTERVAL);
+        if(revival.getCfg().CHAT_FILTER_ENABLED && revival.getCfg().CHAT_FILTER_INTERVAL > 0 && !player.hasPermission(Permissions.CHAT_BYPASS_COOLDOWN))
+            revival.getChatFilter().applyCooldown(player.getUniqueId(), revival.getCfg().CHAT_FILTER_INTERVAL);
     }
 
 }

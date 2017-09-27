@@ -2,15 +2,15 @@ package gg.revival.core.essentials.cont;
 
 import gg.revival.core.Revival;
 import gg.revival.core.essentials.ECommand;
-import gg.revival.core.tools.MsgUtils;
 import gg.revival.core.tools.Permissions;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class ELookupCommand extends ECommand {
 
-    public ELookupCommand() {
+    public ELookupCommand(Revival revival) {
         super(
+                revival,
                 "lookup",
                 "/lookup <player>",
                 "View a players past punishments",
@@ -28,24 +28,24 @@ public class ELookupCommand extends ECommand {
         Player player = (Player)sender;
         String namedPlayer = args[0];
 
-        Revival.getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
+        getRevival().getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
             if(uuid == null) {
-                player.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
+                player.sendMessage(getRevival().getMsgTools().getMessage("errors.player-not-found"));
                 return;
             }
 
-            Revival.getAccountManager().getAccount(uuid, false, result -> {
+            getRevival().getAccountManager().getAccount(uuid, false, result -> {
                 if(result == null) {
-                    player.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
+                    player.sendMessage(getRevival().getMsgTools().getMessage("errors.player-not-found"));
                     return;
                 }
 
                 if(result.getPunishments() == null || result.getPunishments().isEmpty()) {
-                    player.sendMessage(MsgUtils.getMessage("errors.no-punishments-found"));
+                    player.sendMessage(getRevival().getMsgTools().getMessage("errors.no-punishments-found"));
                     return;
                 }
 
-                MsgUtils.sendPunishments(player, username, result);
+                getRevival().getMsgTools().sendPunishments(player, username, result);
             });
         });
     }

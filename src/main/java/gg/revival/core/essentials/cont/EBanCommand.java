@@ -7,8 +7,8 @@ import gg.revival.core.essentials.ECommand;
 import gg.revival.core.punishments.PunishType;
 import gg.revival.core.punishments.Punishment;
 import gg.revival.core.tools.Logger;
-import gg.revival.core.tools.MsgUtils;
 import gg.revival.core.tools.Permissions;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,8 +20,11 @@ import java.util.UUID;
 
 public class EBanCommand extends ECommand {
 
-    public EBanCommand() {
+    @Getter private Revival revival;
+
+    public EBanCommand(Revival revival) {
         super(
+                revival,
                 "ban",
                 "/ban <player> [reason]",
                 "Ban a player",
@@ -60,13 +63,13 @@ public class EBanCommand extends ECommand {
         final String reason = reasonResult;
         final String punisherName = namedPunisher;
 
-        Revival.getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
+        revival.getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
             if(uuid == null) {
-                sender.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
+                sender.sendMessage(revival.getMsgTools().getMessage("errors.player-not-found"));
                 return;
             }
 
-            Revival.getAccountManager().getAccount(uuid, false, result -> {
+            revival.getAccountManager().getAccount(uuid, false, result -> {
                 int address = 0;
 
                 if(result.getRegisteredAddresses() != null && !result.getRegisteredAddresses().isEmpty())
@@ -77,11 +80,11 @@ public class EBanCommand extends ECommand {
                 result.getPunishments().add(punishment);
 
                 if(Bukkit.getPlayer(uuid) != null) {
-                    Bukkit.getPlayer(uuid).kickPlayer(MsgUtils.getBanMessage(punishment));
+                    Bukkit.getPlayer(uuid).kickPlayer(revival.getMsgTools().getBanMessage(punishment));
                 }
 
                 else {
-                    Revival.getAccountManager().saveAccount(result, false, Bukkit.getPlayer(uuid) == null);
+                    revival.getAccountManager().saveAccount(result, false, Bukkit.getPlayer(uuid) == null);
 
                     ByteArrayDataOutput output = ByteStreams.newDataOutput();
                     output.writeUTF("Forward");
@@ -103,7 +106,7 @@ public class EBanCommand extends ECommand {
                 }
 
 
-                Revival.getPlayerTools().sendPermissionMessage(MsgUtils.getMessage("punish-notifications.player-banned")
+                revival.getPlayerTools().sendPermissionMessage(revival.getMsgTools().getMessage("punish-notifications.player-banned")
                         .replace("%player%", username)
                         .replace("%banner%", punisherName), Permissions.PUNISHMENT_VIEW);
 

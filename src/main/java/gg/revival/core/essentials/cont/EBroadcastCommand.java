@@ -2,8 +2,8 @@ package gg.revival.core.essentials.cont;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import gg.revival.core.Revival;
 import gg.revival.core.essentials.ECommand;
-import gg.revival.core.tools.Config;
 import gg.revival.core.tools.Logger;
 import gg.revival.core.tools.Permissions;
 import org.bukkit.Bukkit;
@@ -16,8 +16,9 @@ import java.io.IOException;
 
 public class EBroadcastCommand extends ECommand {
 
-    public EBroadcastCommand() {
+    public EBroadcastCommand(Revival revival) {
         super(
+                revival,
                 "broadcast",
                 "/broadcast [-r] [-n] <message>",
                 "Send out a broadcast to all players",
@@ -82,7 +83,7 @@ public class EBroadcastCommand extends ECommand {
                 broadcastBuilder.append(args[i] + " ");
             }
 
-            Bukkit.broadcastMessage(Config.BROADCASTS_PREFIX + ChatColor.stripColor(broadcastBuilder.toString().trim()));
+            Bukkit.broadcastMessage(getRevival().getCfg().BROADCASTS_PREFIX + ChatColor.stripColor(broadcastBuilder.toString().trim()));
 
             if(network) {
                 ByteArrayDataOutput output = ByteStreams.newDataOutput();

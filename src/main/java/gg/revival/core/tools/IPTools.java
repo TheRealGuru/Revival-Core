@@ -7,7 +7,7 @@ public class IPTools
      * @param ip The IP to be converted
      * @return The converted IP to Integer
      */
-    public static int ipStringToInteger (final String ip) {
+    public static int ipStringToInteger(String ip) {
         int value = 0;
         final String[] parts = ip.split ("\\.");
 
@@ -22,7 +22,7 @@ public class IPTools
      * @param ip The IP in int form
      * @return The converted IP to String
      */
-    public static String ipIntegerToString (int ip) {
+    public static String ipIntegerToString(int ip) {
         final String[] parts2 = new String[4];
 
         for (int i = 0; i < 4; i++) {

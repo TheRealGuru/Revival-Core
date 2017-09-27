@@ -2,7 +2,6 @@ package gg.revival.core.essentials.cont;
 
 import gg.revival.core.Revival;
 import gg.revival.core.essentials.ECommand;
-import gg.revival.core.tools.MsgUtils;
 import gg.revival.core.tools.Permissions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -10,8 +9,9 @@ import org.bukkit.entity.Player;
 
 public class EXPCommand extends ECommand {
 
-    public EXPCommand() {
+    public EXPCommand(Revival revival) {
         super(
+                revival,
                 "xp",
                 "/xp [player]",
                 "View XP",
@@ -29,26 +29,26 @@ public class EXPCommand extends ECommand {
         Player player = (Player)sender;
 
         if(args.length == 0) {
-            player.sendMessage(ChatColor.YELLOW + "You currently have " + ChatColor.AQUA + Revival.getAccountManager().getAccount(player.getUniqueId()).getXp() + ChatColor.YELLOW + " XP");
+            player.sendMessage(ChatColor.YELLOW + "You currently have " + ChatColor.AQUA + getRevival().getAccountManager().getAccount(player.getUniqueId()).getXp() + ChatColor.YELLOW + " XP");
             return;
         }
 
         if(!player.hasPermission(Permissions.XP_VIEW)) {
-            player.sendMessage(MsgUtils.getMessage("errors.no-permission"));
+            player.sendMessage(getRevival().getMsgTools().getMessage("errors.no-permission"));
             return;
         }
 
         String namedPlayer = args[0];
 
-        Revival.getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
+        getRevival().getPlayerTools().getOfflinePlayer(namedPlayer, (uuid, username) -> {
             if(uuid == null) {
-                player.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
+                player.sendMessage(getRevival().getMsgTools().getMessage("errors.player-not-found"));
                 return;
             }
 
-            Revival.getAccountManager().getAccount(uuid, false, result -> {
+            getRevival().getAccountManager().getAccount(uuid, false, result -> {
                 if(result == null) {
-                    player.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
+                    player.sendMessage(getRevival().getMsgTools().getMessage("errors.player-not-found"));
                     return;
                 }
 

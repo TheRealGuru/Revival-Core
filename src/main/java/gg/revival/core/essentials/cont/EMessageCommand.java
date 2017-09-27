@@ -4,18 +4,16 @@ package gg.revival.core.essentials.cont;/*
 
 import gg.revival.core.Revival;
 import gg.revival.core.essentials.ECommand;
-import gg.revival.core.tools.MsgUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class EMessageCommand extends ECommand
-{
+public class EMessageCommand extends ECommand {
 
-    public EMessageCommand()
-    {
+    public EMessageCommand(Revival revival) {
         super(
+                revival,
                 "message",
                 "/message <player> <message>",
                 "Send a private message",
@@ -27,21 +25,18 @@ public class EMessageCommand extends ECommand
     }
 
     @Override
-    public void onCommand(CommandSender sender, String args[])
-    {
+    public void onCommand(CommandSender sender, String args[]) {
         if(!validate(sender, args)) return;
 
         Player player = (Player)sender;
         String namedPlayer = args[0];
 
-        if(Bukkit.getPlayer(namedPlayer) == null)
-        {
-            player.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
+        if(Bukkit.getPlayer(namedPlayer) == null) {
+            player.sendMessage(getRevival().getMsgTools().getMessage("errors.player-not-found"));
             return;
         }
 
-        if(Bukkit.getPlayer(namedPlayer).getUniqueId().equals(player.getUniqueId()))
-        {
+        if(Bukkit.getPlayer(namedPlayer).getUniqueId().equals(player.getUniqueId())) {
             player.sendMessage(ChatColor.RED + "You can't message yourself");
             return;
         }
@@ -49,13 +44,11 @@ public class EMessageCommand extends ECommand
         StringBuilder messageBuilder = new StringBuilder();
 
         for(int i = 1; i < args.length; i++)
-        {
             messageBuilder.append(args[i] + " ");
-        }
 
         String message = ChatColor.stripColor(messageBuilder.toString().trim());
 
-        Revival.getMessageManager().sendMessage(player, Bukkit.getPlayer(namedPlayer), message);
+        getRevival().getMessageManager().sendMessage(player, Bukkit.getPlayer(namedPlayer), message);
     }
 
 }

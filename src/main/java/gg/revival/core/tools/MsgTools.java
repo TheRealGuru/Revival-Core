@@ -3,6 +3,7 @@ package gg.revival.core.tools;
 import gg.revival.core.Revival;
 import gg.revival.core.accounts.Account;
 import gg.revival.core.punishments.Punishment;
+import lombok.Getter;
 import mkremins.fanciful.FancyMessage;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -13,15 +14,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MsgUtils {
+public class MsgTools {
+
+    @Getter private Revival revival;
+
+    public MsgTools(Revival revival) {
+        this.revival = revival;
+    }
 
     /**
      * Returns a ChatColor formatted string from the messages.yml file
      * @param path Message path in messages.yml
      * @return Formatted string
      */
-    public static String getMessage(String path) {
-        return ChatColor.translateAlternateColorCodes('&', Revival.getFileManager().getMessages().getString(path));
+    public String getMessage(String path) {
+        return ChatColor.translateAlternateColorCodes('&', revival.getFileManager().getMessages().getString(path));
     }
 
     /**
@@ -59,7 +66,7 @@ public class MsgUtils {
      * @param username The username to lookup
      * @param account The account thats being displayed
      */
-    public static void sendPunishments(Player player, String username, Account account) {
+    public void sendPunishments(Player player, String username, Account account) {
         player.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "-------------------------");
         player.sendMessage("Displaying all punishments for " + ChatColor.RED + username);
         player.sendMessage(ChatColor.YELLOW + "Hover over each punishment to view more information.");
@@ -94,7 +101,7 @@ public class MsgUtils {
      * @param punishment The players found punishment
      * @return Formatted ban message
      */
-    public static String getBanMessage(Punishment punishment) {
+    public String getBanMessage(Punishment punishment) {
         StringBuilder result = new StringBuilder();
 
         result.append(ChatColor.RED + "Adios, amigo!" + ChatColor.RESET + "\n");
@@ -123,7 +130,7 @@ public class MsgUtils {
      * @param reason Kick reason
      * @return Formatted kick reason
      */
-    public static String getKickMessage(String reason) {
+    public String getKickMessage(String reason) {
         StringBuilder result = new StringBuilder();
 
         result.append(ChatColor.RED + "You got the boot!" + ChatColor.RESET + "\n");

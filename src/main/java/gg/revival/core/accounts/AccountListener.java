@@ -4,8 +4,8 @@ import gg.revival.core.Revival;
 import gg.revival.core.punishments.PunishType;
 import gg.revival.core.punishments.Punishment;
 import gg.revival.core.tools.IPTools;
-import gg.revival.core.tools.MsgUtils;
 import gg.revival.core.tools.Permissions;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,17 +17,23 @@ import java.util.UUID;
 
 public class AccountListener implements Listener {
 
+    @Getter private Revival revival;
+
+    public AccountListener(Revival revival) {
+        this.revival = revival;
+    }
+
     @EventHandler
     public void onPlayerLoginAttempt(AsyncPlayerPreLoginEvent event) {
         UUID uuid = event.getUniqueId();
 
-        Revival.getAccountManager().getAccount(uuid, true, result -> {
+        revival.getAccountManager().getAccount(uuid, true, result -> {
             if(result == null || result.getPunishments().isEmpty()) return;
 
             for(Punishment punishment : result.getPunishments()) {
                 if(punishment.getType().equals(PunishType.BAN)) {
                     if(punishment.isForever() || !punishment.isExpired()) {
-                        event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, MsgUtils.getBanMessage(punishment));
+                        event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, revival.getMsgTools().getBanMessage(punishment));
                         return;
                     }
 
@@ -36,7 +42,7 @@ public class AccountListener implements Listener {
 
                 if(punishment.getType().equals(PunishType.MUTE)) {
                     if(punishment.isForever() || !punishment.isExpired())
-                        Revival.getPunishments().getActiveMutes().put(uuid, punishment);
+                        revival.getPunishments().getActiveMutes().put(uuid, punishment);
                 }
             }
         });
@@ -46,18 +52,18 @@ public class AccountListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        Revival.getPunishments().scanAddress(IPTools.ipStringToInteger(player.getAddress().getAddress().getHostAddress()), result -> {
+        revival.getPunishments().scanAddress(IPTools.ipStringToInteger(player.getAddress().getAddress().getHostAddress()), result -> {
             if(result == null || result.isEmpty() || player.hasPermission(Permissions.PUNISHMENT_PARDON)) return;
 
             for(Punishment punishment : result) {
                 if(punishment.getType().equals(PunishType.BAN) && (punishment.isForever() || !punishment.isExpired())) {
-                    player.kickPlayer(MsgUtils.getBanMessage(punishment));
+                    player.kickPlayer(revival.getMsgTools().getBanMessage(punishment));
 
                     return;
                 }
 
-                if(punishment.getType().equals(PunishType.MUTE) && Revival.getPunishments().getActiveMute(player.getUniqueId()) == null && (punishment.isForever() || !punishment.isExpired()))
-                    Revival.getPunishments().getActiveMutes().put(player.getUniqueId(), punishment);
+                if(punishment.getType().equals(PunishType.MUTE) && revival.getPunishments().getActiveMute(player.getUniqueId()) == null && (punishment.isForever() || !punishment.isExpired()))
+                    revival.getPunishments().getActiveMutes().put(player.getUniqueId(), punishment);
             }
         });
     }
@@ -65,13 +71,13 @@ public class AccountListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        Account account = Revival.getAccountManager().getAccount(player.getUniqueId());
+        Account account = revival.getAccountManager().getAccount(player.getUniqueId());
 
         if(account == null) return;
 
         account.setLastSeen(System.currentTimeMillis());
 
-        Revival.getAccountManager().saveAccount(Revival.getAccountManager().getAccount(player.getUniqueId()), false, true);
+        revival.getAccountManager().saveAccount(revival.getAccountManager().getAccount(player.getUniqueId()), false, true);
     }
 
 }

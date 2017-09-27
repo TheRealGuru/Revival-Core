@@ -6,8 +6,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
-public class Filter
-{
+public class Filter {
 
     /**
      * Contains all users who have active chat cooldowns

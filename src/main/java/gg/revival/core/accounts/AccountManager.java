@@ -7,9 +7,7 @@ import com.mongodb.client.model.Filters;
 import gg.revival.core.Revival;
 import gg.revival.core.punishments.PunishType;
 import gg.revival.core.punishments.Punishment;
-import gg.revival.core.tools.Config;
 import gg.revival.core.tools.IPTools;
-import gg.revival.core.tools.Processor;
 import gg.revival.driver.MongoAPI;
 import lombok.Getter;
 import org.bson.Document;
@@ -19,8 +17,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class AccountManager
-{
+public class AccountManager {
+
+    @Getter private Revival revival;
+
+    public AccountManager(Revival revival) {
+        this.revival = revival;
+    }
 
     /**
      * Contains a set of all cached accounts
@@ -49,7 +52,7 @@ public class AccountManager
      * @param callback Callback interface
      */
     public void getAccount(UUID uuid, boolean unsafe, final AccountCallback callback) {
-        if(!Config.DB_ENABLED) {
+        if(!revival.getCfg().DB_ENABLED) {
             List<UUID> blockedPlayers = new ArrayList<>();
             List<Punishment> punishments = new ArrayList<>();
             List<Integer> newAddressList = new ArrayList<>();
@@ -71,14 +74,14 @@ public class AccountManager
         }
 
         if(unsafe) {
-            if(Revival.getDbManager().getAccounts() == null)
-                Revival.getDbManager().setAccounts(MongoAPI.getCollection(Config.DB_DATABASE, "accounts"));
+            if(revival.getDatabaseManager().getAccounts() == null)
+                revival.getDatabaseManager().setAccounts(MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "accounts"));
 
-            if(Revival.getDbManager().getPunishments() == null)
-                Revival.getDbManager().setPunishments(MongoAPI.getCollection(Config.DB_DATABASE, "punishments"));
+            if(revival.getDatabaseManager().getPunishments() == null)
+                revival.getDatabaseManager().setPunishments(MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "punishments"));
 
-            MongoCollection<Document> accountCollection = Revival.getDbManager().getAccounts();
-            MongoCollection<Document> punishmentCollection = Revival.getDbManager().getPunishments();
+            MongoCollection<Document> accountCollection = revival.getDatabaseManager().getAccounts();
+            MongoCollection<Document> punishmentCollection = revival.getDatabaseManager().getPunishments();
 
             if(accountCollection == null || punishmentCollection == null) return;
 
@@ -105,8 +108,8 @@ public class AccountManager
                 List<Punishment> punishments = new ArrayList<>();
 
                 if(punishmentIds != null && !punishmentIds.isEmpty()) {
-                    if(Revival.getDbManager().getPunishments() == null)
-                        Revival.getDbManager().setPunishments(MongoAPI.getCollection(Config.DB_DATABASE, "punishments"));
+                    if(revival.getDatabaseManager().getPunishments() == null)
+                        revival.getDatabaseManager().setPunishments(MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "punishments"));
 
                     for(String punishmentId : punishmentIds) {
                         FindIterable<Document> punishmentQuery = punishmentCollection.find(Filters.eq("uuid", punishmentId));
@@ -163,14 +166,14 @@ public class AccountManager
         else {
             new BukkitRunnable() {
                 public void run() {
-                    if(Revival.getDbManager().getAccounts() == null)
-                        Revival.getDbManager().setAccounts(MongoAPI.getCollection(Config.DB_DATABASE, "accounts"));
+                    if(revival.getDatabaseManager().getAccounts() == null)
+                        revival.getDatabaseManager().setAccounts(MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "accounts"));
 
-                    if(Revival.getDbManager().getPunishments() == null)
-                        Revival.getDbManager().setPunishments(MongoAPI.getCollection(Config.DB_DATABASE, "punishments"));
+                    if(revival.getDatabaseManager().getPunishments() == null)
+                        revival.getDatabaseManager().setPunishments(MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "punishments"));
 
-                    MongoCollection<Document> accountCollection = Revival.getDbManager().getAccounts();
-                    MongoCollection<Document> punishmentCollection = Revival.getDbManager().getPunishments();
+                    MongoCollection<Document> accountCollection = revival.getDatabaseManager().getAccounts();
+                    MongoCollection<Document> punishmentCollection = revival.getDatabaseManager().getPunishments();
 
                     if(accountCollection == null || punishmentCollection == null) return;
 
@@ -197,8 +200,8 @@ public class AccountManager
                         List<Punishment> punishments = new ArrayList<>();
 
                         if(punishmentIds != null && !punishmentIds.isEmpty()) {
-                            if(Revival.getDbManager().getPunishments() == null)
-                                Revival.getDbManager().setPunishments(MongoAPI.getCollection(Config.DB_DATABASE, "punishments"));
+                            if(revival.getDatabaseManager().getPunishments() == null)
+                                revival.getDatabaseManager().setPunishments(MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "punishments"));
 
                             for(String punishmentId : punishmentIds) {
                                 FindIterable<Document> punishmentQuery = punishmentCollection.find(Filters.eq("uuid", punishmentId));
@@ -267,7 +270,7 @@ public class AccountManager
      * @param unsafe Perform async or block the thread
      */
     public void saveAccount(Account account, boolean unsafe, boolean unload) {
-        if(!Config.DB_ENABLED)
+        if(!revival.getCfg().DB_ENABLED)
             return;
 
         if(unload)
@@ -275,14 +278,14 @@ public class AccountManager
 
         if(unsafe) {
             Runnable saveTask = () -> {
-                if (Revival.getDbManager().getAccounts() == null)
-                    Revival.getDbManager().setAccounts(MongoAPI.getCollection(Config.DB_DATABASE, "accounts"));
+                if (revival.getDatabaseManager().getAccounts() == null)
+                    revival.getDatabaseManager().setAccounts(MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "accounts"));
 
-                if (Revival.getDbManager().getPunishments() == null)
-                    Revival.getDbManager().setPunishments(MongoAPI.getCollection(Config.DB_DATABASE, "punishments"));
+                if (revival.getDatabaseManager().getPunishments() == null)
+                    revival.getDatabaseManager().setPunishments(MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "punishments"));
 
-                MongoCollection<Document> accountCollection = Revival.getDbManager().getAccounts();
-                MongoCollection<Document> punishmentCollection = Revival.getDbManager().getPunishments();
+                MongoCollection<Document> accountCollection = revival.getDatabaseManager().getAccounts();
+                MongoCollection<Document> punishmentCollection = revival.getDatabaseManager().getPunishments();
                 FindIterable<Document> accountQuery = accountCollection.find(Filters.eq("uuid", account.getUuid().toString()));
                 Document accountDoc = accountQuery.first();
 
@@ -342,17 +345,17 @@ public class AccountManager
                     accountCollection.insertOne(newAccountDoc);
             };
 
-            Processor.getSingleThreadExecutor().submit(saveTask);
+            revival.getProcessor().getSingleThreadExecutor().submit(saveTask);
         }
 
         else {
             new BukkitRunnable() {
                 public void run() {
-                    if(Revival.getDbManager().getAccounts() == null)
-                        Revival.getDbManager().setAccounts(MongoAPI.getCollection(Config.DB_DATABASE, "accounts"));
+                    if(revival.getDatabaseManager().getAccounts() == null)
+                        revival.getDatabaseManager().setAccounts(MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "accounts"));
 
-                    MongoCollection<Document> accountCollection = Revival.getDbManager().getAccounts();
-                    MongoCollection<Document> punishmentCollection = Revival.getDbManager().getPunishments();
+                    MongoCollection<Document> accountCollection = revival.getDatabaseManager().getAccounts();
+                    MongoCollection<Document> punishmentCollection = revival.getDatabaseManager().getPunishments();
                     FindIterable<Document> query = accountCollection.find(Filters.eq("uuid", account.getUuid().toString()));
                     Document document = query.first();
 

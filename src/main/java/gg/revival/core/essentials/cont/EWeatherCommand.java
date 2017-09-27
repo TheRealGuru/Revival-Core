@@ -1,5 +1,6 @@
 package gg.revival.core.essentials.cont;
 
+import gg.revival.core.Revival;
 import gg.revival.core.essentials.ECommand;
 import gg.revival.core.tools.Permissions;
 import org.bukkit.ChatColor;
@@ -9,8 +10,9 @@ import org.bukkit.entity.Player;
 
 public class EWeatherCommand extends ECommand {
 
-    public EWeatherCommand() {
+    public EWeatherCommand(Revival revival) {
         super(
+                revival,
                 "weather",
                 "/weather <clear/storm>",
                 "Change the weather",

@@ -9,6 +9,8 @@ import java.util.Set;
 
 public class CommandManager {
 
+    @Getter private Revival revival;
+
     /**
      * Contains every registered command in this plugin
      */
@@ -17,41 +19,43 @@ public class CommandManager {
     /**
      * Loads every command and registers them on the server
      */
-    public CommandManager() {
-        ECommandExecutor commandExecutor = new ECommandExecutor();
+    public CommandManager(Revival revival) {
+        this.revival = revival;
 
-        EBanCommand banCommand = new EBanCommand();
-        ETempbanCommand tempbanCommand = new ETempbanCommand();
-        EUnbanCommand unbanCommand = new EUnbanCommand();
-        EMuteCommand muteCommand = new EMuteCommand();
-        ETempmuteCommand tempmuteCommand = new ETempmuteCommand();
-        EUnmuteCommand unmuteCommand = new EUnmuteCommand();
-        ELookupCommand lookupCommand = new ELookupCommand();
-        EEnchantCommand enchantCommand = new EEnchantCommand();
-        ENameCommand nameCommand = new ENameCommand();
-        EHelpCommand helpCommand = new EHelpCommand();
-        EBroadcastCommand broadcastCommand = new EBroadcastCommand();
-        EKickCommand kickCommand = new EKickCommand();
-        EHealCommand healCommand = new EHealCommand();
-        EWeatherCommand weatherCommand = new EWeatherCommand();
-        ETeleportCommand teleportCommand = new ETeleportCommand();
-        EFreezeCommand freezeCommand = new EFreezeCommand();
-        EUnfreezeCommand unfreezeCommand = new EUnfreezeCommand();
-        EHubCommand hubCommand = new EHubCommand();
-        EXPCommand xpCommand = new EXPCommand();
-        EMessageCommand messageCommand = new EMessageCommand();
-        EReplyCommand replyCommand = new EReplyCommand();
-        EGiveCommand giveCommand = new EGiveCommand();
-        EGamemodeCommand gamemodeCommand = new EGamemodeCommand();
-        EInvCommand invCommand = new EInvCommand();
-        EIgnoreCommand ignoreCommand = new EIgnoreCommand();
-        EUnignoreCommand unignoreCommand = new EUnignoreCommand();
-        EToggleMessagesCommand toggleMessagesCommand = new EToggleMessagesCommand();
-        EToggleGlobalCommand toggleGlobalCommand = new EToggleGlobalCommand();
-        EListCommand listCommand = new EListCommand();
-        EReportCommand reportCommand = new EReportCommand();
-        EHelpOpCommand helpopCommand = new EHelpOpCommand();
-        ETicketsCommand ticketsCommand = new ETicketsCommand();
+        ECommandExecutor commandExecutor = new ECommandExecutor(revival);
+
+        EBanCommand banCommand = new EBanCommand(revival);
+        ETempbanCommand tempbanCommand = new ETempbanCommand(revival);
+        EUnbanCommand unbanCommand = new EUnbanCommand(revival);
+        EMuteCommand muteCommand = new EMuteCommand(revival);
+        ETempmuteCommand tempmuteCommand = new ETempmuteCommand(revival);
+        EUnmuteCommand unmuteCommand = new EUnmuteCommand(revival);
+        ELookupCommand lookupCommand = new ELookupCommand(revival);
+        EEnchantCommand enchantCommand = new EEnchantCommand(revival);
+        ENameCommand nameCommand = new ENameCommand(revival);
+        EHelpCommand helpCommand = new EHelpCommand(revival);
+        EBroadcastCommand broadcastCommand = new EBroadcastCommand(revival);
+        EKickCommand kickCommand = new EKickCommand(revival);
+        EHealCommand healCommand = new EHealCommand(revival);
+        EWeatherCommand weatherCommand = new EWeatherCommand(revival);
+        ETeleportCommand teleportCommand = new ETeleportCommand(revival);
+        EFreezeCommand freezeCommand = new EFreezeCommand(revival);
+        EUnfreezeCommand unfreezeCommand = new EUnfreezeCommand(revival);
+        EHubCommand hubCommand = new EHubCommand(revival);
+        EXPCommand xpCommand = new EXPCommand(revival);
+        EMessageCommand messageCommand = new EMessageCommand(revival);
+        EReplyCommand replyCommand = new EReplyCommand(revival);
+        EGiveCommand giveCommand = new EGiveCommand(revival);
+        EGamemodeCommand gamemodeCommand = new EGamemodeCommand(revival);
+        EInvCommand invCommand = new EInvCommand(revival);
+        EIgnoreCommand ignoreCommand = new EIgnoreCommand(revival);
+        EUnignoreCommand unignoreCommand = new EUnignoreCommand(revival);
+        EToggleMessagesCommand toggleMessagesCommand = new EToggleMessagesCommand(revival);
+        EToggleGlobalCommand toggleGlobalCommand = new EToggleGlobalCommand(revival);
+        EListCommand listCommand = new EListCommand(revival);
+        EReportCommand reportCommand = new EReportCommand(revival);
+        EHelpOpCommand helpopCommand = new EHelpOpCommand(revival);
+        ETicketsCommand ticketsCommand = new ETicketsCommand(revival);
 
         commands.add(banCommand);
         commands.add(tempbanCommand);

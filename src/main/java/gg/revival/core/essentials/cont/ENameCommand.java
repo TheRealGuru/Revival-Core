@@ -9,12 +9,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class ENameCommand extends ECommand
-{
+public class ENameCommand extends ECommand {
 
-    public ENameCommand()
-    {
+    public ENameCommand(Revival revival) {
         super(
+                revival,
                 "name",
                 "/name <name>",
                 "Name an item",
@@ -26,16 +25,14 @@ public class ENameCommand extends ECommand
     }
 
     @Override
-    public void onCommand(CommandSender sender, String args[])
-    {
+    public void onCommand(CommandSender sender, String args[]) {
         if(!validate(sender, args)) return;
 
         Player player = (Player)sender;
 
         ItemStack item = player.getItemInHand();
 
-        if(item == null || item.getType().equals(Material.AIR))
-        {
+        if(item == null || item.getType().equals(Material.AIR)) {
             player.sendMessage(ChatColor.RED + "Not holding an item");
             return;
         }
@@ -43,13 +40,11 @@ public class ENameCommand extends ECommand
         StringBuilder nameBuilder = new StringBuilder();
 
         for(int i = 0; i < args.length; i++)
-        {
             nameBuilder.append(args[i] + " ");
-        }
 
         String name = ChatColor.translateAlternateColorCodes('&', nameBuilder.toString().trim());
 
-        player.setItemInHand(Revival.getItemTools().applyName(name, item));
+        player.setItemInHand(getRevival().getItemTools().applyName(name, item));
 
         player.sendMessage(ChatColor.GREEN + "Applied name: " + ChatColor.RESET + name);
     }

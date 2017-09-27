@@ -10,6 +10,8 @@ import gg.revival.core.database.DBManager;
 import gg.revival.core.essentials.CommandManager;
 import gg.revival.core.essentials.EssentialsListener;
 import gg.revival.core.network.NetworkListener;
+import gg.revival.core.patches.PlayerVelocity;
+import gg.revival.core.patches.PlayerVelocityCommand;
 import gg.revival.core.punishments.PunishmentListener;
 import gg.revival.core.punishments.PunishmentManager;
 import gg.revival.core.ranks.RankManager;
@@ -17,6 +19,7 @@ import gg.revival.core.staff.FreezeListener;
 import gg.revival.core.staff.FreezeManager;
 import gg.revival.core.staff.ModeratorListener;
 import gg.revival.core.tickets.Ticket;
+import gg.revival.core.tickets.TicketGUI;
 import gg.revival.core.tickets.TicketListener;
 import gg.revival.core.tickets.TicketManager;
 import gg.revival.core.tools.*;
@@ -29,59 +32,68 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Revival extends JavaPlugin {
 
-    @Getter static Revival core;
-    @Getter static RankManager rankManager;
-    @Getter static FileManager fileManager;
-    @Getter static Broadcasts broadcasts;
-    @Getter static Filter chatFilter;
-    @Getter static DBManager dbManager;
-    @Getter static AccountManager accountManager;
-    @Getter static PunishmentManager punishments;
-    @Getter static CommandManager commandManager;
-    @Getter static FreezeManager freezeManager;
-    @Getter static MessageManager messageManager;
-    @Getter static TicketManager ticketManager;
-    @Getter static PlayerTools playerTools;
-    @Getter static ServerTools serverTools;
-    @Getter static TimeTools timeTools;
-    @Getter static ItemTools itemTools;
+    @Getter public static Revival core;
+    @Getter public RankManager rankManager;
+    @Getter public FileManager fileManager;
+    @Getter public Broadcasts broadcasts;
+    @Getter public Filter chatFilter;
+    @Getter public DBManager databaseManager;
+    @Getter public AccountManager accountManager;
+    @Getter public PunishmentManager punishments;
+    @Getter public CommandManager commandManager;
+    @Getter public FreezeManager freezeManager;
+    @Getter public MessageManager messageManager;
+    @Getter public TicketManager ticketManager;
+    @Getter public TicketGUI ticketGui;
+    @Getter public PlayerTools playerTools;
+    @Getter public ServerTools serverTools;
+    @Getter public TimeTools timeTools;
+    @Getter public ItemTools itemTools;
+    @Getter public MsgTools msgTools;
+    @Getter public Processor processor;
+    @Getter public Config cfg;
 
     @Override
     public void onEnable() {
         core = this;
         rankManager = new RankManager();
         fileManager = new FileManager();
-        broadcasts = new Broadcasts();
+        broadcasts = new Broadcasts(this);
         chatFilter = new Filter();
-        dbManager = new DBManager();
-        accountManager = new AccountManager();
-        commandManager = new CommandManager();
-        punishments = new PunishmentManager();
+        databaseManager = new DBManager(this);
+        accountManager = new AccountManager(this);
+        commandManager = new CommandManager(this);
+        punishments = new PunishmentManager(this);
         freezeManager = new FreezeManager();
-        messageManager = new MessageManager();
-        ticketManager = new TicketManager();
+        messageManager = new MessageManager(this);
+        ticketManager = new TicketManager(this);
+        ticketGui = new TicketGUI(this);
         playerTools = new PlayerTools();
-        serverTools = new ServerTools();
+        serverTools = new ServerTools(this);
         timeTools = new TimeTools();
         itemTools = new ItemTools();
+        msgTools = new MsgTools(this);
+        processor = new Processor(this);
+        cfg = new Config(this);
 
         fileManager.createFiles();
 
-        Config.loadConfiguration();
-        Config.loadRanks();
-        Config.loadBroadcasts();
-        Config.loadFilteredWords();
+        cfg.loadConfiguration();
+        cfg.loadRanks();
+        cfg.loadBroadcasts();
+        cfg.loadFilteredWords();
 
-        if(Config.DB_ENABLED)
-            dbManager.establishConnection();
+        if(cfg.DB_ENABLED)
+            databaseManager.establishConnection();
 
-        if(Config.BROADCASTS_ENABLED && !broadcasts.getLoadedBroadcasts().isEmpty())
-            broadcasts.performBroadcast(Config.BROADCASTS_RANDOM, Config.BROADCASTS_INTERVAL);
+        if(cfg.BROADCASTS_ENABLED && !broadcasts.getLoadedBroadcasts().isEmpty())
+            broadcasts.performBroadcast(cfg.BROADCASTS_RANDOM, cfg.BROADCASTS_INTERVAL);
 
-        if(Config.TICKETS_ENABLED)
+        if(cfg.TICKETS_ENABLED)
             ticketManager.pullUpdates(false);
 
         loadListeners();
+        loadCommands();
         loadPluginChannels();
     }
 
@@ -90,7 +102,7 @@ public class Revival extends JavaPlugin {
         for(Player players : Bukkit.getOnlinePlayers())
             accountManager.saveAccount(accountManager.getAccount(players.getUniqueId()), true, true);
 
-        if(Config.TICKETS_ENABLED) {
+        if(cfg.TICKETS_ENABLED) {
             for(Ticket tickets : ticketManager.getLoadedTickets())
                 ticketManager.saveTicket(tickets, true);
         }
@@ -108,11 +120,14 @@ public class Revival extends JavaPlugin {
         freezeManager = null;
         messageManager = null;
         ticketManager = null;
+        ticketGui = null;
         punishments = null;
         playerTools = null;
         serverTools = null;
         timeTools = null;
         itemTools = null;
+        msgTools = null;
+        processor = null;
     }
 
     /**
@@ -121,13 +136,20 @@ public class Revival extends JavaPlugin {
     private void loadListeners() {
         PluginManager pluginManager = Bukkit.getPluginManager();
 
-        pluginManager.registerEvents(new ChatListener(), this);
-        pluginManager.registerEvents(new AccountListener(), this);
-        pluginManager.registerEvents(new PunishmentListener(), this);
-        pluginManager.registerEvents(new FreezeListener(), this);
+        pluginManager.registerEvents(new ChatListener(this), this);
+        pluginManager.registerEvents(new AccountListener(this), this);
+        pluginManager.registerEvents(new PunishmentListener(this), this);
+        pluginManager.registerEvents(new FreezeListener(this), this);
         pluginManager.registerEvents(new ModeratorListener(), this);
-        pluginManager.registerEvents(new EssentialsListener(), this);
-        pluginManager.registerEvents(new TicketListener(), this);
+        pluginManager.registerEvents(new EssentialsListener(this), this);
+        pluginManager.registerEvents(new TicketListener(this), this);
+
+        // Patches
+        pluginManager.registerEvents(new PlayerVelocity(this), this);
+    }
+
+    private void loadCommands() {
+        getCommand("playervelocity").setExecutor(new PlayerVelocityCommand(this));
     }
 
     /**
@@ -135,6 +157,6 @@ public class Revival extends JavaPlugin {
      */
     private void loadPluginChannels() {
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCoord");
-        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new NetworkListener());
+        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new NetworkListener(this));
     }
 }

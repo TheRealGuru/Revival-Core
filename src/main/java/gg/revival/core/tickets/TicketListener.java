@@ -1,8 +1,8 @@
 package gg.revival.core.tickets;
 
 import gg.revival.core.Revival;
-import gg.revival.core.tools.Config;
 import gg.revival.core.tools.Permissions;
+import lombok.Getter;
 import mkremins.fanciful.FancyMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -21,18 +21,24 @@ import java.util.UUID;
 
 public class TicketListener implements Listener {
 
+    @Getter private Revival revival;
+
+    public TicketListener(Revival revival) {
+        this.revival = revival;
+    }
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
         if(!player.hasPermission(Permissions.TICKETS_VIEW)) return;
 
-        if(!Config.TICKETS_ENABLED) return;
+        if(!revival.getCfg().TICKETS_ENABLED) return;
 
-        if(Revival.getTicketManager().getLoadedTickets().isEmpty()) return;
+        if(revival.getTicketManager().getLoadedTickets().isEmpty()) return;
 
         new FancyMessage(
-                Revival.getTicketManager().getLoadedTickets().size() + " open tickets")
+                revival.getTicketManager().getLoadedTickets().size() + " open tickets")
                 .color(ChatColor.AQUA).then(" [Click here to view]")
                 .color(ChatColor.GREEN)
                 .command("/tickets").send(player);
@@ -44,7 +50,7 @@ public class TicketListener implements Listener {
 
         Player player = (Player)event.getWhoClicked();
 
-        if(!Config.TICKETS_ENABLED) return;
+        if(!revival.getCfg().TICKETS_ENABLED) return;
         if(!player.hasPermission(Permissions.TICKETS_VIEW)) return;
         if(event.getClickedInventory() == null || event.getClickedInventory().getName() == null || !event.getClickedInventory().getName().equals(ChatColor.BLACK + "Tickets")) return;
         if(event.getCurrentItem() == null || !event.getCurrentItem().getType().equals(Material.SKULL_ITEM)) return;
@@ -70,10 +76,10 @@ public class TicketListener implements Listener {
             }
 
             if(ticketId != null) {
-                Ticket ticket = Revival.getTicketManager().getTicketByUUID(ticketId);
-                Revival.getTicketManager().closeTicket(ticket, player.getUniqueId());
+                Ticket ticket = revival.getTicketManager().getTicketByUUID(ticketId);
+                revival.getTicketManager().closeTicket(ticket, player.getUniqueId());
 
-                TicketGUI.show(player, event.getClickedInventory(), Revival.getTicketManager().getLoadedTickets());
+                revival.getTicketGui().show(player, event.getClickedInventory(), revival.getTicketManager().getLoadedTickets());
 
                 player.sendMessage(ChatColor.GREEN + "Ticket closed");
             }

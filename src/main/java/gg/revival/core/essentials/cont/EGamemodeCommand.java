@@ -3,7 +3,6 @@ package gg.revival.core.essentials.cont;
 import gg.revival.core.Revival;
 import gg.revival.core.essentials.ECommand;
 import gg.revival.core.tools.Logger;
-import gg.revival.core.tools.MsgUtils;
 import gg.revival.core.tools.Permissions;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -12,12 +11,11 @@ import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class EGamemodeCommand extends ECommand
-{
+public class EGamemodeCommand extends ECommand {
 
-    public EGamemodeCommand()
-    {
+    public EGamemodeCommand(Revival revival) {
         super(
+                revival,
                 "gamemode",
                 "/gamemode [player] <0/1/2/3>",
                 "Change a players gamemode",
@@ -29,19 +27,16 @@ public class EGamemodeCommand extends ECommand
     }
 
     @Override
-    public void onCommand(CommandSender sender, String args[])
-    {
+    public void onCommand(CommandSender sender, String args[]) {
         if(!validate(sender, args)) return;
 
         Player player = (Player)sender;
 
-        if(args.length == 1)
-        {
+        if(args.length == 1) {
             String namedGamemode = args[0];
-            GameMode gamemode = Revival.getPlayerTools().getGamemodeByName(namedGamemode);
+            GameMode gamemode = getRevival().getPlayerTools().getGamemodeByName(namedGamemode);
 
-            if(gamemode == null)
-            {
+            if(gamemode == null) {
                 player.sendMessage(ChatColor.RED + "Gamemode not found");
                 return;
             }
@@ -54,18 +49,16 @@ public class EGamemodeCommand extends ECommand
 
         String namedPlayer = args[0];
         String namedGamemode = args[1];
-        GameMode gamemode = Revival.getPlayerTools().getGamemodeByName(namedGamemode);
+        GameMode gamemode = getRevival().getPlayerTools().getGamemodeByName(namedGamemode);
 
-        if(Bukkit.getPlayer(namedPlayer) == null)
-        {
-            player.sendMessage(MsgUtils.getMessage("errors.player-not-found"));
+        if(Bukkit.getPlayer(namedPlayer) == null) {
+            player.sendMessage(getRevival().getMsgTools().getMessage("errors.player-not-found"));
             return;
         }
 
         Player gamemodePlayer = Bukkit.getPlayer(namedPlayer);
 
-        if(gamemode == null)
-        {
+        if(gamemode == null) {
             player.sendMessage(ChatColor.RED + "Gamemode not found");
             return;
         }

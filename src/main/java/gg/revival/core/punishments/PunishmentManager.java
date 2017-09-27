@@ -4,7 +4,6 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import gg.revival.core.Revival;
-import gg.revival.core.tools.Config;
 import gg.revival.driver.MongoAPI;
 import lombok.Getter;
 import org.bson.Document;
@@ -13,6 +12,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.*;
 
 public class PunishmentManager {
+
+    @Getter private Revival revival;
+
+    public PunishmentManager(Revival revival) {
+        this.revival = revival;
+    }
 
     /**
      * Contains active mutes running on the server
@@ -47,10 +52,10 @@ public class PunishmentManager {
 
         new BukkitRunnable() {
             public void run() {
-                if(Revival.getDbManager().getPunishments() == null)
-                    Revival.getDbManager().setPunishments(MongoAPI.getCollection(Config.DB_DATABASE, "punishments"));
+                if(revival.getDatabaseManager().getPunishments() == null)
+                    revival.getDatabaseManager().setPunishments(MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "punishments"));
 
-                MongoCollection<Document> punishmentCollection = Revival.getDbManager().getPunishments();
+                MongoCollection<Document> punishmentCollection = revival.getDatabaseManager().getPunishments();
                 FindIterable<Document> query = punishmentCollection.find(Filters.eq("punishedAddress", ip));
                 Iterator<Document> iterator = query.iterator();
 
