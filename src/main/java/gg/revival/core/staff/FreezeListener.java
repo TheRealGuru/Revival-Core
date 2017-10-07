@@ -1,6 +1,7 @@
 package gg.revival.core.staff;
 
 import gg.revival.core.Revival;
+import gg.revival.core.tools.Permissions;
 import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
@@ -13,10 +14,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.*;
 
 public class FreezeListener implements Listener {
 
@@ -24,6 +22,14 @@ public class FreezeListener implements Listener {
 
     public FreezeListener(Revival revival) {
         this.revival = revival;
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+
+        if(revival.getFreezeManager().isFrozen(player.getUniqueId()))
+            revival.getPlayerTools().sendPermissionMessage(player.getName() + ChatColor.DARK_RED + " logged out while frozen", Permissions.MOD_TOOLS);
     }
 
     @EventHandler

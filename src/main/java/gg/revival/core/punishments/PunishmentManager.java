@@ -36,7 +36,7 @@ public class PunishmentManager {
             if(punishment.isForever() || !punishment.isExpired())
                 return punishment;
 
-            activeMutes.remove(punishment);
+            activeMutes.remove(uuid);
         }
 
         return null;
@@ -56,7 +56,15 @@ public class PunishmentManager {
                     revival.getDatabaseManager().setPunishments(MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "punishments"));
 
                 MongoCollection<Document> punishmentCollection = revival.getDatabaseManager().getPunishments();
-                FindIterable<Document> query = punishmentCollection.find(Filters.eq("punishedAddress", ip));
+                FindIterable<Document> query;
+
+                try {
+                    query = punishmentCollection.find(Filters.eq("punishedAddress", ip));
+                } catch (LinkageError err) {
+                    scanAddress(ip, callback);
+                    return;
+                }
+
                 Iterator<Document> iterator = query.iterator();
 
                 while(iterator.hasNext()) {
@@ -93,9 +101,9 @@ public class PunishmentManager {
                     public void run() {
                         callback.onQueryDone(result);
                     }
-                }.runTask(Revival.getCore());
+                }.runTask(revival);
             }
-        }.runTaskAsynchronously(Revival.getCore());
+        }.runTaskAsynchronously(revival);
     }
 
 }

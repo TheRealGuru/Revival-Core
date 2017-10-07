@@ -43,7 +43,7 @@ public class TicketManager {
      * @param ticketId
      * @return
      */
-    public Ticket getTicketByUUID(UUID ticketId) {
+    Ticket getTicketByUUID(UUID ticketId) {
         ImmutableList<Ticket> cache = ImmutableList.copyOf(loadedTickets);
 
         for(Ticket ticket : cache)
@@ -128,7 +128,7 @@ public class TicketManager {
      * @param ticket
      * @param closer
      */
-    public void closeTicket(Ticket ticket, UUID closer) {
+    void closeTicket(Ticket ticket, UUID closer) {
         ticket.setClosed(true);
         loadedTickets.remove(ticket);
         saveTicket(ticket, false);
@@ -153,7 +153,7 @@ public class TicketManager {
         }
     }
 
-    public void sendNotification(Ticket ticket, String creatorName, String reportedName) {
+    private void sendNotification(Ticket ticket, String creatorName, String reportedName) {
         if(ticket.getReportedUUID() != null && reportedName != null)
             revival.getPlayerTools().sendPermissionMessage(ChatColor.WHITE + "[" + ChatColor.DARK_RED + "Report" + ChatColor.WHITE + "] " +
             creatorName + ChatColor.GRAY + " has reported " + ChatColor.WHITE + reportedName + ChatColor.GRAY + " for " + ChatColor.RESET + ticket.getReason(), Permissions.TICKETS_VIEW);

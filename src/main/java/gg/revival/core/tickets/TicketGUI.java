@@ -28,7 +28,7 @@ public class TicketGUI {
      * @param inventory
      * @param tickets
      */
-    public void show(Player displayedTo, final Inventory inventory, Set<Ticket> tickets) {
+    public void show(Player displayedTo, Inventory inventory, Set<Ticket> tickets) {
         if(tickets.size() == 0) {
             displayedTo.closeInventory();
             return;

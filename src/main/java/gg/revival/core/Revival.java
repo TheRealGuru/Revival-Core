@@ -23,7 +23,6 @@ import gg.revival.core.tickets.TicketGUI;
 import gg.revival.core.tickets.TicketListener;
 import gg.revival.core.tickets.TicketManager;
 import gg.revival.core.tools.*;
-import gg.revival.driver.MongoAPI;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -86,11 +85,10 @@ public class Revival extends JavaPlugin {
         if(cfg.DB_ENABLED)
             databaseManager.establishConnection();
 
-        if(cfg.BROADCASTS_ENABLED && !broadcasts.getLoadedBroadcasts().isEmpty())
-            broadcasts.performBroadcast(cfg.BROADCASTS_RANDOM, cfg.BROADCASTS_INTERVAL);
-
         if(cfg.TICKETS_ENABLED)
             ticketManager.pullUpdates(false);
+
+        broadcasts.performBroadcast(cfg.BROADCASTS_RANDOM, cfg.BROADCASTS_INTERVAL);
 
         loadListeners();
         loadCommands();
@@ -106,9 +104,6 @@ public class Revival extends JavaPlugin {
             for(Ticket tickets : ticketManager.getLoadedTickets())
                 ticketManager.saveTicket(tickets, true);
         }
-
-        if(MongoAPI.isConnected())
-            MongoAPI.disconnect();
 
         core = null;
         rankManager = null;
@@ -156,7 +151,7 @@ public class Revival extends JavaPlugin {
      * Loads Plugin-Message channels to communicate with clients and other servers running on our network
      */
     private void loadPluginChannels() {
-        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCoord");
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new NetworkListener(this));
     }
 }

@@ -91,7 +91,7 @@ public class ModeratorListener implements Listener {
 
         if(player.hasPermission(Permissions.MOD_TOOLS) && !player.hasPermission(Permissions.ADMIN_TOOLS)) {
             player.setGameMode(GameMode.SPECTATOR);
-            player.setFlySpeed(player.getFlySpeed() * 4);
+            player.setFlySpeed(player.getFlySpeed() * 6);
         }
     }
 

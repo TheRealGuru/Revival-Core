@@ -14,7 +14,7 @@ public class Ticket {
     @Getter long createDate;
     @Getter @Setter boolean closed;
 
-    public Ticket(UUID ticketUUID, UUID ticketCreator, UUID reportedUUID, String reason, long createDate) {
+    Ticket(UUID ticketUUID, UUID ticketCreator, UUID reportedUUID, String reason, long createDate) {
         this.ticketUUID = ticketUUID;
         this.ticketCreator = ticketCreator;
         this.reportedUUID = reportedUUID;

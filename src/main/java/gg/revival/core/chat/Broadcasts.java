@@ -33,6 +33,8 @@ public class Broadcasts {
      * @param interval Delay in seconds before the next broadcast is ran
      */
     public void performBroadcast(boolean random, int interval) {
+        if(!revival.getCfg().BROADCASTS_ENABLED || loadedBroadcasts.isEmpty()) return;
+
         if(remainingBroadcasts.isEmpty())
             remainingBroadcasts.addAll(loadedBroadcasts);
 
