@@ -25,7 +25,9 @@ public class ChatListener implements Listener {
         Player player = event.getPlayer();
 
         if(revival.getChatFilter().hasCooldown(player.getUniqueId()) && !player.hasPermission(Permissions.CHAT_BYPASS_COOLDOWN)) {
-            player.sendMessage(revival.getMsgTools().getMessage("errors.chat-cooldown"));
+            player.sendMessage(revival.getMsgTools().getMessage("errors.chat-cooldown").replace("%cooldown%",
+                    revival.getTimeTools().getFormattedCooldown(true, revival.getChatFilter().getCooldowns().get(player.getUniqueId()) - System.currentTimeMillis())));
+
             event.setCancelled(true);
         }
 
