@@ -53,7 +53,7 @@ public class Broadcasts {
 
         new BukkitRunnable() {
             public void run() {
-                performBroadcast(random, interval);
+                performBroadcast(revival.getCfg().BROADCASTS_RANDOM, revival.getCfg().BROADCASTS_INTERVAL);
             }
         }.runTaskLater(Revival.getCore(), 20L * interval);
     }

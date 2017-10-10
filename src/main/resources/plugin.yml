@@ -5,6 +5,8 @@ author: johnsama
 description: Core engine that powers the Revival Network's servers
 depend: [MongoBukkitDriver, ProtocolLib]
 commands:
+  revival:
+    description: Revival Core command
   ban:
     description: Ban a player
   tempban:

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class Config {
 
@@ -49,6 +50,25 @@ public class Config {
     public double PLAYER_VELOCITY_V = 1.0;
 
     public Map<String, List<String>> HELP_TOPICS = new HashMap<>();
+
+    /**
+     * Reloads configuration from config.yml
+     */
+    public void reloadConfiguration() {
+        revival.getFileManager().reloadFiles();
+
+        HELP_TOPICS.clear();
+        revival.getChatFilter().getBadWords().clear();
+        revival.getRankManager().getRanks().clear();
+        revival.getBroadcasts().getLoadedBroadcasts().clear();
+
+        loadConfiguration();
+        loadBroadcasts();
+        loadRanks();
+        loadFilteredWords();
+
+        Logger.log(Level.WARNING, "Reloaded configuration");
+    }
 
     /**
      * Loads configuration from config.yml

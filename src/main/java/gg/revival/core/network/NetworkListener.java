@@ -5,7 +5,6 @@ import com.google.common.io.ByteStreams;
 import gg.revival.core.Revival;
 import gg.revival.core.punishments.PunishType;
 import gg.revival.core.punishments.Punishment;
-import gg.revival.core.tools.Logger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -32,8 +31,6 @@ public class NetworkListener implements PluginMessageListener {
 
         ByteArrayDataInput input = ByteStreams.newDataInput(bytes);
         String subchannel = input.readUTF();
-
-        Logger.log("Received message from Plugin-channel '" + subchannel + "'");
 
         if(subchannel.equals("Punishment")) {
             short len = input.readShort();

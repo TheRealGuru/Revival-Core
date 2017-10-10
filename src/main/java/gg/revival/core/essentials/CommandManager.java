@@ -56,6 +56,7 @@ public class CommandManager {
         EReportCommand reportCommand = new EReportCommand(revival);
         EHelpOpCommand helpopCommand = new EHelpOpCommand(revival);
         ETicketsCommand ticketsCommand = new ETicketsCommand(revival);
+        ERevivalCommand revivalCommand = new ERevivalCommand(revival);
 
         commands.add(banCommand);
         commands.add(tempbanCommand);
@@ -89,6 +90,7 @@ public class CommandManager {
         commands.add(reportCommand);
         commands.add(helpopCommand);
         commands.add(ticketsCommand);
+        commands.add(revivalCommand);
 
         for(ECommand commands : commands)
             Revival.getCore().getCommand(commands.getLabel()).setExecutor(commandExecutor);
