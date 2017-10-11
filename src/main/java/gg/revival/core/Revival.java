@@ -18,6 +18,7 @@ import gg.revival.core.ranks.RankManager;
 import gg.revival.core.staff.FreezeListener;
 import gg.revival.core.staff.FreezeManager;
 import gg.revival.core.staff.ModeratorListener;
+import gg.revival.core.staff.StaffManager;
 import gg.revival.core.tickets.Ticket;
 import gg.revival.core.tickets.TicketGUI;
 import gg.revival.core.tickets.TicketListener;
@@ -43,6 +44,7 @@ public class Revival extends JavaPlugin {
     @Getter public FreezeManager freezeManager;
     @Getter public MessageManager messageManager;
     @Getter public TicketManager ticketManager;
+    @Getter public StaffManager staffManager;
     @Getter public TicketGUI ticketGui;
     @Getter public PlayerTools playerTools;
     @Getter public ServerTools serverTools;
@@ -66,6 +68,7 @@ public class Revival extends JavaPlugin {
         freezeManager = new FreezeManager();
         messageManager = new MessageManager(this);
         ticketManager = new TicketManager(this);
+        staffManager = new StaffManager(this);
         ticketGui = new TicketGUI(this);
         playerTools = new PlayerTools();
         serverTools = new ServerTools(this);
@@ -135,7 +138,7 @@ public class Revival extends JavaPlugin {
         pluginManager.registerEvents(new AccountListener(this), this);
         pluginManager.registerEvents(new PunishmentListener(this), this);
         pluginManager.registerEvents(new FreezeListener(this), this);
-        pluginManager.registerEvents(new ModeratorListener(), this);
+        pluginManager.registerEvents(new ModeratorListener(this), this);
         pluginManager.registerEvents(new EssentialsListener(this), this);
         pluginManager.registerEvents(new TicketListener(this), this);
 

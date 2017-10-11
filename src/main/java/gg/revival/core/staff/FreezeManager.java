@@ -1,5 +1,6 @@
 package gg.revival.core.staff;
 
+import com.google.common.collect.Maps;
 import gg.revival.core.Revival;
 import lombok.Getter;
 import org.bukkit.ChatColor;
@@ -7,7 +8,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -16,7 +16,7 @@ public class FreezeManager {
     /**
      * Contains all frozen players
      */
-    @Getter Map<UUID, Location> frozenPlayers = new HashMap<>();
+    @Getter Map<UUID, Location> frozenPlayers = Maps.newConcurrentMap();
 
     /**
      * Returns the players original location if they're frozen
@@ -62,7 +62,7 @@ public class FreezeManager {
      * Loop method that constantly keeps checking if the player has moved until they are offline or no longer frozen
      * @param player
      */
-    public void checkLocation(Player player) {
+    private void checkLocation(Player player) {
         if(player == null) return;
 
         Location location = getLocation(player.getUniqueId());

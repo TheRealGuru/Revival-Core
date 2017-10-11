@@ -57,6 +57,8 @@ public class CommandManager {
         EHelpOpCommand helpopCommand = new EHelpOpCommand(revival);
         ETicketsCommand ticketsCommand = new ETicketsCommand(revival);
         ERevivalCommand revivalCommand = new ERevivalCommand(revival);
+        EVanishCommand vanishCommand = new EVanishCommand(revival);
+        ENoclipCommand noclipCommand = new ENoclipCommand(revival);
 
         commands.add(banCommand);
         commands.add(tempbanCommand);
@@ -91,6 +93,8 @@ public class CommandManager {
         commands.add(helpopCommand);
         commands.add(ticketsCommand);
         commands.add(revivalCommand);
+        commands.add(vanishCommand);
+        commands.add(noclipCommand);
 
         for(ECommand commands : commands)
             Revival.getCore().getCommand(commands.getLabel()).setExecutor(commandExecutor);

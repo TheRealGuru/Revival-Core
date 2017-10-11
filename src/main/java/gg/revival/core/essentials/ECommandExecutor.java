@@ -10,7 +10,7 @@ public class ECommandExecutor implements CommandExecutor {
 
     @Getter private Revival revival;
 
-    public ECommandExecutor(Revival revival) {
+    ECommandExecutor(Revival revival) {
         this.revival = revival;
     }
 

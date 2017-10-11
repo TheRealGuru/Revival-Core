@@ -95,3 +95,9 @@ commands:
   playervelocity:
     description: Modify player velocity patch values
     aliases: [pv]
+  vanish:
+    description: Toggle vanish
+    aliases: [v]
+  noclip:
+    description: Toggle noclip
+    aliases: [nc]
