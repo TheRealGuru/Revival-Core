@@ -4,7 +4,6 @@ import gg.revival.core.Revival;
 import gg.revival.core.essentials.ECommand;
 import gg.revival.core.punishments.PunishType;
 import gg.revival.core.punishments.Punishment;
-import gg.revival.core.tools.Logger;
 import gg.revival.core.tools.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -81,7 +80,7 @@ public class EUnbanCommand extends ECommand {
                         .replace("%unbanner%", unbanner)
                         .replace("%punishments%", String.valueOf(removedBans)), Permissions.PUNISHMENT_VIEW);
 
-                Logger.log(username + " has been unbanned by " + unbanner + ", " + removedBans + " punishment(s) were removed");
+                getRevival().getLog().log(username + " has been unbanned by " + unbanner + ", " + removedBans + " punishment(s) were removed");
             });
         });
     }

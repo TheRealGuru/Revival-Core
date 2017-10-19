@@ -4,7 +4,6 @@ import gg.revival.core.Revival;
 import gg.revival.core.essentials.ECommand;
 import gg.revival.core.punishments.PunishType;
 import gg.revival.core.punishments.Punishment;
-import gg.revival.core.tools.Logger;
 import gg.revival.core.tools.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -83,7 +82,7 @@ public class EMuteCommand extends ECommand {
                 if(Bukkit.getPlayer(uuid) != null)
                     Bukkit.getPlayer(uuid).sendMessage(getRevival().getMsgTools().getMessage("muted.forever").replace("%reason%", reason));
 
-                Logger.log(username + " has been muted by " + punisherName + " for " + punishment.getReason());
+                getRevival().getLog().log(username + " has been muted by " + punisherName + " for " + punishment.getReason());
             });
         });
     }

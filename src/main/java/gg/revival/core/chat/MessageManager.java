@@ -2,7 +2,6 @@ package gg.revival.core.chat;
 
 import gg.revival.core.Revival;
 import gg.revival.core.accounts.Account;
-import gg.revival.core.tools.Logger;
 import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -57,7 +56,7 @@ public class MessageManager {
         .replace("%sender%", sender.getName())
         .replace("%message%", message));
 
-        Logger.log("[PM] " + sender.getName() + " told " + receiver.getName() + ": " + message);
+        revival.getLog().log("[PM] " + sender.getName() + " told " + receiver.getName() + ": " + message);
     }
 
 }

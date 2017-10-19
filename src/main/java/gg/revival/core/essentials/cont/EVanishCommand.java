@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 public class EVanishCommand extends ECommand {
 
     public EVanishCommand(Revival revival) {
-        super(revival, "vanish", "/vanish", "Toggle vanish", Permissions.ADMIN_TOOLS, 0, 0, true);
+        super(revival, "vanish", "/vanish", "Toggle vanish", Permissions.MOD_TOOLS, 0, 0, true);
     }
 
     @Override

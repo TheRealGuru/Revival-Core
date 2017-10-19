@@ -10,8 +10,6 @@ import gg.revival.core.database.DBManager;
 import gg.revival.core.essentials.CommandManager;
 import gg.revival.core.essentials.EssentialsListener;
 import gg.revival.core.network.NetworkListener;
-import gg.revival.core.patches.PlayerVelocity;
-import gg.revival.core.patches.PlayerVelocityCommand;
 import gg.revival.core.punishments.PunishmentListener;
 import gg.revival.core.punishments.PunishmentManager;
 import gg.revival.core.ranks.RankManager;
@@ -53,6 +51,7 @@ public class Revival extends JavaPlugin {
     @Getter public MsgTools msgTools;
     @Getter public Processor processor;
     @Getter public Config cfg;
+    @Getter public Log log;
 
     @Override
     public void onEnable() {
@@ -77,6 +76,7 @@ public class Revival extends JavaPlugin {
         msgTools = new MsgTools(this);
         processor = new Processor(this);
         cfg = new Config(this);
+        log = new Log();
 
         fileManager.createFiles();
 
@@ -94,7 +94,6 @@ public class Revival extends JavaPlugin {
         broadcasts.performBroadcast(cfg.BROADCASTS_RANDOM, cfg.BROADCASTS_INTERVAL);
 
         loadListeners();
-        loadCommands();
         loadPluginChannels();
     }
 
@@ -126,6 +125,7 @@ public class Revival extends JavaPlugin {
         itemTools = null;
         msgTools = null;
         processor = null;
+        log = null;
     }
 
     /**
@@ -141,13 +141,6 @@ public class Revival extends JavaPlugin {
         pluginManager.registerEvents(new ModeratorListener(this), this);
         pluginManager.registerEvents(new EssentialsListener(this), this);
         pluginManager.registerEvents(new TicketListener(this), this);
-
-        // Patches
-        pluginManager.registerEvents(new PlayerVelocity(this), this);
-    }
-
-    private void loadCommands() {
-        getCommand("playervelocity").setExecutor(new PlayerVelocityCommand(this));
     }
 
     /**

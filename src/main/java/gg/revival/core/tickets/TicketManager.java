@@ -6,7 +6,6 @@ import com.google.common.collect.Sets;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import gg.revival.core.Revival;
-import gg.revival.core.tools.Logger;
 import gg.revival.core.tools.Permissions;
 import gg.revival.driver.MongoAPI;
 import lombok.Getter;
@@ -97,11 +96,11 @@ public class TicketManager {
             if(reported != null) {
                 revival.getPlayerTools().getOfflinePlayer(reported, (reportedId, reportedUsername) -> {
                     sendNotification(ticket, creatorUsername, reportedUsername);
-                    Logger.log(creatorUsername + " reported " + reportedUsername + " for " + ticket.getReason());
+                    revival.getLog().log(creatorUsername + " reported " + reportedUsername + " for " + ticket.getReason());
                 });
             } else {
                 sendNotification(ticket, creatorUsername, null);
-                Logger.log(creatorUsername + " asked " + ticket.getReason());
+                revival.getLog().log(creatorUsername + " asked " + ticket.getReason());
             }
         });
 
@@ -139,7 +138,7 @@ public class TicketManager {
             closerName = Bukkit.getPlayer(closer).getName();
 
         if(closerName != null)
-            Logger.log(closerName + " has closed a ticket");
+            revival.getLog().log(closerName + " has closed a ticket");
 
         for(Player players : Bukkit.getOnlinePlayers()) {
             if(players.getUniqueId().equals(closer)) continue;
@@ -211,7 +210,7 @@ public class TicketManager {
                 if (notifyUpdates)
                     revival.getPlayerTools().sendPermissionMessage(ChatColor.YELLOW + "Added " + added + " new tickets", Permissions.TICKETS_VIEW);
 
-                Logger.log("Loaded " + loadedTickets.size() + " Tickets");
+                revival.getLog().log("Loaded " + loadedTickets.size() + " Tickets");
             }
         }.runTaskAsynchronously(Revival.getCore());
     }

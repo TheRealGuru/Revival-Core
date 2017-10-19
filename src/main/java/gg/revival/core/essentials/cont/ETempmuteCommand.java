@@ -4,7 +4,6 @@ import gg.revival.core.Revival;
 import gg.revival.core.essentials.ECommand;
 import gg.revival.core.punishments.PunishType;
 import gg.revival.core.punishments.Punishment;
-import gg.revival.core.tools.Logger;
 import gg.revival.core.tools.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -98,7 +97,7 @@ public class ETempmuteCommand extends ECommand {
                             .replace("%reason%", reason).replace("%time%", formatter.format(date)));
                 }
 
-                Logger.log(username + " has been muted by " + punisherName + " for " + punishment.getReason() + "\n" + "This mute will expire on " + formatter.format(date));
+                getRevival().getLog().log(username + " has been muted by " + punisherName + " for " + punishment.getReason() + "\n" + "This mute will expire on " + formatter.format(date));
             });
         });
     }

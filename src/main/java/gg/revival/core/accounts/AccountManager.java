@@ -12,10 +12,12 @@ import gg.revival.driver.MongoAPI;
 import lombok.Getter;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
 
 public class AccountManager {
 
@@ -419,4 +421,61 @@ public class AccountManager {
         }
     }
 
+    /**
+     * Adds XP to the given UUID's account
+     * @param uuid
+     * @param amount
+     */
+    public void addXP(UUID uuid, Integer amount) {
+        Account account = getAccount(uuid);
+
+        if(account == null) {
+            revival.getLog().log(Level.WARNING, "Could not find account for '" + uuid.toString() + "'");
+            return;
+        }
+
+        account.setXp(account.getXp() + amount);
+
+        if(Bukkit.getPlayer(uuid) != null)
+            Bukkit.getPlayer(uuid).sendMessage(ChatColor.GREEN + "+" + amount + "XP");
+    }
+
+    /**
+     * Spends XP from the given UUID's account
+     * @param uuid
+     * @param amount
+     */
+    public void spendXP(UUID uuid, Integer amount) {
+        Account account = getAccount(uuid);
+
+        if(account == null) {
+            revival.getLog().log(Level.SEVERE, "Could not subtract XP from '" + uuid.toString() + "'");
+            return;
+        }
+
+        account.setXp(account.getXp() - amount);
+
+        if(Bukkit.getPlayer(uuid) != null)
+            Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + "-" + amount + "XP");
+    }
+
+    /**
+     * Sets given players XP to the given amount
+     * @param uuid
+     * @param amount
+     */
+    public void setXP(UUID uuid, Integer amount) {
+        Account account = getAccount(uuid);
+        int oldXp = account.getXp();
+
+        if(account == null) {
+            revival.getLog().log(Level.WARNING, "Could not set XP for '" + uuid.toString() + "'");
+            return;
+        }
+
+        account.setXp(amount);
+
+        if(Bukkit.getPlayer(uuid) != null)
+            Bukkit.getPlayer(uuid).sendMessage(ChatColor.YELLOW + "Old XP" + ChatColor.WHITE + ": " + oldXp + ChatColor.YELLOW + " New XP" + ChatColor.WHITE + account.getXp());
+    }
 }

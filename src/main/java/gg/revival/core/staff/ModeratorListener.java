@@ -3,6 +3,7 @@ package gg.revival.core.staff;
 import gg.revival.core.Revival;
 import gg.revival.core.tools.Permissions;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -14,6 +15,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
+
+import java.util.UUID;
 
 public class ModeratorListener implements Listener {
 
@@ -98,7 +101,18 @@ public class ModeratorListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if(!player.hasPermission(Permissions.MOD_TOOLS) && !player.hasPermission(Permissions.ADMIN_TOOLS)) return;
+        if(!player.hasPermission(Permissions.MOD_TOOLS) && !player.hasPermission(Permissions.ADMIN_TOOLS)) {
+            for(UUID vanished : revival.getStaffManager().getVanished()) {
+                if(Bukkit.getPlayer(vanished) == null) continue;
+
+                Player vanishedPlayer = Bukkit.getPlayer(vanished);
+
+                if(player.canSee(vanishedPlayer))
+                    player.hidePlayer(vanishedPlayer);
+            }
+
+            return;
+        }
 
         revival.getStaffManager().hidePlayer(player);
     }

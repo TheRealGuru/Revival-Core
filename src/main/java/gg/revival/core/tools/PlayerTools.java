@@ -25,7 +25,7 @@ public class PlayerTools {
 
         int cursor = 0;
 
-        for(ItemStack contents : viewer.getInventory().getContents()) {
+        for(ItemStack contents : viewed.getInventory().getContents()) {
             if(contents == null) {
                 cursor++;
                 continue;
@@ -49,7 +49,8 @@ public class PlayerTools {
         List<String> potionLore = new ArrayList<>();
 
         for(PotionEffect potion : viewed.getActivePotionEffects())
-            potionLore.add(ChatColor.RESET + "" + ChatColor.WHITE + StringUtils.capitalize(potion.getType().getName().toLowerCase().replace("_", " ") + ": " + ChatColor.DARK_AQUA + potion.getDuration() / 20));
+            potionLore.add(ChatColor.RESET + "" + ChatColor.WHITE + StringUtils.capitalize(potion.getType().getName().toLowerCase().replace("_", " ") + ": " +
+                    ChatColor.DARK_AQUA + potion.getDuration() / 20));
 
         potionMeta.setLore(potionLore);
 

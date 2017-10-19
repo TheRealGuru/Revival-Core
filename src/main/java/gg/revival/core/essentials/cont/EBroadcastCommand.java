@@ -4,7 +4,6 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import gg.revival.core.Revival;
 import gg.revival.core.essentials.ECommand;
-import gg.revival.core.tools.Logger;
 import gg.revival.core.tools.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -73,14 +72,14 @@ public class EBroadcastCommand extends ECommand {
                 output.writeShort(messageBytes.toByteArray().length);
                 output.write(messageBytes.toByteArray());
 
-                Logger.log("Deployed network-wide broadcast");
+                getRevival().getLog().log("Deployed network-wide broadcast");
             }
         }
 
         else {
-            for(int i = 1; i < args.length; i++) {
-                if(args[i].equals("-r") || args[i].equals("-n")) continue;
-                broadcastBuilder.append(args[i] + " ");
+            for (String arg : args) {
+                if (arg.equals("-r") || arg.equals("-n")) continue;
+                broadcastBuilder.append(arg + " ");
             }
 
             Bukkit.broadcastMessage(getRevival().getCfg().BROADCASTS_PREFIX + ChatColor.stripColor(broadcastBuilder.toString().trim()));
@@ -104,7 +103,7 @@ public class EBroadcastCommand extends ECommand {
                 output.writeShort(messageBytes.toByteArray().length);
                 output.write(messageBytes.toByteArray());
 
-                Logger.log("Deployed network-wide broadcast");
+                getRevival().getLog().log("Deployed network-wide broadcast");
             }
         }
     }

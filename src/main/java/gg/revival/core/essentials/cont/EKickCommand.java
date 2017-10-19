@@ -2,7 +2,6 @@ package gg.revival.core.essentials.cont;
 
 import gg.revival.core.Revival;
 import gg.revival.core.essentials.ECommand;
-import gg.revival.core.tools.Logger;
 import gg.revival.core.tools.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -58,7 +57,7 @@ public class EKickCommand extends ECommand {
                 .replace("%player%", player.getName())
                 .replace("%kicker%", kicker), Permissions.PUNISHMENT_VIEW);
 
-        Logger.log(player.getName() + " has been kicked by " + kicker + " for " + reason);
+        getRevival().getLog().log(player.getName() + " has been kicked by " + kicker + " for " + reason);
     }
 
 }

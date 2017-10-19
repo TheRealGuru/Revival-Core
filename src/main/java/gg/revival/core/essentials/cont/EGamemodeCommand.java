@@ -2,7 +2,6 @@ package gg.revival.core.essentials.cont;
 
 import gg.revival.core.Revival;
 import gg.revival.core.essentials.ECommand;
-import gg.revival.core.tools.Logger;
 import gg.revival.core.tools.Permissions;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -67,7 +66,7 @@ public class EGamemodeCommand extends ECommand {
         gamemodePlayer.sendMessage(ChatColor.GREEN + player.getName() + " changed your gamemode to " + StringUtils.capitalize(gamemode.toString().toLowerCase()));
         player.sendMessage(ChatColor.GREEN + "Changed " + gamemodePlayer.getName() + "'s gamemode to " + StringUtils.capitalize(gamemode.toString().toLowerCase()));
 
-        Logger.log(player.getName() + " changed " + gamemodePlayer.getName() + "'s gamemode to " + StringUtils.capitalize(gamemode.toString().toLowerCase()));
+        getRevival().getLog().log(player.getName() + " changed " + gamemodePlayer.getName() + "'s gamemode to " + StringUtils.capitalize(gamemode.toString().toLowerCase()));
     }
 
 }

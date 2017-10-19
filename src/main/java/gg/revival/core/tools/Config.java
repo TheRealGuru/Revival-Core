@@ -67,7 +67,7 @@ public class Config {
         loadRanks();
         loadFilteredWords();
 
-        Logger.log(Level.WARNING, "Reloaded configuration");
+        revival.getLog().log(Level.WARNING, "Reloaded configuration");
     }
 
     /**
@@ -116,7 +116,7 @@ public class Config {
             HELP_TOPICS.put(displayName, formattedLore);
         }
 
-        Logger.log("Loaded " + HELP_TOPICS.size() + " Help Topics");
+        revival.getLog().log("Loaded " + HELP_TOPICS.size() + " Help Topics");
     }
 
     /**
@@ -124,7 +124,7 @@ public class Config {
      */
     public void loadFilteredWords() {
         revival.getChatFilter().getBadWords().addAll(revival.getConfig().getStringList("chat-filter.filter-out"));
-        Logger.log("Loaded " + revival.getChatFilter().getBadWords().size() + " Chat Filters");
+        revival.getLog().log("Loaded " + revival.getChatFilter().getBadWords().size() + " Chat Filters");
     }
 
     /**
@@ -143,7 +143,7 @@ public class Config {
             revival.getRankManager().getRanks().add(rank);
         }
 
-        Logger.log("Loaded " + revival.getRankManager().getRanks().size() + " Ranks");
+        revival.getLog().log("Loaded " + revival.getRankManager().getRanks().size() + " Ranks");
     }
 
     /**
@@ -157,7 +157,7 @@ public class Config {
             broadcasts.add(ChatColor.translateAlternateColorCodes('&', broadcast));
 
         revival.getBroadcasts().getLoadedBroadcasts().addAll(broadcasts);
-        Logger.log("Loaded " + revival.getBroadcasts().getLoadedBroadcasts().size() + " Broadcasts");
+        revival.getLog().log("Loaded " + revival.getBroadcasts().getLoadedBroadcasts().size() + " Broadcasts");
     }
 
 }
