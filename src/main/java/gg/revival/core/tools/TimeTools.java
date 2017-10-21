@@ -2,7 +2,58 @@ package gg.revival.core.tools;
 
 import org.apache.commons.lang.math.NumberUtils;
 
+import java.util.concurrent.TimeUnit;
+
 public class TimeTools {
+
+    /**
+     * Returns a formatted uptime based on given long
+     * @param uptime
+     * @return
+     */
+    public String formatIntoUptime(long uptime) {
+        long days = TimeUnit.MILLISECONDS
+                .toDays(uptime);
+        uptime -= TimeUnit.DAYS.toMillis(days);
+
+        long hours = TimeUnit.MILLISECONDS
+                .toHours(uptime);
+        uptime -= TimeUnit.HOURS.toMillis(hours);
+
+        long minutes = TimeUnit.MILLISECONDS
+                .toMinutes(uptime);
+        uptime -= TimeUnit.MINUTES.toMillis(minutes);
+
+        long seconds = TimeUnit.MILLISECONDS
+                .toSeconds(uptime);
+
+        if(days != 0)
+            return days + " day(s)";
+
+        if(hours != 0)
+            return hours + " hour(s)";
+
+        if(minutes != 0)
+            return minutes + " minute(s)";
+
+        if(seconds != 0)
+            return seconds + " second(s)";
+
+        return "Time not found";
+    }
+
+    /**
+     * Formats a string in to Hours, minutes and seconds
+     * @param duration Time in seconds
+     * @return The fancy looking time
+     */
+    public String formatIntoHHMMSS(int duration) {
+        int remainder = duration % 3600;
+        int minutes = remainder / 60;
+        int seconds = remainder % 60;
+
+        return new StringBuilder().append(minutes).append(":").append(seconds < 10 ? "0" : "").append(seconds).toString();
+    }
 
     /**
      * Returns a fancy looking formatted decimal from a long

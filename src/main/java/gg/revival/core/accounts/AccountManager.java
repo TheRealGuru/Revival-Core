@@ -1,6 +1,7 @@
 package gg.revival.core.accounts;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -13,6 +14,8 @@ import lombok.Getter;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -53,16 +56,14 @@ public class AccountManager {
      * @param uuid The user UUID
      * @param callback Callback interface
      */
-    public void getAccount(UUID uuid, boolean unsafe, final AccountCallback callback) {
+    public void getAccount(UUID uuid, boolean unsafe, boolean cache, final AccountCallback callback) {
         if(!revival.getCfg().DB_ENABLED) {
-            List<UUID> blockedPlayers = new ArrayList<>();
-            List<Punishment> punishments = new ArrayList<>();
-            List<Integer> newAddressList = new ArrayList<>();
+            List<Integer> newAddressList = Lists.newArrayList();
 
             if(Bukkit.getPlayer(uuid) != null && Bukkit.getPlayer(uuid).isOnline())
                 newAddressList.add(IPTools.ipStringToInteger(Bukkit.getPlayer(uuid).getAddress().getAddress().getHostAddress()));
 
-            Account account = new Account(uuid, newAddressList, 0, false, false, blockedPlayers, punishments, System.currentTimeMillis());
+            Account account = new Account(uuid, newAddressList, 0, false, false, Lists.newArrayList(), Lists.newArrayList(), Lists.newArrayList(), System.currentTimeMillis());
             accounts.add(account);
 
             callback.onQueryDone(account);
@@ -92,22 +93,45 @@ public class AccountManager {
             try {
                 accountQuery = MongoAPI.getQueryByFilter(accountCollection, "uuid", uuid.toString());
             } catch (LinkageError err) {
-                getAccount(uuid, unsafe, callback);
+                getAccount(uuid, unsafe, cache, callback);
                 return;
             }
 
             Document document = accountQuery.first();
-            Account account = null;
+            Account account;
 
             if(document != null) {
-                int xp = document.getInteger("xp");
-                boolean hideGlobalChat = document.getBoolean("hideGlobalChat");
-                boolean hideMessages = document.getBoolean("hideMessages");
-                List<String> blockedPlayersIds = (List<String>)document.get("blockedPlayers");
-                List<String> punishmentIds = (List<String>)document.get("punishments");
-                List<Integer> registeredAddresses = (List<Integer>)document.get("registeredAddresses");
-                List<UUID> blockedPlayers = new ArrayList<>();
-                List<Punishment> punishments = new ArrayList<>();
+                int xp = 0;
+                long lastSeen = System.currentTimeMillis();
+                boolean hideGlobalChat = false, hideMessages = false;
+                List<String> blockedPlayerIds = Lists.newArrayList(), punishmentIds = Lists.newArrayList(), notes = Lists.newArrayList();
+                List<Integer> addresses = Lists.newArrayList();
+                List<UUID> blockedPlayers = Lists.newArrayList();
+                List<Punishment> punishments = Lists.newArrayList();
+
+                if(document.get("xp") != null)
+                    xp = document.getInteger("xp");
+
+                if(document.get("hideGlobalChat") != null)
+                    hideGlobalChat = document.getBoolean("hideGlobalChat");
+
+                if(document.get("hideMessages") != null)
+                    hideMessages = document.getBoolean("hideMessages");
+
+                if(document.get("blockedPlayers") != null)
+                    blockedPlayerIds = (List<String>) document.get("blockedPlayers");
+
+                if(document.get("punishments") != null)
+                    punishmentIds = (List<String>) document.get("punishments");
+
+                if(document.get("addresses") != null)
+                    addresses = (List<Integer>) document.get("addresses");
+
+                if(document.get("notes") != null)
+                    notes = (List<String>) document.get("notes");
+
+                if(document.get("lastSeen") != null)
+                    lastSeen = document.getLong("lastSeen");
 
                 if(punishmentIds != null && !punishmentIds.isEmpty()) {
                     if(revival.getDatabaseManager().getPunishments() == null)
@@ -146,20 +170,19 @@ public class AccountManager {
                     }
                 }
 
-                if(blockedPlayersIds != null && !blockedPlayersIds.isEmpty()) {
-                    for(String blockedPlayerId : blockedPlayersIds)
+                if(blockedPlayerIds != null && !blockedPlayerIds.isEmpty()) {
+                    for(String blockedPlayerId : blockedPlayerIds)
                         blockedPlayers.add(UUID.fromString(blockedPlayerId));
                 }
 
-                account = new Account(uuid, registeredAddresses, xp, hideGlobalChat, hideMessages, blockedPlayers, punishments, System.currentTimeMillis());
+                account = new Account(uuid, addresses, xp, hideGlobalChat, hideMessages, blockedPlayers, punishments, notes, lastSeen);
             }
 
             else {
-                List<UUID> blockedPlayers = new ArrayList<>(); List<Punishment> punishments = new ArrayList<>(); List<Integer> registeredAddresses = new ArrayList<>();
-                account = new Account(uuid, registeredAddresses, 0, false, false, blockedPlayers, punishments, System.currentTimeMillis());
+                account = new Account(uuid, Lists.newArrayList(), 0, false, false, Lists.newArrayList(), Lists.newArrayList(), Lists.newArrayList(), System.currentTimeMillis());
             }
 
-            if(getAccount(uuid) == null)
+            if(getAccount(uuid) == null && cache)
                 accounts.add(account);
 
             callback.onQueryDone(account);
@@ -179,27 +202,50 @@ public class AccountManager {
 
                     if(accountCollection == null || punishmentCollection == null) return;
 
-                    FindIterable<Document> accountQuery = null;
+                    FindIterable<Document> accountQuery;
 
                     try {
                         accountQuery = MongoAPI.getQueryByFilter(accountCollection, "uuid", uuid.toString());
                     } catch (LinkageError err) {
-                        getAccount(uuid, unsafe, callback);
+                        getAccount(uuid, unsafe, cache, callback);
                         return;
                     }
 
                     Document document = accountQuery.first();
-                    Account account = null;
+                    Account account;
 
                     if(document != null) {
-                        int xp = document.getInteger("xp");
-                        boolean hideGlobalChat = document.getBoolean("hideGlobalChat");
-                        boolean hideMessages = document.getBoolean("hideMessages");
-                        List<String> blockedPlayersIds = (List<String>)document.get("blockedPlayers");
-                        List<String> punishmentIds = (List<String>)document.get("punishments");
-                        List<Integer> registeredAddresses = (List<Integer>)document.get("registeredAddresses");
-                        List<UUID> blockedPlayers = new ArrayList<>();
-                        List<Punishment> punishments = new ArrayList<>();
+                        int xp = 0;
+                        long lastSeen = System.currentTimeMillis();
+                        boolean hideGlobalChat = false, hideMessages = false;
+                        List<String> blockedPlayerIds = Lists.newArrayList(), punishmentIds = Lists.newArrayList(), notes = Lists.newArrayList();
+                        List<Integer> addresses = Lists.newArrayList();
+                        List<UUID> blockedPlayers = Lists.newArrayList();
+                        List<Punishment> punishments = Lists.newArrayList();
+
+                        if(document.get("xp") != null)
+                            xp = document.getInteger("xp");
+
+                        if(document.get("hideGlobalChat") != null)
+                            hideGlobalChat = document.getBoolean("hideGlobalChat");
+
+                        if(document.get("hideMessages") != null)
+                            hideMessages = document.getBoolean("hideMessages");
+
+                        if(document.get("blockedPlayers") != null)
+                            blockedPlayerIds = (List<String>) document.get("blockedPlayers");
+
+                        if(document.get("punishments") != null)
+                            punishmentIds = (List<String>) document.get("punishments");
+
+                        if(document.get("addresses") != null)
+                            addresses = (List<Integer>) document.get("addresses");
+
+                        if(document.get("notes") != null)
+                            notes = (List<String>) document.get("notes");
+
+                        if(document.get("lastSeen") != null)
+                            lastSeen = document.getLong("lastSeen");
 
                         if(punishmentIds != null && !punishmentIds.isEmpty()) {
                             if(revival.getDatabaseManager().getPunishments() == null)
@@ -238,20 +284,19 @@ public class AccountManager {
                             }
                         }
 
-                        if(blockedPlayersIds != null && !blockedPlayersIds.isEmpty()) {
-                            for(String blockedPlayerId : blockedPlayersIds)
+                        if(blockedPlayerIds != null && !blockedPlayerIds.isEmpty()) {
+                            for(String blockedPlayerId : blockedPlayerIds)
                                 blockedPlayers.add(UUID.fromString(blockedPlayerId));
                         }
 
-                        account = new Account(uuid, registeredAddresses, xp, hideGlobalChat, hideMessages, blockedPlayers, punishments, System.currentTimeMillis());
+                        account = new Account(uuid, addresses, xp, hideGlobalChat, hideMessages, blockedPlayers, punishments, notes, lastSeen);
                     }
 
                     else {
-                        List<UUID> blockedPlayers = new ArrayList<>(); List<Punishment> punishments = new ArrayList<>(); List<Integer> registeredAddresses = new ArrayList<>();
-                        account = new Account(uuid, registeredAddresses, 0, false, false, blockedPlayers, punishments, System.currentTimeMillis());
+                        account = new Account(uuid, Lists.newArrayList(), 0, false, false, Lists.newArrayList(), Lists.newArrayList(), Lists.newArrayList(), System.currentTimeMillis());
                     }
 
-                    if(getAccount(uuid) == null)
+                    if(getAccount(uuid) == null && cache)
                         accounts.add(account);
 
                     final Account result = account;
@@ -308,12 +353,13 @@ public class AccountManager {
                 }
 
                 Document newAccountDoc = new Document("uuid", account.getUuid().toString())
-                        .append("registeredAddresses", account.getRegisteredAddresses())
+                        .append("addresses", account.getRegisteredAddresses())
                         .append("xp", account.getXp())
                         .append("hideGlobalChat", account.isHideGlobalChat())
                         .append("hideMessages", account.isHideMessages())
                         .append("blockedPlayers", blockedPlayerIds)
                         .append("punishments", punishmentIds)
+                        .append("notes", account.getNotes())
                         .append("lastSeen", account.getLastSeen());
 
                 if (!account.getPunishments().isEmpty()) {
@@ -378,12 +424,13 @@ public class AccountManager {
                     }
 
                     Document newAccountDoc = new Document("uuid", account.getUuid().toString())
-                            .append("registeredAddresses", account.getRegisteredAddresses())
+                            .append("addresses", account.getRegisteredAddresses())
                             .append("xp", account.getXp())
                             .append("hideGlobalChat", account.isHideGlobalChat())
                             .append("hideMessages", account.isHideMessages())
                             .append("blockedPlayers", blockedPlayerIds)
                             .append("punishments", punishmentIds)
+                            .append("notes", account.getNotes())
                             .append("lastSeen", account.getLastSeen());
 
                     if(!account.getPunishments().isEmpty()) {
@@ -426,7 +473,7 @@ public class AccountManager {
      * @param uuid
      * @param amount
      */
-    public void addXP(UUID uuid, Integer amount) {
+    public void addXP(UUID uuid, String reason, Integer amount) {
         Account account = getAccount(uuid);
 
         if(account == null) {
@@ -436,8 +483,15 @@ public class AccountManager {
 
         account.setXp(account.getXp() + amount);
 
-        if(Bukkit.getPlayer(uuid) != null)
-            Bukkit.getPlayer(uuid).sendMessage(ChatColor.GREEN + "+" + amount + "XP");
+        new BukkitRunnable() {
+            public void run() {
+                if(Bukkit.getPlayer(uuid) != null) {
+                    Player player = Bukkit.getPlayer(uuid);
+                    player.sendMessage(ChatColor.GREEN + "+" + amount + "XP - " + reason);
+                    player.playSound(player.getLocation(), Sound.LEVEL_UP, 1.0f, 1.0f);
+                }
+            }
+        }.runTaskLater(revival, 60L);
     }
 
     /**
@@ -445,7 +499,7 @@ public class AccountManager {
      * @param uuid
      * @param amount
      */
-    public void spendXP(UUID uuid, Integer amount) {
+    public void spendXP(UUID uuid, String reason, Integer amount) {
         Account account = getAccount(uuid);
 
         if(account == null) {
@@ -456,7 +510,7 @@ public class AccountManager {
         account.setXp(account.getXp() - amount);
 
         if(Bukkit.getPlayer(uuid) != null)
-            Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + "-" + amount + "XP");
+            Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + "-" + amount + "XP - " + reason);
     }
 
     /**

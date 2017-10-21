@@ -29,14 +29,17 @@ public class EToggleGlobalCommand extends ECommand {
         Player player = (Player)sender;
         Account account = getRevival().getAccountManager().getAccount(player.getUniqueId());
 
+        if(account == null) {
+            player.sendMessage(ChatColor.RED + "Account not found");
+            return;
+        }
+
         if(account.isHideGlobalChat()) {
             account.setHideGlobalChat(false);
             player.sendMessage(ChatColor.GREEN + "You can now see global chat");
-            return;
         } else {
             account.setHideGlobalChat(true);
             player.sendMessage(ChatColor.GREEN + "You can no longer see global chat");
-            return;
         }
     }
 

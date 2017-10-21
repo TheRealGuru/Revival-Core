@@ -47,7 +47,7 @@ public class NetworkListener implements PluginMessageListener {
 
                 Player foundPlayer = Bukkit.getPlayer(receivedData);
 
-                revival.getAccountManager().getAccount(foundPlayer.getUniqueId(), false, result -> {
+                revival.getAccountManager().getAccount(foundPlayer.getUniqueId(), false, false, result -> {
                     if(result.getPunishments() == null || result.getPunishments().isEmpty()) return;
 
                     for(Punishment punishment : result.getPunishments()) {

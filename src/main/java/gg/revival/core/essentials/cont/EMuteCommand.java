@@ -60,7 +60,7 @@ public class EMuteCommand extends ECommand {
                 return;
             }
 
-            getRevival().getAccountManager().getAccount(uuid, false, result -> {
+            getRevival().getAccountManager().getAccount(uuid, false, false, result -> {
                 int address = 0;
 
                 if(result.getRegisteredAddresses() != null && !result.getRegisteredAddresses().isEmpty())

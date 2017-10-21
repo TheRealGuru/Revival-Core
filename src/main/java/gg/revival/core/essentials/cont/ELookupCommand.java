@@ -13,7 +13,7 @@ public class ELookupCommand extends ECommand {
                 revival,
                 "lookup",
                 "/lookup <player>",
-                "View a players past punishments",
+                "Lookup player information",
                 Permissions.PUNISHMENT_VIEW,
                 1,
                 1,
@@ -34,18 +34,13 @@ public class ELookupCommand extends ECommand {
                 return;
             }
 
-            getRevival().getAccountManager().getAccount(uuid, false, result -> {
+            getRevival().getAccountManager().getAccount(uuid, false, false, result -> {
                 if(result == null) {
                     player.sendMessage(getRevival().getMsgTools().getMessage("errors.player-not-found"));
                     return;
                 }
 
-                if(result.getPunishments() == null || result.getPunishments().isEmpty()) {
-                    player.sendMessage(getRevival().getMsgTools().getMessage("errors.no-punishments-found"));
-                    return;
-                }
-
-                getRevival().getMsgTools().sendPunishments(player, username, result);
+                getRevival().getMsgTools().sendLookup(player, username, result);
             });
         });
     }

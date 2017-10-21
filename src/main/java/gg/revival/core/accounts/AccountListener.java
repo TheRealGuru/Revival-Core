@@ -27,7 +27,7 @@ public class AccountListener implements Listener {
     public void onPlayerLoginAttempt(AsyncPlayerPreLoginEvent event) {
         UUID uuid = event.getUniqueId();
 
-        revival.getAccountManager().getAccount(uuid, true, result -> {
+        revival.getAccountManager().getAccount(uuid, true, true, result -> {
             if(result == null || result.getPunishments().isEmpty()) return;
 
             for(Punishment punishment : result.getPunishments()) {

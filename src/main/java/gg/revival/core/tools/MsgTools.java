@@ -2,10 +2,12 @@ package gg.revival.core.tools;
 
 import gg.revival.core.Revival;
 import gg.revival.core.accounts.Account;
+import gg.revival.core.punishments.PunishType;
 import gg.revival.core.punishments.Punishment;
 import lombok.Getter;
 import mkremins.fanciful.FancyMessage;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -58,6 +60,60 @@ public class MsgTools {
 
             player.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "-------------------------");
         }
+    }
+
+    /**
+     * Sends player lookup information to the given displayedTo player
+     * @param displayedTo
+     * @param username
+     * @param account
+     */
+    public void sendLookup(Player displayedTo, String username, Account account) {
+        StringBuilder response = new StringBuilder();
+        boolean online = Bukkit.getPlayer(username) != null && Bukkit.getPlayer(username).isOnline();
+
+        response.append(ChatColor.YELLOW + "" + ChatColor.STRIKETHROUGH + "-------------------------\n");
+        response.append(ChatColor.YELLOW + username + ChatColor.GRAY + " [");
+
+        if(online)
+            response.append(ChatColor.GREEN + "Online");
+        else
+            response.append(ChatColor.RED + "Offline");
+
+        response.append(ChatColor.GRAY + "]\n");
+
+        if(!online)
+            response.append(ChatColor.AQUA + "Last seen" + ChatColor.WHITE + ": " + revival.getTimeTools().formatIntoUptime(System.currentTimeMillis() - account.getLastSeen()) + " ago\n");
+
+        if(!account.getPunishments().isEmpty()) {
+            for(Punishment punishment : account.getPunishments()) {
+                if(!punishment.getType().equals(PunishType.BAN) || punishment.isExpired()) continue;
+                response.append(ChatColor.RED + "This player is currently banned\n");
+                break;
+            }
+        }
+
+        response.append(ChatColor.YELLOW + "" + ChatColor.STRIKETHROUGH + "-------------------------\n");
+
+        response.append(ChatColor.GOLD + "Account Info" + ChatColor.WHITE + ":\n");
+        response.append(ChatColor.YELLOW + " - " + ChatColor.GOLD + "Revival XP: " + ChatColor.WHITE + account.getXp() + "\n");
+        response.append(ChatColor.YELLOW + " - " + ChatColor.GOLD + "Global Chat Hidden: " + (account.isHideGlobalChat() ? ChatColor.GREEN + "True" : ChatColor.RED + "False") + "\n");
+        response.append(ChatColor.YELLOW + " - " + ChatColor.GOLD + "Private Messages Hidden: " + (account.isHideMessages() ? ChatColor.GREEN + "True" : ChatColor.RED + "False") + "\n");
+        response.append(ChatColor.YELLOW + " - " + ChatColor.GOLD + "Blocked Players: " + ChatColor.WHITE + account.getBlockedPlayers().size() + "\n");
+        response.append(ChatColor.YELLOW + " - " + ChatColor.GOLD + "Punishments on record: " + ChatColor.WHITE + account.getPunishments().size() + "\n");
+
+        response.append(ChatColor.YELLOW + "" + ChatColor.STRIKETHROUGH + "-------------------------\n");
+
+        if(!account.getNotes().isEmpty()) {
+            response.append(ChatColor.GOLD + "Notes" + ChatColor.WHITE + "\n");
+
+            for(String note : account.getNotes())
+                response.append(ChatColor.YELLOW + " - " + ChatColor.WHITE + note + ChatColor.RESET + "\n");
+
+            response.append(ChatColor.YELLOW + "" + ChatColor.STRIKETHROUGH + "-------------------------\n");
+        }
+
+        displayedTo.sendMessage(response.toString());
     }
 
     /**

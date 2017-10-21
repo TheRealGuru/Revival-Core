@@ -47,7 +47,7 @@ public class EUnbanCommand extends ECommand {
                 return;
             }
 
-            getRevival().getAccountManager().getAccount(uuid, false, result -> {
+            getRevival().getAccountManager().getAccount(uuid, false, false, result -> {
                 if(result.getPunishments().isEmpty()) {
                     sender.sendMessage(getRevival().getMsgTools().getMessage("errors.player-not-banned"));
                     return;

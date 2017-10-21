@@ -98,3 +98,5 @@ commands:
   noclip:
     description: Toggle noclip
     aliases: [nc]
+  note:
+    description: Leave a note on a players account
