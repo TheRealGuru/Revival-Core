@@ -29,11 +29,15 @@ public class ChatListener implements Listener {
                     revival.getTimeTools().getFormattedCooldown(true, revival.getChatFilter().getCooldowns().get(player.getUniqueId()) - System.currentTimeMillis())));
 
             event.setCancelled(true);
+
+            return;
         }
 
         if(revival.getCfg().CHAT_FILTER_ENABLED && revival.getChatFilter().isBad(event.getMessage().split(" ")) && !player.hasPermission(Permissions.CHAT_BYPASS_FILTER)) {
             player.sendMessage(revival.getMsgTools().getMessage("errors.not-allowed-to-say"));
             event.setCancelled(true);
+
+            return;
         }
 
         if(revival.getCfg().CHAT_FILTER_ENABLED && revival.getCfg().CHAT_FILTER_INTERVAL > 0 && !player.hasPermission(Permissions.CHAT_BYPASS_COOLDOWN))

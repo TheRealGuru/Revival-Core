@@ -10,7 +10,7 @@ import java.util.UUID;
 public class Account {
 
     @Getter UUID uuid;
-    @Getter @Setter List<Integer> registeredAddresses;
+    @Getter @Setter int address;
     @Getter @Setter int xp;
     @Getter @Setter boolean hideGlobalChat;
     @Getter @Setter boolean hideMessages;
@@ -19,11 +19,11 @@ public class Account {
     @Getter List<String> notes;
     @Getter @Setter long lastSeen;
 
-    public Account(UUID uuid, List<Integer> registeredAddresses, int xp, boolean hideGlobalChat, boolean hideMessages, List<UUID> blockedPlayers,
+    public Account(UUID uuid, int address, int xp, boolean hideGlobalChat, boolean hideMessages, List<UUID> blockedPlayers,
                    List<Punishment> punishments, List<String> notes, long lastSeen) {
 
         this.uuid = uuid;
-        this.registeredAddresses = registeredAddresses;
+        this.address = address;
         this.xp = xp;
         this.hideGlobalChat = hideGlobalChat;
         this.hideMessages = hideMessages;

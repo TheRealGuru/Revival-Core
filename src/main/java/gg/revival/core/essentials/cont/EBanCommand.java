@@ -66,10 +66,7 @@ public class EBanCommand extends ECommand {
             }
 
             getRevival().getAccountManager().getAccount(uuid, false, false, result -> {
-                int address = 0;
-
-                if(result.getRegisteredAddresses() != null && !result.getRegisteredAddresses().isEmpty())
-                    address = result.getRegisteredAddresses().get(0);
+                int address = result.getAddress();
 
                 Punishment punishment = new Punishment(UUID.randomUUID(), uuid, address, punisher, reason, PunishType.BAN, System.currentTimeMillis(), -1L);
 

@@ -2,6 +2,7 @@ package gg.revival.core.accounts;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -58,12 +59,14 @@ public class AccountManager {
      */
     public void getAccount(UUID uuid, boolean unsafe, boolean cache, final AccountCallback callback) {
         if(!revival.getCfg().DB_ENABLED) {
-            List<Integer> newAddressList = Lists.newArrayList();
+            int address = 0;
 
             if(Bukkit.getPlayer(uuid) != null && Bukkit.getPlayer(uuid).isOnline())
-                newAddressList.add(IPTools.ipStringToInteger(Bukkit.getPlayer(uuid).getAddress().getAddress().getHostAddress()));
+                address = IPTools.ipStringToInteger(Bukkit.getPlayer(uuid).getAddress().getAddress().getHostAddress());
 
-            Account account = new Account(uuid, newAddressList, 0, false, false, Lists.newArrayList(), Lists.newArrayList(), Lists.newArrayList(), System.currentTimeMillis());
+            Account account = new Account(uuid, address, 0, false,
+                    false, Lists.newArrayList(), Lists.newArrayList(), Lists.newArrayList(), System.currentTimeMillis());
+
             accounts.add(account);
 
             callback.onQueryDone(account);
@@ -88,7 +91,7 @@ public class AccountManager {
 
             if(accountCollection == null || punishmentCollection == null) return;
 
-            FindIterable<Document> accountQuery = null;
+            FindIterable<Document> accountQuery;
 
             try {
                 accountQuery = MongoAPI.getQueryByFilter(accountCollection, "uuid", uuid.toString());
@@ -101,11 +104,10 @@ public class AccountManager {
             Account account;
 
             if(document != null) {
-                int xp = 0;
+                int xp = 0, address = 0;
                 long lastSeen = System.currentTimeMillis();
                 boolean hideGlobalChat = false, hideMessages = false;
                 List<String> blockedPlayerIds = Lists.newArrayList(), punishmentIds = Lists.newArrayList(), notes = Lists.newArrayList();
-                List<Integer> addresses = Lists.newArrayList();
                 List<UUID> blockedPlayers = Lists.newArrayList();
                 List<Punishment> punishments = Lists.newArrayList();
 
@@ -124,8 +126,8 @@ public class AccountManager {
                 if(document.get("punishments") != null)
                     punishmentIds = (List<String>) document.get("punishments");
 
-                if(document.get("addresses") != null)
-                    addresses = (List<Integer>) document.get("addresses");
+                if(document.get("address") != null)
+                    address = document.getInteger("address");
 
                 if(document.get("notes") != null)
                     notes = (List<String>) document.get("notes");
@@ -175,11 +177,11 @@ public class AccountManager {
                         blockedPlayers.add(UUID.fromString(blockedPlayerId));
                 }
 
-                account = new Account(uuid, addresses, xp, hideGlobalChat, hideMessages, blockedPlayers, punishments, notes, lastSeen);
+                account = new Account(uuid, address, xp, hideGlobalChat, hideMessages, blockedPlayers, punishments, notes, lastSeen);
             }
 
             else {
-                account = new Account(uuid, Lists.newArrayList(), 0, false, false, Lists.newArrayList(), Lists.newArrayList(), Lists.newArrayList(), System.currentTimeMillis());
+                account = new Account(uuid, 0, 0, false, false, Lists.newArrayList(), Lists.newArrayList(), Lists.newArrayList(), System.currentTimeMillis());
             }
 
             if(getAccount(uuid) == null && cache)
@@ -215,11 +217,10 @@ public class AccountManager {
                     Account account;
 
                     if(document != null) {
-                        int xp = 0;
+                        int xp = 0, address = 0;
                         long lastSeen = System.currentTimeMillis();
                         boolean hideGlobalChat = false, hideMessages = false;
                         List<String> blockedPlayerIds = Lists.newArrayList(), punishmentIds = Lists.newArrayList(), notes = Lists.newArrayList();
-                        List<Integer> addresses = Lists.newArrayList();
                         List<UUID> blockedPlayers = Lists.newArrayList();
                         List<Punishment> punishments = Lists.newArrayList();
 
@@ -238,8 +239,8 @@ public class AccountManager {
                         if(document.get("punishments") != null)
                             punishmentIds = (List<String>) document.get("punishments");
 
-                        if(document.get("addresses") != null)
-                            addresses = (List<Integer>) document.get("addresses");
+                        if(document.get("address") != null)
+                            address = document.getInteger("address");
 
                         if(document.get("notes") != null)
                             notes = (List<String>) document.get("notes");
@@ -289,11 +290,11 @@ public class AccountManager {
                                 blockedPlayers.add(UUID.fromString(blockedPlayerId));
                         }
 
-                        account = new Account(uuid, addresses, xp, hideGlobalChat, hideMessages, blockedPlayers, punishments, notes, lastSeen);
+                        account = new Account(uuid, address, xp, hideGlobalChat, hideMessages, blockedPlayers, punishments, notes, lastSeen);
                     }
 
                     else {
-                        account = new Account(uuid, Lists.newArrayList(), 0, false, false, Lists.newArrayList(), Lists.newArrayList(), Lists.newArrayList(), System.currentTimeMillis());
+                        account = new Account(uuid, 0, 0, false, false, Lists.newArrayList(), Lists.newArrayList(), Lists.newArrayList(), System.currentTimeMillis());
                     }
 
                     if(getAccount(uuid) == null && cache)
@@ -353,7 +354,7 @@ public class AccountManager {
                 }
 
                 Document newAccountDoc = new Document("uuid", account.getUuid().toString())
-                        .append("addresses", account.getRegisteredAddresses())
+                        .append("address", account.getAddress())
                         .append("xp", account.getXp())
                         .append("hideGlobalChat", account.isHideGlobalChat())
                         .append("hideMessages", account.isHideMessages())
@@ -424,7 +425,7 @@ public class AccountManager {
                     }
 
                     Document newAccountDoc = new Document("uuid", account.getUuid().toString())
-                            .append("addresses", account.getRegisteredAddresses())
+                            .append("address", account.getAddress())
                             .append("xp", account.getXp())
                             .append("hideGlobalChat", account.isHideGlobalChat())
                             .append("hideMessages", account.isHideMessages())
@@ -466,6 +467,46 @@ public class AccountManager {
                 }
             }.runTaskAsynchronously(Revival.getCore());
         }
+    }
+
+    /**
+     * Returns a callback containing a set of all accounts associated to a players account
+     * @param ip
+     * @param callback
+     */
+    public void getAssociatedAccounts(int ip, AltCallback callback) {
+        Set<UUID> result = Sets.newHashSet();
+
+        new BukkitRunnable() {
+            public void run() {
+                if(revival.getDatabaseManager().getAccounts() == null)
+                    revival.getDatabaseManager().setAccounts(MongoAPI.getCollection(revival.getCfg().DB_DATABASE, "accounts"));
+
+                MongoCollection collection = revival.getDatabaseManager().getAccounts();
+                FindIterable<Document> query;
+
+                try {
+                    query = collection.find(Filters.eq("address", ip));
+                } catch (LinkageError err) {
+                    getAssociatedAccounts(ip, callback);
+                    return;
+                }
+
+                for (Document current : query) {
+                    if (current.get("uuid") == null) continue;
+
+                    UUID uuid = UUID.fromString(current.getString("uuid"));
+
+                    result.add(uuid);
+                }
+
+                new BukkitRunnable() {
+                    public void run() {
+                        callback.onQueryDone(result);
+                    }
+                }.runTask(revival);
+            }
+        }.runTaskAsynchronously(revival);
     }
 
     /**

@@ -1,6 +1,7 @@
 package gg.revival.core.essentials;
 
 import gg.revival.core.Revival;
+import gg.revival.core.tools.Permissions;
 import gg.revival.driver.MongoAPI;
 import lombok.Getter;
 import org.bukkit.ChatColor;
@@ -34,12 +35,18 @@ public class EssentialsListener implements Listener {
 
         event.setJoinMessage(null);
 
+        revival.getPlayerTools().sendPermissionMessage(ChatColor.GRAY + player.getName() + " joined the server", Permissions.ADMIN_TOOLS);
+
         revival.getServerTools().sendFormattedTabList(player, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw());
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+
         event.setQuitMessage(null);
+
+        revival.getPlayerTools().sendPermissionMessage(ChatColor.GRAY + player.getName() + " left the server", Permissions.ADMIN_TOOLS);
     }
 
     @EventHandler

@@ -45,6 +45,8 @@ public class AccountListener implements Listener {
                         revival.getPunishments().getActiveMutes().put(uuid, punishment);
                 }
             }
+
+            result.setAddress(IPTools.ipStringToInteger(event.getAddress().getHostAddress()));
         });
     }
 
